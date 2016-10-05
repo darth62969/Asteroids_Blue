@@ -16,11 +16,14 @@ LIBFLAGS = -lglut -lGLU -lGL
 
 # Independent Targets - first is executable, second is object
 
-main : main.o  
-	$(CC) main.o -o bin/main $(LIBFLAGS) 	
+asteroids : main.o  
+	$(CC) asteroids.o -o bin/asteroids $(LIBFLAGS) 	
 
-main.o : src/main.cpp
-	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/main.cpp
+asteroids.o : src/asteroids.cpp
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/asteroids.cpp
+
+asteroid.o :
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/asteroid.cpp
 
 
 # Default Targets for Cleaning up the Environment
