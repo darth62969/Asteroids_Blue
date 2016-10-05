@@ -5,6 +5,9 @@
 # Mercer University
 # Fall 2016 
 #
+# Modified for use in: The Blue Team's Asteroids 
+# Modified by: Jonathan Oakes
+#
 
 CC = g++ 
 CFLAGS = 
