@@ -8,13 +8,20 @@ class asteroid.h
 {
     public:
         asteroid asteroid::createAsteroid();
-        asteroid asteroid::createAsteroid(triangle a);
+	asteroid asteroid::breakupAsteroid(asteriod a);
 
     private:
         triangle * triptr;
         triangle * nexttriptr;
         point * origin;
         int numsides;
+	int max_x;
+	int max_y;
+        asteroid asteroid::createAsteroid(triangle a);
+	asteroid asteroid::tessilateAsteriod();
+	
 }
 
+
+#include "asteriod.cpp"
 #endif
