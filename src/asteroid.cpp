@@ -22,4 +22,13 @@ asteriod createAsteroid()
  */
 
 }
+asteroid * breakupAsteroid(asteriod a)
+{
+/*	todo:
+ *	get trinagle set to a.
+ *	createAsteroid(traingle a)
+ * 	repeat till last triangle pointer.
+*/
+}
+
 
