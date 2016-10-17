@@ -6,24 +6,24 @@
 # Fall 2016 
 #
 # Modified for use in: The Blue Team's Asteroids 
-# Modified by: Jonathan Oakes
+# Modified by: Blue Squad
 #
 
 CC = g++ 
 CFLAGS = 
 COPTFLAGS = -O3 
 LIBFLAGS = -lglut -lGLU -lGL
+HEADERS = src/headers.h src/structs.h
+OBJS = main.o
 
 # Independent Targets - first is executable, second is object
+Asteroids : $(OBJS) $(HEADERS)
+	$(CC) -o Asteroids $(OBJS) $(LIBFLAGS)
 
-asteroids : main.o  
-	$(CC) asteroids.o -o bin/asteroids $(LIBFLAGS) 	
+main.o : src/main.cpp $(HEADERS)
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/main.cpp
 
-asteroids.o : src/asteroids.cpp
-	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/asteroids.cpp
 
-asteroid.o :
-	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/asteroid.cpp
 
 
 # Default Targets for Cleaning up the Environment
