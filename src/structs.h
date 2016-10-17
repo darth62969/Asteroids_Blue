@@ -26,7 +26,4 @@ struct bullet{
     point p;
     point pTranslation;
 }
-
-#include "structs.cpp"
-
 #endif
