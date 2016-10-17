@@ -1,61 +1,31 @@
 #ifndef STRUCTS_H
 #define STRUCTS_H
 
-class point{
-
-private: 
-struct point
-{
-	double x
-	double y
-	double z
+struct asteriod{
+    float rotation;
+    float translation;
+    vector <points> astPnts;
+    bool clipped;
 }
 
-public:
-point(double x, double y, double z);
-void structs::setX(double x);
-void structs::setY(double y);
-void structs::setZ(double z);
-void structs::set(double x, double y, double z);
-double structs::getX();
-double structs::getY();
-double structs::getZ();
-double[3] structs::get();
-
-
-
+struct point{
+    GLfloat x, y, z, w;
 }
-class triangle {
 
-private:
 struct triangle{
-	point a;
-	point b;
-	point c;
+    point a, b, c;    
 }
 
-public:
-triangle();
-void setA(point a);
-void setB(point a);
-void setC(point a);
-void set(point a, point b, point c);
-point getA();
-point getB();
-point getC();
-point[3] triangle::get();
-
+struct ship{
+    triangle body;
+    vector<bullet> bullets;
+    GLfloat rotation;
 }
 
-class triangleArray
-{
-public:
-	triangle triangleArray::at(int idx); // gets triangle at index
-	triangle 
-	
-
+struct bullet{
+    point p;
+    point pTranslation;
 }
-
 
 #include "structs.cpp"
 
