@@ -15,6 +15,7 @@ struct asteriod{
     float rotation;
     point translation;
     vector <points> astPnts;
+    vector <traingle> astTris;
     bool clipped;
 }
 
