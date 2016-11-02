@@ -30,8 +30,8 @@ struct ship
 
 struct bullet
 {
-    point p;
-    point pTranslation;
+    point location;
+    point translation;
 }
 
 #endif
