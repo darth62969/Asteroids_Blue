@@ -1,5 +1,4 @@
 #include "headers.h"
-#include "structs.h"
 
 bullet createBullet(void)
 {
