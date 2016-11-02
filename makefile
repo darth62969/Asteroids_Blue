@@ -14,7 +14,7 @@ CFLAGS =
 COPTFLAGS = -O3 
 LIBFLAGS = -lglut -lGLU -lGL
 HEADERS = src/headers.h src/structs.h
-OBJS = main.o
+OBJS = main.o asteroid.o ship.o bullets.o
 
 # Independent Targets - first is executable, second is object
 Asteroids : $(OBJS) $(HEADERS)
@@ -23,7 +23,14 @@ Asteroids : $(OBJS) $(HEADERS)
 main.o : src/main.cpp $(HEADERS)
 	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/main.cpp
 
+ship.o : src/ship.cpp $(HEADERS)
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/ship.cpp
 
+asteroid.o : src/asteroid.cpp $(HEADERS)
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/asteroid.cpp
+
+bullets.o : src/bullets.cpp $(HEADERS)
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/bullets.cpp
 
 
 # Default Targets for Cleaning up the Environment

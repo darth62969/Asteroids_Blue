@@ -1,7 +1,5 @@
-#include <iostream>
-#include <cmath>
-#include <fstream>
-#include <gl/glut>
+#include "headers.h"
+#include "structs.h"
 
 using namespace std;
 
