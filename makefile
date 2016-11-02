@@ -18,10 +18,19 @@ OBJS = main.o
 
 # Independent Targets - first is executable, second is object
 Asteroids : $(OBJS) $(HEADERS)
-	$(CC) -o Asteroids $(OBJS) $(LIBFLAGS)
+	$(CC) -o bin/Asteroids $(OBJS) $(LIBFLAGS)
 
 main.o : src/main.cpp $(HEADERS)
 	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/main.cpp
+
+asteroid.o: src/asteroid.cpp
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/asteroid.cpp
+
+bullets.o: src/bullets.cpp
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/bullets.cpp
+ship.o: src/ship.cpp
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/ship.cpp
+
 
 
 
