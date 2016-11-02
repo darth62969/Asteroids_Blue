@@ -1,7 +1,7 @@
 #ifndef __STRUCTS_H_INCLUDED__
 #define __STRUCTS_H_INCLUDED__
 
-#include "stucts.h"
+#include "headers.h"
 
 
 class asteroid.h

@@ -1,8 +1,4 @@
-#include <iostream>
-#include <cmath>
-#include <fstream>
-#include <gl/glut>
-
+#include "headers.h"
 using namespace std;
 
 void setDefaultSize(int x, int y)
