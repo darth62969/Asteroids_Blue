@@ -9,7 +9,7 @@ bullet createBullet(void)
 	shot.location = enterprise.body.a;
 	
 	// Convert the rotation (float) of enterprise to radians.
-	theta = enterprise.rotation * M_PI / 180.0;
+	double theta = enterprise.rotation * M_PI / 180.0;
 
 	point translation;
 	translation.x = cos(theta);

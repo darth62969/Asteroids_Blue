@@ -17,8 +17,8 @@ struct asteriod
 {
     float rotation;
     point translation;
-   std::vector<point> astPnts;
-   std::vector<triangle> astTris;
+    std::vector<point> astPnts;
+    std::vector<triangle> astTris;
     bool clipped;
 };
 

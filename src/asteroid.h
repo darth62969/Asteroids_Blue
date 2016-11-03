@@ -1,7 +1,8 @@
-#ifndef __STRUCTS_H_INCLUDED__
-#define __STRUCTS_H_INCLUDED__
+#ifndef __ASTEROID_H_INCLUDED__
+#define __ASTEROID_H_INCLUDED__
 
 #include "headers.h"
+#include "structs.h"
 
 class asteroid
 {
@@ -10,9 +11,12 @@ class asteroid
 	    asteroid breakupAsteroid(asteroid a);
 
     private:
-        //triangle * triptr;
-        //triangle * nexttriptr;
-       // point origin;
+        float rotation;
+        point translation;
+        point origin;
+        std::vector<point> astPnts;
+        std::vector<triangle> astTris;
+        bool clipped;
         int numsides;
 	    int max_x;
 	    int max_y;
