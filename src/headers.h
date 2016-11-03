@@ -21,6 +21,8 @@ using namespace std;
 
 //constants go here
 
+
+//Window Constants
 const int WINDOW_MAX_X = 600;
 const int WINDOW_MAX_Y = 600;
 const int WINDOW_POSITION_X = 100;
@@ -30,6 +32,14 @@ const int WORLD_COORDINATE_MIN_y = 0;
 const int WORLD_COORDINATE_MAX_X = 600;
 const int WORLD_COORDINATE_MAX_y = 600;
 
+//Asteroid Contants
+const int ASTEROID_MAX_X = 20;
+const int ASTEROID_MAX_Y = 20;
 
+//Ship Constants
+
+//World Constants
+
+//Other Constants
 
 #endif
