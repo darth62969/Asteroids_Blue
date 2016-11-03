@@ -6,7 +6,7 @@ ship createShip(void)
 	/* Create a ship, enterprise, with points at (450, 450), (450, 550), and (550, 500).
 	 * These points will need to be changed later depending on the size of our window.
 	 */
-	ship enterprise;
+	ship temp;
 	triangle body;
 	point a;
 	a.x = 550.0;
@@ -20,10 +20,10 @@ ship createShip(void)
 	body.a = a;
 	body.b = b;
 	body.c = c;
-	enterprise.body = body;
+	temp.body = body;
 
 	// Rotation will be changed if the user presses the left or right arrow keys.
-	enterprise.rotation = 0.0;
+	temp.rotation = 0.0;
 
-	return enterprise;
+	return temp;
 }
