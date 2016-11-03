@@ -1,33 +1,37 @@
 #ifndef STRUCTS
 #define STRUCTS
 
-#include <vector>
+#include "headers.h"
 
-struct point{
-    GLfloat x, y, z, w;
-}
+struct point
+{
+    float x, y, z, w;
+};
 
-struct triangle{
+struct triangle
+{
     point a, b, c;    
-}
+};
 
-struct asteriod{
+struct asteriod
+{
     float rotation;
     point translation;
-    vector <points> astPnts;
-    vector <traingle> astTris;
+    vector<point> astPnts;
+    vector<triangle> astTris;
     bool clipped;
-}
+};
 
-
-struct ship{
+struct ship
+{
     triangle body;
-    GLfloat rotation;
-}
+    float rotation;
+};
 
-struct bullet{
-    point p;
-    point pTranslation;
-}
+struct bullet
+{
+    point location;
+    point translation;
+};
 
 #endif

@@ -1,14 +1,12 @@
-#include <iostream>
-#include <cmath>
-#include <fstream>
-#include <gl/glut>
+#include "headers.h"
 
-using namespace std;
+int max_x;
+int max_y;
 
 void setDefaultSize(int x, int y)
 {
-	this.max_x = x;
-	this.max_y = y;
+	max_x = x;
+	max_y = y;
 }
 
 asteriod createAsteroid()
@@ -22,6 +20,7 @@ asteriod createAsteroid()
  */
 
 }
+
 asteroid * breakupAsteroid(asteriod a)
 {
 /*	todo:
@@ -30,5 +29,3 @@ asteroid * breakupAsteroid(asteriod a)
  * 	repeat till last triangle pointer.
 */
 }
-
-

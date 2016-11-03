@@ -1,27 +1,18 @@
-#ifndef __STRUCTS_H_INCLUDED__
-#define __STRUCTS_H_INCLUDED__
+#include "headers.h"
 
-#include "stucts.h"
-
-
-class asteroid.h
+class asteroid
 {
-    public:
-        asteroid asteroid::createAsteroid();
-	asteroid asteroid::breakupAsteroid(asteriod a);
+	public:
+        	asteroid createAsteroid();
+		asteroid breakupAsteroid(asteroid a);
 
-    private:
-        triangle * triptr;
-        triangle * nexttriptr;
-        point * origin;
-        int numsides;
-	int max_x;
-	int max_y;
-        asteroid asteroid::createAsteroid(triangle a);
-	asteroid asteroid::tessilateAsteriod();
-	
-}
-
-
-#include "asteriod.cpp"
-#endif
+	private:
+		//triangle * triptr;
+		//triangle * nexttriptr;
+		// point origin;
+        	int numsides;
+		int max_x;
+	    	int max_y;
+        	//asteroid createAsteroid(triangle a);
+	    	asteroid tessilateAsteriod();	
+};
