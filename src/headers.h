@@ -14,7 +14,6 @@
 #include "structs.h"
 #include "ship.h"
 
-using namespace std;
 
 //constants go here
 
