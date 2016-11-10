@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 #include "structs.h"
+=======
+>>>>>>> 6e59ff59a6d9b5d6ca3a1de5ca7e00bcde07bd5e
 #include "headers.h"
 
 ship createShip(void)
