@@ -1,9 +1,7 @@
-<<<<<<< HEAD
-#include "structs.h"
-=======
->>>>>>> 6e59ff59a6d9b5d6ca3a1de5ca7e00bcde07bd5e
 #include "headers.h"
-
+#include "structs.h"
+#include "globals.h"
+#include "prototypes.h"
 ship createShip(void)
 {
 	/* Create a ship, enterprise, with points at (450, 450), (450, 550), and (550, 500).

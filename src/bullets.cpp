@@ -1,4 +1,6 @@
-#include "headers.h"
+#include "structs.h"
+#include "globals.h"
+#include "prototypes.h"
 
 bullet createBullet(void)
 {
@@ -18,4 +20,6 @@ bullet createBullet(void)
 	 * shot will move in each pass through the pipeline.
 	 */
 	shot.translation = translation;
+
+	return shot;
 }

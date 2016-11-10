@@ -1,4 +1,7 @@
 #include "headers.h"
+#include "structs.h"
+#include "globals.h"
+#include "prototypes.h"
 
 int max_x;
 int max_y;

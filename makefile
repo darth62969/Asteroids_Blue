@@ -13,7 +13,7 @@ CC = g++
 CFLAGS = 
 COPTFLAGS = -O3 
 LIBFLAGS = -lglut -lGLU -lGL
-HEADERS = src/headers.h src/structs.h
+HEADERS = src/headers.h src/structs.h src/globals.h src/prototypes.h
 OBJS = main.o asteroid.o ship.o bullets.o
 
 # Independent Targets - first is executable, second is object
