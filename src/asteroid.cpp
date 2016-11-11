@@ -3,16 +3,14 @@
 #include "globals.h"
 #include "prototypes.h"
 
-int max_x;
-int max_y;
+float rotation;
+point translation;
+std::vector<point> astPnts;
+std::vector<triangle> astTris;
+bool clipped;
+int numsides = 0;
 
-void setDefaultSize(int x, int y)
-{
-	max_x = x;
-	max_y = y;
-}
-
-asteriod createAsteroid()
+asteroid::asteroid()
 {
 /*	todo:
  *	generate raondome number between 0 and 8;
@@ -21,10 +19,24 @@ asteriod createAsteroid()
  *	teslate points save as triangles
  * 	return asteroid
  */
+ 	
+	while (numsides<ASTEROID_MIN_SIZE) 
+		numsides = lrand48()%ASTEROID_MAX_SIZE;
+	std::cout << "number of sides to generate " << numsides << std::endl;
+	for (int i = 0; i < numsides; i++)
+	{
+		point b;
+		b.x= lrand48()%ASTEROID_MAX_X;
+		b.y= lrand48()%ASTEROID_MAX_Y;
+		astPnts.push_back(b);
+		std::cout << "generated x: " << b.x << " generated y:" << b.y << std::endl;
+	}
 
+	rotation = drand48();
+	std::cout << "rotation was set to " << rotation << std::endl;
 }
 
-asteroid * breakupAsteroid(asteriod a)
+std::vector<asteroid> asteroid::breakupAsteroid()
 {
 /*	todo:
  *	get trinagle set to a.

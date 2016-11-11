@@ -36,7 +36,7 @@ ship.o: src/ship.cpp
 # Default Targets for Cleaning up the Environment
 
 clean :
-	rm *.o
+	rm bin/*
 
 pristine :
 	rm *.o

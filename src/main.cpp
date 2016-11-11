@@ -7,30 +7,9 @@
 #include "prototypes.h"
 //constants go here
 
-
-//Window Constants
-const int WINDOW_MAX_X = 600;
-const int WINDOW_MAX_Y = 600;
-const int WINDOW_POSITION_X = 100;
-const int WINDOW_POSITION_Y = 100;
-const int WORLD_COORDINATE_MIN_X = 0;
-const int WORLD_COORDINATE_MIN_Y = 0;
-const int WORLD_COORDINATE_MAX_X = 600;
-const int WORLD_COORDINATE_MAX_Y = 600;
-
-//Asteroid Contants
-const int ASTEROID_MAX_X = 20;
-const int ASTEROID_MAX_Y = 20;
-
-//Ship Constants
-
-//World Constants
-
-//Other Constants
-
-
 //Global Varianbles
 ship enterprise = createShip();
+
 
 void gameView()
 {
@@ -48,6 +27,7 @@ void initiateGameDisplay()
 
 void initiateAsteroids()
 {
+	asteroid a = asteroid();
 	//Generate Asteroids
 }
 
@@ -78,7 +58,7 @@ void initiateWindow(int argc, char** argv)
 int main(int argc, char** argv)
 {
 	initiateWindow(argc, argv); /* Set up Window */
-    	initiateShip();
+    initiateShip();
 	initiateAsteroids();
 	initiateGameDisplay();
 	glutDisplayFunc(gameView);
