@@ -23,13 +23,13 @@ asteroid::asteroid()
 	while (numsides<ASTEROID_MIN_SIZE) 
 		numsides = lrand48()%ASTEROID_MAX_SIZE;
 	std::cout << "number of sides to generate " << numsides << std::endl;
-	for (int i = 0; i < numsides; i++)
+	for (int j = 0; j < numsides; j++)
 	{
 		point b;
 		b.x= lrand48()%ASTEROID_MAX_X;
 		b.y= lrand48()%ASTEROID_MAX_Y;
 		astPnts.push_back(b);
-		std::cout << "generated x: " << b.x << " generated y:" << b.y << std::endl;
+	//	std::cout << "generated x: " << b.x << " generated y:" << b.y << std::endl;
 	}
 
 	rotation = drand48();
@@ -43,4 +43,22 @@ std::vector<asteroid> asteroid::breakupAsteroid()
  *	createAsteroid(traingle a)
  * 	repeat till last triangle pointer.
 */
+}
+
+void asteroid::tessilateAsteriod()
+{
+/* 	todo:
+ * 	Organize points in astPnts in counterclockwise direction
+ *	Create Triangles from astPnts and save them in to astTris
+ */
+}
+
+std::vector<point> asteroid::getPoints()
+{
+	return astPnts;
+}
+
+std::vector<triangle> asteroid::getTess()
+{
+	return astTris;
 }

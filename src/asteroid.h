@@ -9,7 +9,8 @@ class asteroid
 	public:
         explicit asteroid();
 		std::vector<asteroid> breakupAsteroid();
-
+		std::vector<point> getPoints();
+		std::vector<triangle> getTess();
 
 	private:
 	    float rotation;
@@ -18,14 +19,12 @@ class asteroid
     	std::vector<triangle> astTris;
     	bool clipped;
         int numsides;
-		int max_x;
-	    int max_y;
         //asteroid createAsteroid(triangle a);
 		//triangle * triptr;
 		//triangle * nexttriptr;
 		// point origin;
 
-	    asteroid tessilateAsteriod();	
+	    void tessilateAsteriod();	
 
 
 
