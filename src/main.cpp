@@ -10,25 +10,26 @@
 ship enterprise = createShip();
 
 //Runtime Variables go here
-std::vector<asteroid> asteroidBelt;
+vector<asteroid> asteroidBelt;
 
 void debugDisplay(void)
 {
 	glClear ( GL_COLOR_BUFFER_BIT );  // Clear display window
-    glColor3f ( 0.1, 0.5, 0.0 );      // Set line segment color to green
+    	glColor3f ( 0.1, 0.5, 0.0 );      // Set line segment color to green
     
-    for (int i = 0; i < (asteroidBelt.size()); i++)
-    {
-		std::vector<point> a = asteroidBelt.at(i).getPoints();
+    	for (int i = 0; i < (asteroidBelt.size()); i++)
+    	{
+		vector<point> a = asteroidBelt.at(i).getPoints();
+		point b = asteroidBelt.at(i).getCenter();
 		for (int j = 0; j < (a.size()); j++)
-        {
-           	glBegin (GL_LINES);
-      	       	glVertex2d(a.at(j).x*100, a.at(j).y*100);
-	           	glVertex2d( a.at((j+1)%a.size()).x*100, a.at((j+1)%a.size()).y*100);
-           	glEnd ();         
-        }
+        	{
+           		glBegin (GL_LINES);
+      	       		glVertex2d(a.at(j).x + b.x, a.at(j).y + b.y);
+	           	glVertex2d( a.at((j+1)%a.size()).x + b.x, a.at((j+1)%a.size()).y +b.y);
+           		glEnd ();         
+        	}
 	}
-    glFlush();
+    	glFlush();
 }
 
 void gameView()
@@ -51,13 +52,13 @@ void initiateAsteroids()
 {
 	//Generate Asteroids
 	int i= 0;
-	while (i<2)
+	while (i<NUMBER_OF_ASTEROIDS)
 	{	
 		asteroid a = asteroid();
 		asteroidBelt.push_back(a);
 		i++;
 	}
-	std::cout << asteroidBelt.size();
+	cout << asteroidBelt.size();
 }
 
 void initiateShip()
@@ -69,7 +70,7 @@ void initiateShip()
 void initiateWindow(int argc, char** argv)
 {
 	//build window
-    glutInit(&argc,argv);
+    	glutInit(&argc,argv);
 	glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB); /* default, not needed */
 	glutInitWindowSize(WINDOW_MAX_X,WINDOW_MAX_Y); /* set pixel window */
 	glutInitWindowPosition(WINDOW_POSITION_X, WINDOW_POSITION_Y);
@@ -78,12 +79,12 @@ void initiateWindow(int argc, char** argv)
 void initiateStuff( void )
 {
 	glClearColor(0.0, 0.0, 0.0, 0.0); /* white background */
-    glColor3f(1.0, 0.0, 0.0); /* draw in red */
-    glPointSize(10.0);
+    	glColor3f(1.0, 0.0, 0.0); /* draw in red */
+    	glPointSize(10.0);
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(WORLD_COORDINATE_MIN_X, WORLD_COORDINATE_MAX_X,
+    	glMatrixMode(GL_PROJECTION);
+    	glLoadIdentity();
+	gluOrtho2D(WORLD_COORDINATE_MIN_X, WORLD_COORDINATE_MAX_X,
         WORLD_COORDINATE_MIN_Y, WORLD_COORDINATE_MAX_Y);
 	glMatrixMode(GL_MODELVIEW);
 }
@@ -92,12 +93,10 @@ int main(int argc, char** argv)
 {
 	initiateWindow(argc, argv); /* Set up Window */
 	initiateStuff();
-    initiateShip();
+	initiateShip();
 	initiateAsteroids();
 	initiateGameDisplay();
 	glutDisplayFunc(gameView);
 	glutIdleFunc(gameLoop);
 	glutMainLoop();
-	
-
 }

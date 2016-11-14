@@ -3,10 +3,11 @@
 #include "globals.h"
 #include "prototypes.h"
 
+point center;
 float rotation;
 point translation;
-std::vector<point> astPnts;
-std::vector<triangle> astTris;
+vector<point> astPnts;
+vector<triangle> astTris;
 bool clipped;
 int numsides = 0;
 
@@ -20,23 +21,30 @@ asteroid::asteroid()
  * 	return asteroid
  */
  	
-	while (numsides<ASTEROID_MIN_SIZE) 
-		numsides = lrand48()%ASTEROID_MAX_SIZE;
-	std::cout << "number of sides to generate " << numsides << std::endl;
+	numsides = rand()% (ASTEROID_MAX_SIZE-ASTEROID_MIN_SIZE + 1) + ASTEROID_MIN_SIZE;
+	cout << "number of sides to generate " << numsides;
+	center.x = rand() % (WORLD_COORDINATE_MAX_X + 1) + WORLD_COORDINATE_MIN_X;
+	center.y = rand() % (WORLD_COORDINATE_MAX_Y + 1) + WORLD_COORDINATE_MIN_Y;
+	cout << "\tcenter of asteroid at " << center.x << " " << center.y << endl;
 	for (int j = 0; j < numsides; j++)
 	{
 		point b;
-		b.x= lrand48()%ASTEROID_MAX_X;
-		b.y= lrand48()%ASTEROID_MAX_Y;
+		b.x = rand() % (ASTEROID_MAX_X+1);
+		b.y = rand() % (ASTEROID_MAX_Y+1);
 		astPnts.push_back(b);
 	//	std::cout << "generated x: " << b.x << " generated y:" << b.y << std::endl;
 	}
 
-	rotation = drand48();
-	std::cout << "rotation was set to " << rotation << std::endl;
+	//rotation = drand48();
+	//cout << "rotation was set to " << rotation << std::endl;
 }
 
-std::vector<asteroid> asteroid::breakupAsteroid()
+point asteroid::getCenter()
+{
+	return center;
+}
+
+vector<asteroid> asteroid::breakupAsteroid()
 {
 /*	todo:
  *	get trinagle set to a.
@@ -53,12 +61,12 @@ void asteroid::tessilateAsteriod()
  */
 }
 
-std::vector<point> asteroid::getPoints()
+vector<point> asteroid::getPoints()
 {
 	return astPnts;
 }
 
-std::vector<triangle> asteroid::getTess()
+vector<triangle> asteroid::getTess()
 {
 	return astTris;
 }

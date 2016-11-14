@@ -12,6 +12,8 @@
 #include <iostream>
 #include "asteroid.h"
 
+using namespace std;
+
 //Window Constants
 const int WINDOW_MAX_X = 600;
 const int WINDOW_MAX_Y = 600;
@@ -27,9 +29,11 @@ const int ASTEROID_MAX_X = 20;
 const int ASTEROID_MAX_Y = 20;
 const int ASTEROID_MAX_SIZE = 12;
 const int ASTEROID_MIN_SIZE = 4;
+
 //Ship Constants
 
 //World Constants
+const int NUMBER_OF_ASTEROIDS = 50;
 
 //Other Constants
 
