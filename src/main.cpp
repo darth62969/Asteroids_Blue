@@ -6,11 +6,17 @@
 #include "globals.h"
 #include "prototypes.h"
 
+#define SPACEBAR
+
 //Global Varianbles
 ship enterprise = createShip();
 
 //Runtime Variables go here
 vector<asteroid> asteroidBelt;
+
+float shipRotation = 0.0;
+
+bool filled = false;
 
 void debugDisplay(void)
 {
@@ -65,6 +71,8 @@ void initiateShip()
 {
 	//Build Ship and ship dependencies.
 
+	
+
 }
 
 void initiateWindow(int argc, char** argv)
@@ -108,6 +116,46 @@ void initiateOctogon(void){
 			glVertex2f( pts[i].x , pts[i].y);
 		}
 	glEnd();
+}
+
+void keyboard(int key, int x, int y){
+	
+	//if(key == 's' || key == 'S')
+		// start game
+
+	//if(key == 'p' || key == 'P')
+		//pause movement
+
+	if(key == 'q' || key == 'Q')
+		exit(0);
+
+	if(key == 't' || key == 'T')
+		filled = false;
+
+	if(key == 'f' || key == 'F')
+		filled = true;	
+
+
+}
+
+void specialKeys(int key, int x, int y){
+	switch(key){
+		case GLUT_KEY_RIGHT:
+			shipRotation += 1.0;
+			glutIdleFunc(gameLoop);
+			break;
+
+		case GLUT_KEY_LEFT:
+			shipRotation -= 1.0;
+			glutIdleFunc(gameLoop);
+			break;	
+
+		case SPACEBAR:
+			// fire missiles
+			break;		
+
+		default: break;
+	}
 }
 
 int main(int argc, char** argv)
