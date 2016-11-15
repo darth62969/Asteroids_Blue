@@ -12,6 +12,7 @@ class asteroid
 		std::vector<asteroid> breakupAsteroid();
 		std::vector<point> getPoints();
 		std::vector<triangle> getTess();
+		float getRotation();
 
 	private:
 		point center;

@@ -20,23 +20,26 @@ asteroid::asteroid()
  *	teslate points save as triangles
  * 	return asteroid
  */
- 	
 	numsides = rand()% (ASTEROID_MAX_SIZE-ASTEROID_MIN_SIZE + 1) + ASTEROID_MIN_SIZE;
 	cout << "number of sides to generate " << numsides;
 	center.x = rand() % (WORLD_COORDINATE_MAX_X + 1) + WORLD_COORDINATE_MIN_X;
 	center.y = rand() % (WORLD_COORDINATE_MAX_Y + 1) + WORLD_COORDINATE_MIN_Y;
 	cout << "\tcenter of asteroid at " << center.x << " " << center.y << endl;
+	int i = rand();
 	for (int j = 0; j < numsides; j++)
 	{
+		srand (static_cast <unsigned> (time(0))*(i*(j+67)/10));
 		point b;
 		b.x = rand() % (ASTEROID_MAX_X+1);
 		b.y = rand() % (ASTEROID_MAX_Y+1);
 		astPnts.push_back(b);
+		i++;
 	//	std::cout << "generated x: " << b.x << " generated y:" << b.y << std::endl;
 	}
 
 	//rotation = drand48();
-	//cout << "rotation was set to " << rotation << std::endl;
+	float rotation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+	cout << "rotation was set to " << rotation << std::endl;
 }
 
 point asteroid::getCenter()
@@ -69,4 +72,9 @@ vector<point> asteroid::getPoints()
 vector<triangle> asteroid::getTess()
 {
 	return astTris;
+}
+
+float asteroid::getRotation()
+{
+	return rotation;
 }
