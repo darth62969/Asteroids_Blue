@@ -35,7 +35,6 @@ asteroid::asteroid()
 	//	std::cout << "generated x: " << b.x << " generated y:" << b.y << std::endl;
 	}
 
-	sortPoints();
 	//rotation = drand48();
 	//cout << "rotation was set to " << rotation << std::endl;
 }
