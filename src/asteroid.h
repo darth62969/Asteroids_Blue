@@ -1,4 +1,3 @@
-
 #ifndef __ASTEROID_H_INCLUDED__
 #define __ASTEROID_H_INCLUDED__
 
@@ -26,10 +25,7 @@ class asteroid
 		//triangle * triptr;
 		//triangle * nexttriptr;
 		// point origin;
-
-	    	void tessilateAsteriod();	
-
-
-
+	    	void tessilateAsteriod();
+		void sortPoints();
 };
 #endif

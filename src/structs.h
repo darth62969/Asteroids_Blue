@@ -3,7 +3,7 @@
 
 struct point
 {
-    float x, y, z, w;
+    float x, y, z, w, angle;
 };
 
 struct triangle
