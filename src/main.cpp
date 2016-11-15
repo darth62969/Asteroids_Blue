@@ -35,7 +35,24 @@ void debugDisplay(void)
            		glEnd ();         
         	}
 	}
-    	glFlush();
+    	
+	glPushMatrix();
+
+	glLoadIdentity();
+	
+	ship.rotate();
+
+		glBegin(GL_TRIANGLES);
+		glVertex2d(a.x, a.y);
+		glVertex2d(b.x, b.y);
+		glVertex2d(c.x, c.y);
+		glEnd();		
+
+	glPopMatrix();
+
+
+	glFlush();
+
 }
 
 void gameView()
@@ -141,12 +158,12 @@ void keyboard(int key, int x, int y){
 void specialKeys(int key, int x, int y){
 	switch(key){
 		case GLUT_KEY_RIGHT:
-			shipRotation += 1.0;
+			enterprise.rotation += 1.0;
 			glutIdleFunc(gameLoop);
 			break;
 
 		case GLUT_KEY_LEFT:
-			shipRotation -= 1.0;
+			enterprise.rotation -= 1.0;
 			glutIdleFunc(gameLoop);
 			break;	
 

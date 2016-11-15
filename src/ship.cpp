@@ -28,3 +28,9 @@ ship createShip(void)
 
 	return temp;
 }
+
+void rotate(){
+	glTranslatef(WINDOW_MAX/2, WINDOW_MAX/2, 0.0);
+	glRotatef(rotation, 0.0, 0.0, 1.0);
+	glTranslatef(-(WINDOW_MAX/2), -(WINDOW_MAX/2), 0.0);  
+}
