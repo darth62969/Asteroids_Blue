@@ -14,7 +14,7 @@ vector<asteroid> asteroidBelt;
 
 void debugDisplay(void)
 {
-	glClear ( GL_COLOR_BUFFER_BIT );  // Clear display window
+	//glClear ( GL_COLOR_BUFFER_BIT );  // Clear display window
     	glColor3f ( 0.1, 0.5, 0.0 );      // Set line segment color to green
     
     	for (int i = 0; i < (asteroidBelt.size()); i++)
@@ -76,9 +76,9 @@ void initiateWindow(int argc, char** argv)
 	glutInitWindowPosition(WINDOW_POSITION_X, WINDOW_POSITION_Y);
 	glutCreateWindow("Asteroids: RETURN OF METEOR");
 }
-void initiateStuff( void )
+void initiateGL( void )
 {
-	glClearColor(0.0, 0.0, 0.0, 0.0); /* white background */
+	glClearColor(1.0,1.0,1.0,1.0); /* white background */
     	glColor3f(1.0, 0.0, 0.0); /* draw in red */
     	glPointSize(10.0);
 
@@ -89,10 +89,42 @@ void initiateStuff( void )
 	glMatrixMode(GL_MODELVIEW);
 }
 
+void initiateOctogon(void){
+	glClear(GL_COLOR_BUFFER_BIT);
+	point p1 = {100,100,0,1};
+	point p2 = {300,17.15729,0,1};
+	point p3 = {500,100,0,1};
+	point p4 = {600-17.15729,300,0,1};
+	point p5 = {500,500,0,1};
+	point p6 = {300,600-17.15729,0,1};
+	point p7 = {100,500,0,1};
+	point p8 = {17.15729,300,0,1};
+	
+	glColor3f(0.0,0.0,0.0);
+	glBegin(GL_POLYGON);
+		glVertex2i(p1.x,p1.y);
+		glVertex2i(p2.x,p2.y);
+		glVertex2i(p3.x,p3.y);
+		glVertex2i(p4.x,p4.y);
+		glVertex2i(p5.x,p5.y);
+		glVertex2i(p6.x,p6.y);
+		glVertex2i(p7.x,p7.y);
+		glVertex2i(p8.x,p8.y);
+
+	glEnd();
+	glFlush();
+
+
+
+
+	
+
+}
 int main(int argc, char** argv)
 {
 	initiateWindow(argc, argv); /* Set up Window */
-	initiateStuff();
+	initiateGL();
+	initiateOctogon();
 	initiateShip();
 	initiateAsteroids();
 	initiateGameDisplay();
