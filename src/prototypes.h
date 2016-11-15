@@ -5,4 +5,6 @@
 
 ship createShip(void);
 
+void rotatePoint(point& p, double theta);
+
 #endif
