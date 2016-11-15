@@ -1,8 +1,6 @@
 #ifndef STRUCTS
 #define STRUCTS
 
-#include "headers.h"
-
 struct point
 {
     float x, y, z, w;
@@ -12,7 +10,7 @@ struct triangle
 {
     point a, b, c;    
 };
-
+/*
 struct asteriod
 {
     float rotation;
@@ -21,7 +19,7 @@ struct asteriod
     std::vector<triangle> astTris;
     bool clipped;
 };
-
+*/
 struct ship
 {
     triangle body;

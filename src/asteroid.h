@@ -2,26 +2,31 @@
 #ifndef __ASTEROID_H_INCLUDED__
 #define __ASTEROID_H_INCLUDED__
 
-
-#include "headers.h"
 #include "structs.h"
 
 class asteroid
 {
 	public:
-        asteroid createAsteroid();
-		asteroid breakupAsteroid(asteroid a);
-
+        	explicit asteroid();
+		point getCenter();
+		std::vector<asteroid> breakupAsteroid();
+		std::vector<point> getPoints();
+		std::vector<triangle> getTess();
 
 	private:
+		point center;
+	    	float rotation;
+        	point translation;
+    		std::vector<point> astPnts;
+    		std::vector<triangle> astTris;
+    		bool clipped;
+        	int numsides;
+        	//asteroid createAsteroid(triangle a);
 		//triangle * triptr;
 		//triangle * nexttriptr;
 		// point origin;
-        int numsides;
-		int max_x;
-	    int max_y;
-        //asteroid createAsteroid(triangle a);
-	    asteroid tessilateAsteriod();	
+
+	    	void tessilateAsteriod();	
 
 
 
