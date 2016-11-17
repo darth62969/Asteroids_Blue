@@ -99,7 +99,7 @@ void initiateAsteroids()
 void initiateShip()
 {
 	//Build Ship and ship dependencies.
-
+	enterprise = createShip();
 	
 
 }
@@ -184,6 +184,7 @@ void specialKeys(int key, int x, int y){
 			bullet  shot = createBullet();
 			bullets.push_back(shot);
 			//bullet.firebullet();
+			glutIdleFunc(gameLoop);
 			break;		
 
 		default: break;
