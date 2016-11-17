@@ -14,6 +14,8 @@ ship enterprise = createShip();
 //Runtime Variables go here
 vector<asteroid> asteroidBelt;
 
+vector<bullet> bullets;
+
 float shipRotation = 0.0;
 
 bool filled = false;
@@ -50,9 +52,19 @@ void debugDisplay(void)
 
 	glPopMatrix();
 
+	for(int i = 0; i < bullets.size(); i++){
+		glPushMatrix();
+		glLoadIdentity();
+		bullets[i].fire();
+		glPopMatrix();
+	}
 
-	glFlush();
+	//glFlush();
+	
 
+	
+
+	glSwapBuffers();
 }
 
 void gameView()
@@ -169,6 +181,9 @@ void specialKeys(int key, int x, int y){
 
 		case SPACEBAR:
 			// fire missiles
+			bullet  shot = createBullet();
+			bullets.push_back(shot);
+			//bullet.firebullet();
 			break;		
 
 		default: break;

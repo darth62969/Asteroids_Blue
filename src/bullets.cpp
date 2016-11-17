@@ -23,3 +23,19 @@ bullet createBullet(void)
 
 	return shot;
 }
+
+void fireBullet(void){
+	
+	glTranslatef(translation.x, translation.y, 0.0);
+	translation.x += 1.0;
+	translation.y += 1.0;
+
+	drawBullet();
+}
+
+void drawBullet(void){
+	glBegin(GL_POINTS);
+		glVertex2f(shot.translation.x, shot.translation.y);
+	glEnd();
+	
+}
