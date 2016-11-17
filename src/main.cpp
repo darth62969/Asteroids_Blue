@@ -40,6 +40,15 @@ void gameView()
 }
 void gameLoop()
 {
+	for (int i =0; i < (asteroidBelt.size(); i++)
+	{
+		for (int j = 0; j < (a.size()); j++)
+		{
+			point a = asteroidBelt.at(i).getPoints().at(i);
+			rotatePoint( &a, asteroidBelt.at(i).getRotation());
+			
+		}
+	}
 
 }
 void initiateGameDisplay()
