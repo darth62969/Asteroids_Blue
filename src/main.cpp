@@ -39,16 +39,18 @@ void debugDisplay(void)
 	}
     	
 	glPushMatrix();
-
-	glLoadIdentity();
 	
-	ship.rotate();
 
-		glBegin(GL_TRIANGLES);
-		glVertex2d(a.x, a.y);
-		glVertex2d(b.x, b.y);
-		glVertex2d(c.x, c.y);
-		glEnd();		
+	glTranslatef(WINDOW_MAX/2, WINDOW_MAX/2, 0.0);
+	glRotatef(enterprise.rotation)	
+	glTranslate(-(WINDOW_MAX/2), -(WINDOW_MAX/2), 0.0);
+	
+
+	glBegin(GL_TRIANGLES);
+		glVertex2d(enterprise.body.a.x, enterprise.body.a.y);
+		glVertex2d(enterprise.body.b.x, enterprise.body.b.y);
+		glVertex2d(enterprise.body.c.x, enterprise.body.c.y);
+	glEnd();		
 
 	glPopMatrix();
 
@@ -108,7 +110,8 @@ void initiateWindow(int argc, char** argv)
 {
 	//build window
     	glutInit(&argc,argv);
-	glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB); /* default, not needed */
+	//glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB); /* default, not needed */
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(WINDOW_MAX_X,WINDOW_MAX_Y); /* set pixel window */
 	glutInitWindowPosition(WINDOW_POSITION_X, WINDOW_POSITION_Y);
 	glutCreateWindow("Asteroids: RETURN OF METEOR");
