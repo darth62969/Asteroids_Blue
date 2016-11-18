@@ -56,8 +56,10 @@ void debugDisplay(void)
 
 	for(int i = 0; i < bullets.size(); i++){
 		glPushMatrix();
-		glLoadIdentity();
-		bullets[i].fire();
+			glTranslatef(bullets[i].translation.x, bullets[i].translation.y, 0.0);
+			glBegin(GL_POINTS);
+				glVertex2f(bullets[i].location.x, bullets[i].location.y);
+			glEnd();
 		glPopMatrix();
 	}
 
