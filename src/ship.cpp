@@ -2,6 +2,9 @@
 #include "structs.h"
 #include "globals.h"
 #include "prototypes.h"
+
+
+
 ship createShip(void)
 {
 	/* Create a ship, enterprise, with points at (450, 450), (450, 550), and (550, 500).
@@ -28,9 +31,18 @@ ship createShip(void)
 
 	return temp;
 }
-
+/*
 void rotate(){
 	glTranslatef(WINDOW_MAX/2, WINDOW_MAX/2, 0.0);
 	glRotatef(rotation, 0.0, 0.0, 1.0);
 	glTranslatef(-(WINDOW_MAX/2), -(WINDOW_MAX/2), 0.0);  
 }
+
+void drawShip(){
+	glBegin(GL_TRIANGLES);
+		glVertex2f(a.x, a.y);
+		glVertex2f(b.x, b.y);
+		glVertex2f(c.x, c.y);
+	glEnd();
+}
+*/

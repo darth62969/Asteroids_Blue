@@ -23,7 +23,7 @@ bullet createBullet(void)
 
 	return shot;
 }
-
+/*
 void fireBullet(void){
 	
 	glTranslatef(translation.x, translation.y, 0.0);
@@ -39,3 +39,4 @@ void drawBullet(void){
 	glEnd();
 	
 }
+*/
