@@ -57,6 +57,9 @@ vector<asteroid> asteroid::breakupAsteroid()
 */
 
 	for(int i = 0; i < astTris.size(); i++)
+	{
+
+	}
  
 
 

@@ -3,18 +3,12 @@
 
 struct point
 {
-    float x, y, z, w, angle;
+    float x, y, z, w, angle ;
 };
-
-struct vector{
-	float x, y;
-}
 
 struct triangle
 {
-    point a, b, c;    
-    vector direction;   
-	
+    point a, b, c;
 };
 /*
 struct asteriod
