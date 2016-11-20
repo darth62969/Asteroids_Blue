@@ -56,7 +56,9 @@ void debugDisplay(void)
 
 	for(int i = 0; i < bullets.size(); i++){
 		glPushMatrix();
-			glTranslatef(bullets[i].translation.x, bullets[i].translation.y, 0.0);
+			bullets[i].location.x += bullets[i].translation.x;
+			bullets[i].location.y += bullets[i].translation.y;  
+			//glTranslatef(bullets[i].location.x, bullets[i].location.y, 0.0);
 			glBegin(GL_POINTS);
 				glVertex2f(bullets[i].location.x, bullets[i].location.y);
 			glEnd();
