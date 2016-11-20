@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <iostream>
+#include <algorithm>
 #include "asteroid.h"
 
 using namespace std;
