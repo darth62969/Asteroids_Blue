@@ -38,12 +38,14 @@ void debugDisplay(void)
         	}
 	}
     	
+
+	// to be placed in Pipeline
 	glPushMatrix();
 	
 
-	glTranslatef(WINDOW_MAX/2, WINDOW_MAX/2, 0.0);
-	glRotatef(enterprise.rotation)	
-	glTranslate(-(WINDOW_MAX/2), -(WINDOW_MAX/2), 0.0);
+	glTranslatef(WINDOW_MAX_X/2, WINDOW_MAX_Y/2, 0.0);
+	glRotatef(enterprise.rotation, 0.0, 0.0, 1.0);	
+	glTranslatef(-(WINDOW_MAX_X/2), -(WINDOW_MAX_Y/2), 0.0);
 	
 
 	glBegin(GL_TRIANGLES);
@@ -70,7 +72,7 @@ void debugDisplay(void)
 
 	
 
-	glSwapBuffers();
+	glutSwapBuffers();
 }
 
 void gameView()
@@ -186,14 +188,14 @@ void specialKeys(int key, int x, int y){
 			glutIdleFunc(gameLoop);
 			break;	
 
-		case SPACEBAR:
+		case 32:{
 			// fire missiles
-			bullet  shot = createBullet();
+			bullet shot = createBullet();
 			bullets.push_back(shot);
 			//bullet.firebullet();
 			glutIdleFunc(gameLoop);
 			break;		
-
+		}
 		default: break;
 	}
 }
