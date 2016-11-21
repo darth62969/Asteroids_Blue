@@ -28,6 +28,7 @@ struct ship
 
 struct bullet
 {
+    point start;
     point location;
     point translation;
 };

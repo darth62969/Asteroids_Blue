@@ -6,7 +6,7 @@
 #include "globals.h"
 #include "prototypes.h"
 
-#define SPACEBAR
+//#define SPACEBAR
 
 //Global Varianbles
 ship enterprise = createShip();
@@ -43,9 +43,9 @@ void debugDisplay(void)
 	glPushMatrix();
 	
 
-	glTranslatef(WINDOW_MAX_X/2, WINDOW_MAX_Y/2, 0.0);
-	glRotatef(enterprise.rotation, 0.0, 0.0, 1.0);	
-	glTranslatef(-(WINDOW_MAX_X/2), -(WINDOW_MAX_Y/2), 0.0);
+	//glTranslatef(WINDOW_MAX_X/2, WINDOW_MAX_Y/2, 0.0);
+	//glRotatef(enterprise.rotation, 0.0, 0.0, 1.0);	
+	//glTranslatef(-(WINDOW_MAX_X/2), -(WINDOW_MAX_Y/2), 0.0);
 	
 
 	glBegin(GL_TRIANGLES);
@@ -60,16 +60,14 @@ void debugDisplay(void)
 		glPushMatrix();
 			bullets[i].location.x += bullets[i].translation.x;
 			bullets[i].location.y += bullets[i].translation.y;  
-			//glTranslatef(bullets[i].location.x, bullets[i].location.y, 0.0);
+			glTranslatef(bullets[i].location.x, bullets[i].location.y, 0.0);
 			glBegin(GL_POINTS);
-				glVertex2f(bullets[i].location.x, bullets[i].location.y);
+				glVertex2f(bullets[i].start.x, bullets[i].start.y);
 			glEnd();
 		glPopMatrix();
 	}
 
 	//glFlush();
-	
-
 	
 
 	glutSwapBuffers();
@@ -123,7 +121,7 @@ void initiateWindow(int argc, char** argv)
 	glutCreateWindow("Asteroids: RETURN OF METEOR");
 }
 void initiateGL( void )
-{
+{:
 	glClearColor(1.0,1.0,1.0,1.0); /* white background */
     	glColor3f(1.0, 0.0, 0.0); /* draw in red */
     	glPointSize(10.0);

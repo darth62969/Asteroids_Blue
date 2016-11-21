@@ -7,8 +7,10 @@ bullet createBullet(void)
 	bullet shot;
 
 	// The bullet will originate at the front of the ship.
+	//shot.location = enterprise.body.a;
+	shot.start = enterprise.body.a;	
 	shot.location = enterprise.body.a;
-	
+
 	// Convert the rotation (float) of enterprise to radians.
 	double theta = enterprise.rotation * M_PI / 180.0;
 
