@@ -192,7 +192,7 @@ void specialKeys(int key, int x, int y){
 			break;	
 
 		case SPACEBAR:
-			// fire missiles
+			//fire missiles
 			//bullet shot = createBullet();
 			//bullets.push_back(shot);
 			//bullet.firebullet();
@@ -211,7 +211,8 @@ int main(int argc, char** argv)
 	initiateShip();
 	initiateAsteroids();
 	initiateGameDisplay();
-	glutKeyboardFunc(keyboard); 
+	glutKeyboardFunc(keyboard);
+	glutSpecialFunc(specialKeys); 
 	glutDisplayFunc(gameView);
 	glutIdleFunc(gameLoop);
 	glutMainLoop();
