@@ -55,6 +55,14 @@ vector<asteroid> asteroid::breakupAsteroid()
  *	createAsteroid(traingle a)
  * 	repeat till last triangle pointer.
 */
+
+	for(int i = 0; i < astTris.size(); i++)
+	{
+
+	}
+ 
+
+
 }
 
 void asteroid::tessilateAsteriod()
