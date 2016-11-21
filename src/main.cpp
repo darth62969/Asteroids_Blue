@@ -6,7 +6,7 @@
 #include "globals.h"
 #include "prototypes.h"
 
-#define SPACEBAR
+#define SPACEBAR 32
 
 //Global Varianbles
 ship enterprise = createShip();
@@ -20,9 +20,11 @@ float shipRotation = 0.0;
 
 bool filled = false;
 
+void initiateOctogon(void);
+
 void debugDisplay(void)
 {
-	//glClear ( GL_COLOR_BUFFER_BIT );  // Clear display window
+	initiateOctogon();  // Clear display window
     	glColor3f ( 0.1, 0.5, 0.0 );      // Set line segment color to green
     
     	for (int i = 0; i < (asteroidBelt.size()); i++)
@@ -37,34 +39,39 @@ void debugDisplay(void)
            		glEnd ();         
         	}
 	}
-    	
+/*  	
 	glPushMatrix();
-
-	glLoadIdentity();
 	
-	ship.rotate();
 
-		glBegin(GL_TRIANGLES);
-		glVertex2d(a.x, a.y);
-		glVertex2d(b.x, b.y);
-		glVertex2d(c.x, c.y);
-		glEnd();		
-
+	glTranslatef(WINDOW_MAX_X/2, WINDOW_MAX_Y/2, 0.0);
+	glRotatef(enterprise.rotation)	
+	glTranslate(-(WINDOW_MAX_X/2), -(WINDOW_MAX_Y/2), 0.0);*/
+	
+	/*
+	glBegin(GL_TRIANGLES);
+		glVertex2d(enterprise.body.a.x, enterprise.body.a.y);
+		glVertex2d(enterprise.body.b.x, enterprise.body.b.y);
+		glVertex2d(enterprise.body.c.x, enterprise.body.c.y);
+	glEnd();*/
+	drawShip(enterprise);		
+/*
 	glPopMatrix();
-
+*/
 	for(int i = 0; i < bullets.size(); i++){
 		glPushMatrix();
-		glLoadIdentity();
-		bullets[i].fire();
+			glTranslatef(bullets[i].translation.x, bullets[i].translation.y, 0.0);
+			glBegin(GL_POINTS);
+				glVertex2f(bullets[i].location.x, bullets[i].location.y);
+			glEnd();
 		glPopMatrix();
 	}
 
-	//glFlush();
+//	glFlush();
 	
 
 	
 
-	glSwapBuffers();
+	glutSwapBuffers();
 }
 
 void gameView()
@@ -75,7 +82,7 @@ void gameView()
 }
 void gameLoop()
 {
-
+	glutPostRedisplay();
 }
 void initiateGameDisplay()
 {
@@ -107,8 +114,9 @@ void initiateShip()
 void initiateWindow(int argc, char** argv)
 {
 	//build window
-    	glutInit(&argc,argv);
-	glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB); /* default, not needed */
+    glutInit(&argc,argv);
+	//glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB); /* default, not needed */
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(WINDOW_MAX_X,WINDOW_MAX_Y); /* set pixel window */
 	glutInitWindowPosition(WINDOW_POSITION_X, WINDOW_POSITION_Y);
 	glutCreateWindow("Asteroids: RETURN OF METEOR");
@@ -147,7 +155,7 @@ void initiateOctogon(void){
 	glEnd();
 }
 
-void keyboard(int key, int x, int y){
+void keyboard(unsigned char key, int x, int y){
 	
 	//if(key == 's' || key == 'S')
 		// start game
@@ -163,7 +171,11 @@ void keyboard(int key, int x, int y){
 
 	if(key == 'f' || key == 'F')
 		filled = true;	
-
+	if(key == 'w' || key == 'W')
+		enterprise.rotation += 1.0;
+	if(key == 's' || key == 'S')
+		enterprise.rotation -= 1.0;
+		
 
 }
 
@@ -181,13 +193,13 @@ void specialKeys(int key, int x, int y){
 
 		case SPACEBAR:
 			// fire missiles
-			bullet  shot = createBullet();
-			bullets.push_back(shot);
+			//bullet shot = createBullet();
+			//bullets.push_back(shot);
 			//bullet.firebullet();
 			glutIdleFunc(gameLoop);
 			break;		
 
-		default: break;
+		//default: break;
 	}
 }
 
@@ -199,6 +211,7 @@ int main(int argc, char** argv)
 	initiateShip();
 	initiateAsteroids();
 	initiateGameDisplay();
+	glutKeyboardFunc(keyboard); 
 	glutDisplayFunc(gameView);
 	glutIdleFunc(gameLoop);
 	glutMainLoop();
