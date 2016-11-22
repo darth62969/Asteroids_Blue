@@ -24,6 +24,8 @@ asteroid::asteroid()
 	cout << "number of sides to generate " << numsides;
 	center.x = rand() % (WORLD_COORDINATE_MAX_X + 1) + WORLD_COORDINATE_MIN_X;
 	center.y = rand() % (WORLD_COORDINATE_MAX_Y + 1) + WORLD_COORDINATE_MIN_Y;
+	rotation = rand() % 360;
+	rotation *= M_PI / 180.0;
 	cout << "\tcenter of asteroid at " << center.x << " " << center.y << endl;
 	int i = rand();
 	for (int j = 0; j < numsides; j++)
@@ -48,6 +50,30 @@ point asteroid::getCenter()
 	return center;
 }
 
+void asteroid::incrementLocation()
+{
+	center.x+=cos(rotation)/2;
+	center.y+=sin(rotation)/2;
+	switch((int)center.x)
+	{
+		case WORLD_COORDINATE_MAX_X:
+			center.x=WORLD_COORDINATE_MIN_X;
+			break;
+		case WORLD_COORDINATE_MIN_X:
+			center.x=WORLD_COORDINATE_MAX_X;
+			break;
+	}
+	switch((int)center.y)
+	{
+		case WORLD_COORDINATE_MAX_Y:
+			center.y=WORLD_COORDINATE_MIN_Y;
+			break;
+		case WORLD_COORDINATE_MIN_Y:
+			center.y=WORLD_COORDINATE_MAX_Y;
+	}
+
+}
+
 vector<asteroid> asteroid::breakupAsteroid()
 {
 /*	todo:
@@ -55,6 +81,14 @@ vector<asteroid> asteroid::breakupAsteroid()
  *	createAsteroid(traingle a)
  * 	repeat till last triangle pointer.
 */
+
+	for(int i = 0; i < astTris.size(); i++)
+	{
+
+	}
+ 
+
+
 }
 
 void asteroid::tessilateAsteriod()
