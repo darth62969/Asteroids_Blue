@@ -82,6 +82,11 @@ void gameView()
 }
 void gameLoop()
 {
+	for(int i=0; i <bullets.size();i++)
+	{
+		bullets.at(i).location.x += cos(bullets.at(i).theta);
+		bullets.at(i).location.y += sin(bullets.at(i).theta);
+	}
 	glutPostRedisplay();
 }
 void initiateGameDisplay()
@@ -175,6 +180,14 @@ void keyboard(unsigned char key, int x, int y){
 		enterprise.rotation += 1.0;
 	if(key == 's' || key == 'S')
 		enterprise.rotation -= 1.0;
+	if(key == ' ')
+	{
+		bullet shot = createBullet();
+		bullets.push_back(shot);
+		fireBullet(shot);
+		glutIdleFunc(gameLoop);
+	}
+
 		
 
 }
@@ -193,9 +206,9 @@ void specialKeys(int key, int x, int y){
 
 		case SPACEBAR:
 			//fire missiles
-			//bullet shot = createBullet();
-			//bullets.push_back(shot);
-			//bullet.firebullet();
+			bullet shot = createBullet();
+			bullets.push_back(shot);
+			fireBullet(shot);
 			glutIdleFunc(gameLoop);
 			break;		
 

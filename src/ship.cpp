@@ -13,13 +13,13 @@ ship createShip(void)
 	ship temp;
 	triangle body;
 	point a;
-	a.x = 1;
+	a.x = 2;
 	a.y = 0;
 	point b;
-	b.x = -1.0;
+	b.x = -2.0;
 	b.y = -1.0;
 	point c;
-	c.x = -1.0;
+	c.x = -2.0;
 	c.y = 1.0;
 	body.a = a;
 	body.b = b;
@@ -46,13 +46,13 @@ void drawShip(ship a)
 	b[2] = {a.body.c.x, a.body.c.y, a.body.c.z, a.body.c.w, a.body.c.angle};
 	for (int i =0; i < 3; i++)
 	{
-		scalePoint(b[i], 10);
+		scalePoint(b[i], 7);
 		rotatePoint(b[i], a.rotation);
 		//translatePoint(b[i], WORLD_COORDINATE_MAX_X/2, WORLD_COORDINATE_MAX_Y/2, 0);
 	}
 	glBegin(GL_LINES);
 		for(int i = 0; i<3; i++)
-		{
+		{    
 			glVertex2d(b[i].x + WORLD_COORDINATE_MAX_X/2, b[i].y + WORLD_COORDINATE_MAX_Y/2);
 			glVertex2d(b[(i+1)%3].x + WORLD_COORDINATE_MAX_X/2, b[(i+1)%3].y + WORLD_COORDINATE_MAX_Y/2);
 		}

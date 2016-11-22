@@ -28,8 +28,10 @@ struct ship
 
 struct bullet
 {
+    float theta;
     point location;
     point translation;
+    
 };
 
 #endif
