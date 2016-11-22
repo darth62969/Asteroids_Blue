@@ -1,4 +1,3 @@
-
 #ifndef __ASTEROID_H_INCLUDED__
 #define __ASTEROID_H_INCLUDED__
 
@@ -12,6 +11,7 @@ class asteroid
 		std::vector<asteroid> breakupAsteroid();
 		std::vector<point> getPoints();
 		std::vector<triangle> getTess();
+		float getRotation();
 
 	private:
 		point center;
@@ -25,10 +25,7 @@ class asteroid
 		//triangle * triptr;
 		//triangle * nexttriptr;
 		// point origin;
-
-	    	void tessilateAsteriod();	
-
-
-
+	    	void tessilateAsteriod();
+		void sortPoints();
 };
 #endif
