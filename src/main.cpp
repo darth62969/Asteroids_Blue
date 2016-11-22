@@ -87,6 +87,10 @@ void gameLoop()
 		bullets.at(i).location.x += cos(bullets.at(i).theta);
 		bullets.at(i).location.y += sin(bullets.at(i).theta);
 	}
+		for(int i=0; i <asteroidBelt.size();i++)
+	{
+		asteroidBelt.at(i).incrementLocation();
+	}
 	glutPostRedisplay();
 }
 void initiateGameDisplay()
@@ -195,12 +199,12 @@ void keyboard(unsigned char key, int x, int y){
 void specialKeys(int key, int x, int y){
 	switch(key){
 		case GLUT_KEY_RIGHT:
-			enterprise.rotation += 1.0;
+			enterprise.rotation += 2.5;
 			glutIdleFunc(gameLoop);
 			break;
 
 		case GLUT_KEY_LEFT:
-			enterprise.rotation -= 1.0;
+			enterprise.rotation -= 2.5;
 			glutIdleFunc(gameLoop);
 			break;	
 
