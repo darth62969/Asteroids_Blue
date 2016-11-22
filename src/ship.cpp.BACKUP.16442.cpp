@@ -13,14 +13,24 @@ ship createShip(void)
 	ship temp;
 	triangle body;
 	point a;
+<<<<<<< HEAD
+	a.x = 450.0/;
+	a.y = 450.0;
+=======
 	a.x = 2;
 	a.y = 0;
+>>>>>>> 7fec802db0e197363c1df65dc06cad3278dcb367
 	point b;
 	b.x = -2.0;
 	b.y = -1.0;
 	point c;
+<<<<<<< HEAD
+	c.x = 550.0;
+	c.y = 500.0;
+=======
 	c.x = -2.0;
 	c.y = 1.0;
+>>>>>>> 7fec802db0e197363c1df65dc06cad3278dcb367
 	body.a = a;
 	body.b = b;
 	body.c = c;
@@ -59,3 +69,14 @@ void drawShip(ship a)
 	glEnd();
 }
 
+<<<<<<< HEAD
+void drawShip(){
+	glBegin(GL_TRIANGLES);
+		glVertex2f(a.x, a.y);
+		glVertex2f(b.x, b.y);
+		glVertex2f(c.x, c.y);
+	glEnd();
+}
+*/
+=======
+>>>>>>> 7fec802db0e197363c1df65dc06cad3278dcb367
