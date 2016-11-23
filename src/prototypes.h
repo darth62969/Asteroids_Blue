@@ -17,6 +17,8 @@ void drawShip(ship a);
 
 void fireBullet(bullet shot);
 bullet createBullet();
+void drawBullet(bullet shot);
+
 
 void buildTranslate( float x, float y, float z, float (&TM) [4][4]);
 
