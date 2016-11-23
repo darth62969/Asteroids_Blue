@@ -22,6 +22,20 @@ bool filled = false;
 
 void initiateOctogon(void);
 
+void Pipeline(void){
+	//apply transformations
+		//ship
+		//asteroids
+		//bullets
+		
+		//collision detection
+
+		//clipping
+		
+		//tesselation
+	//
+}
+
 void debugDisplay(void)
 {
 	initiateOctogon();  // Clear display window
@@ -53,17 +67,19 @@ void debugDisplay(void)
 		glVertex2d(enterprise.body.b.x, enterprise.body.b.y);
 		glVertex2d(enterprise.body.c.x, enterprise.body.c.y);
 	glEnd();*/
+
+	rotateShip(enterprise);
 	drawShip(enterprise);		
 /*
 	glPopMatrix();
 */
 	for(int i = 0; i < bullets.size(); i++){
-		glPushMatrix();
-			glTranslatef(bullets[i].translation.x, bullets[i].translation.y, 0.0);
+		//glPushMatrix();
+			//glTranslatef(bullets[i].translation.x, bullets[i].translation.y, 0.0);
 			glBegin(GL_POINTS);
 				glVertex2f(bullets[i].location.x, bullets[i].location.y);
 			glEnd();
-		glPopMatrix();
+		//glPopMatrix();
 	}
 
 //	glFlush();
@@ -80,12 +96,14 @@ void gameView()
 	debugDisplay();
 
 }
+
+
 void gameLoop()
 {
 	for(int i=0; i <bullets.size();i++)
 	{
-		bullets.at(i).location.x += cos(bullets.at(i).theta);
-		bullets.at(i).location.y += sin(bullets.at(i).theta);
+		bullets.at(i).location.x += 2.0* cos(bullets.at(i).theta);
+		bullets.at(i).location.y += 2.0*sin(bullets.at(i).theta);
 	}
 		for(int i=0; i <asteroidBelt.size();i++)
 	{
@@ -181,9 +199,9 @@ void keyboard(unsigned char key, int x, int y){
 	if(key == 'f' || key == 'F')
 		filled = true;	
 	if(key == 'w' || key == 'W')
-		enterprise.rotation += 1.0;
+		enterprise.rotation += 2.5;
 	if(key == 's' || key == 'S')
-		enterprise.rotation -= 1.0;
+		enterprise.rotation -= 2.5;
 	if(key == ' ')
 	{
 		bullet shot = createBullet();
@@ -199,12 +217,12 @@ void keyboard(unsigned char key, int x, int y){
 void specialKeys(int key, int x, int y){
 	switch(key){
 		case GLUT_KEY_RIGHT:
-			enterprise.rotation += 2.5;
+			enterprise.rotation -= 2.5;
 			glutIdleFunc(gameLoop);
 			break;
 
 		case GLUT_KEY_LEFT:
-			enterprise.rotation -= 2.5;
+			enterprise.rotation += 2.5;
 			glutIdleFunc(gameLoop);
 			break;	
 
