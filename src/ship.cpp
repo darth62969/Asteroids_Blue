@@ -16,14 +16,14 @@ ship createShip(void)
 	ship temp;
 	triangle body;
 	point a;
-	a.x = 14.0 + WORLD_COORDINATE_MAX_X/2;
-	a.y = 0.0 + WORLD_COORDINATE_MAX_Y/2;
+	a.x = 2;
+	a.y = 0.0;
 	point b;
-	b.x = -14.0 + WORLD_COORDINATE_MAX_X/2;
-	b.y = -7.0 + WORLD_COORDINATE_MAX_Y/2;
+	b.x = -2.0;
+	b.y = -1.0;
 	point c;
-	c.x = -14.0 + WORLD_COORDINATE_MAX_X/2;
-	c.y = 7.0 + WORLD_COORDINATE_MAX_Y/2;
+	c.x = -2;
+	c.y = 1.0;
 	body.a = a;
 	body.b = b;
 	body.c = c;
@@ -86,17 +86,18 @@ void drawShip(ship a)
 	b[0] = {a.body.a.x, a.body.a.y, a.body.a.z, a.body.a.w, a.body.a.angle};
 	b[1] = {a.body.b.x, a.body.b.y, a.body.b.z, a.body.b.w, a.body.b.angle};
 	b[2] = {a.body.c.x, a.body.c.y, a.body.c.z, a.body.c.w, a.body.c.angle};
-	for (int i =0; i < 3; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		scalePoint(b[i], 7);
 		rotatePoint(b[i], a.rotation);
 		//translatePoint(b[i], WORLD_COORDINATE_MAX_X/2, WORLD_COORDINATE_MAX_Y/2, 0);
 	}
-	glBegin(GL_LINES);
+	enterprise.aLocation = {b[0].x+WORLD_COORDINATE_MAX_X/2, b[0].y+WORLD_COORDINATE_MAX_Y/2} ;
+	glBegin(GL_TRIANGLES);
 		for(int i = 0; i<3; i++)
 		{    
 			glVertex2d(b[i].x + WORLD_COORDINATE_MAX_X/2, b[i].y + WORLD_COORDINATE_MAX_Y/2);
-			glVertex2d(b[(i+1)%3].x + WORLD_COORDINATE_MAX_X/2, b[(i+1)%3].y + WORLD_COORDINATE_MAX_Y/2);
+			//glVertex2d(b[(i+1)%3].x + WORLD_COORDINATE_MAX_X/2, b[(i+1)%3].y + WORLD_COORDINATE_MAX_Y/2);
 		}
 	glEnd();
 }

@@ -24,6 +24,7 @@ struct ship
 {
     triangle body;
     float rotation;
+    point aLocation;
 };
 
 struct bullet

@@ -7,10 +7,10 @@ bullet createBullet()
 	bullet shot;
 
 	// The bullet will originate at the front of the ship.
-	shot.location = enterprise.body.a;
-	
+	shot.location = enterprise.aLocation;
 	// Convert the rotation (float) of enterprise to radians.
 	shot.theta = enterprise.rotation * M_PI / 180.0;
+	//rotatePoint(shot.location, shot.theta);
 
 	//point translation;
 	//translation.x = cos(theta);
