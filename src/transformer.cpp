@@ -87,6 +87,17 @@ void rotatePoint(point& p,double theta){
 
 	mtop(p,B);
 }
+
+void rotatePointB(point& p, double theta){
+	ptom(p,A);
+	
+	buildRotateZ(TRANS, theta);
+	mVmult(TRANS,4,4,A,4,1,B,4,1);
+
+	mtop(p,B);
+	
+}
+
 void scalePoint(point& p,double scale)
 {
 	ptom(p,A);

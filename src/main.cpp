@@ -16,16 +16,38 @@ vector<asteroid> asteroidBelt;
 
 vector<bullet> bullets;
 
-float shipRotation = 0.0;
+bool newRotate = false;
+
+//float shipRotation = 0.0;
 
 bool filled = false;
 
 void initiateOctogon(void);
 
+void Pipeline(void){
+	//apply transformations
+		//ship
+		if(newRotate){
+			rotateShip(enterprise);
+			newRotate = false;
+		}
+		//asteroids
+		//bullets		
+		//collision detection
+
+		//clipping
+		
+		//tesselation
+	//
+}
+
 void debugDisplay(void)
 {
 	initiateOctogon();  // Clear display window
     	glColor3f ( 0.1, 0.5, 0.0 );      // Set line segment color to green
+	glPointSize(4.0);
+
+	//Pipeline();
     
     	for (int i = 0; i < (asteroidBelt.size()); i++)
     	{
@@ -39,37 +61,16 @@ void debugDisplay(void)
            		glEnd ();         
         	}
 	}
-/*  	
-	glPushMatrix();
-	
 
-	glTranslatef(WINDOW_MAX_X/2, WINDOW_MAX_Y/2, 0.0);
-	glRotatef(enterprise.rotation)	
-	glTranslate(-(WINDOW_MAX_X/2), -(WINDOW_MAX_Y/2), 0.0);*/
 	
-	/*
-	glBegin(GL_TRIANGLES);
-		glVertex2d(enterprise.body.a.x, enterprise.body.a.y);
-		glVertex2d(enterprise.body.b.x, enterprise.body.b.y);
-		glVertex2d(enterprise.body.c.x, enterprise.body.c.y);
-	glEnd();*/
 	drawShip(enterprise);		
-/*
-	glPopMatrix();
-*/
+
+
+	glColor3f(1.0, 1.0, 0.0);
 	for(int i = 0; i < bullets.size(); i++){
-		glPushMatrix();
-			glTranslatef(bullets[i].translation.x, bullets[i].translation.y, 0.0);
-			glBegin(GL_POINTS);
-				glVertex2f(bullets[i].location.x, bullets[i].location.y);
-			glEnd();
-		glPopMatrix();
+			drawBullet(bullets[i]);
+		
 	}
-
-//	glFlush();
-	
-
-	
 
 	glutSwapBuffers();
 }
@@ -80,12 +81,18 @@ void gameView()
 	debugDisplay();
 
 }
+
+
 void gameLoop()
 {
 	for(int i=0; i <bullets.size();i++)
 	{
-		bullets.at(i).location.x += cos(bullets.at(i).theta);
-		bullets.at(i).location.y += sin(bullets.at(i).theta);
+		bullets.at(i).location.x += 2.0* cos(bullets.at(i).theta);
+		bullets.at(i).location.y += 2.0*sin(bullets.at(i).theta);
+	}
+	for(int i=0; i <asteroidBelt.size();i++)
+	{
+		asteroidBelt.at(i).incrementLocation();
 	}
 	glutPostRedisplay();
 }
@@ -171,15 +178,28 @@ void keyboard(unsigned char key, int x, int y){
 	if(key == 'q' || key == 'Q')
 		exit(0);
 
-	if(key == 't' || key == 'T')
+	if(key == 't' || key == 'T'){
 		filled = false;
+		glutIdleFunc(gameLoop);
+	}
 
-	if(key == 'f' || key == 'F')
+	if(key == 'f' || key == 'F'){
 		filled = true;	
-	if(key == 'w' || key == 'W')
-		enterprise.rotation += 1.0;
-	if(key == 's' || key == 'S')
-		enterprise.rotation -= 1.0;
+		glutIdleFunc(gameLoop);
+	}
+
+	if(key == 'w' || key == 'W'){
+		enterprise.rotation += 2.5;
+		newRotate = true;
+		glutIdleFunc(gameLoop);
+	}		
+
+	if(key == 's' || key == 'S'){
+		enterprise.rotation -= 2.5;
+		newRotate = true;
+		glutIdleFunc(gameLoop);
+	}
+
 	if(key == ' ')
 	{
 		bullet shot = createBullet();
@@ -195,12 +215,14 @@ void keyboard(unsigned char key, int x, int y){
 void specialKeys(int key, int x, int y){
 	switch(key){
 		case GLUT_KEY_RIGHT:
-			enterprise.rotation += 1.0;
+			enterprise.rotation -= 2.5;
+			newRotate = true;
 			glutIdleFunc(gameLoop);
 			break;
 
 		case GLUT_KEY_LEFT:
-			enterprise.rotation -= 1.0;
+			enterprise.rotation += 2.5;
+			newRotate = true;
 			glutIdleFunc(gameLoop);
 			break;	
 
