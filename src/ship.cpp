@@ -80,16 +80,24 @@ void rotateShip(ship& s){
 }
 
 
-void drawShip(ship s){
-
-	glColor3f(1.0, 0.0, 0.0);
-	glBegin(GL_TRIANGLES);
+void drawShip(ship a)
+{
+	point b[3];
+	b[0] = {a.body.a.x, a.body.a.y, a.body.a.z, a.body.a.w, a.body.a.angle};
+	b[1] = {a.body.b.x, a.body.b.y, a.body.b.z, a.body.b.w, a.body.b.angle};
+	b[2] = {a.body.c.x, a.body.c.y, a.body.c.z, a.body.c.w, a.body.c.angle};
+	for (int i =0; i < 3; i++)
+	{
+		scalePoint(b[i], 7);
+		rotatePoint(b[i], a.rotation);
+		//translatePoint(b[i], WORLD_COORDINATE_MAX_X/2, WORLD_COORDINATE_MAX_Y/2, 0);
+	}
+	glBegin(GL_LINES);
 		for(int i = 0; i<3; i++)
 		{    
-			glVertex2d(s.body.a.x, s.body.a.y);
-			glVertex2d(s.body.b.x, s.body.b.y);
-			glVertex2d(s.body.c.x, s.body.c.y);
-			printf("drew ship at %f %f\n%f %f\n %f %f\n", s.body.a.x, s.body.a.y, s.body.b.x, s.body.b.y, s.body.c.x, s.body.c.y);
+			glVertex2d(b[i].x + WORLD_COORDINATE_MAX_X/2, b[i].y + WORLD_COORDINATE_MAX_Y/2);
+			glVertex2d(b[(i+1)%3].x + WORLD_COORDINATE_MAX_X/2, b[(i+1)%3].y + WORLD_COORDINATE_MAX_Y/2);
 		}
 	glEnd();
 }
+

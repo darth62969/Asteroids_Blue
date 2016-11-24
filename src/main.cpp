@@ -47,7 +47,7 @@ void debugDisplay(void)
     	glColor3f ( 0.1, 0.5, 0.0 );      // Set line segment color to green
 	glPointSize(4.0);
 
-	Pipeline();
+	//Pipeline();
     
     	for (int i = 0; i < (asteroidBelt.size()); i++)
     	{
@@ -90,7 +90,7 @@ void gameLoop()
 		bullets.at(i).location.x += 2.0* cos(bullets.at(i).theta);
 		bullets.at(i).location.y += 2.0*sin(bullets.at(i).theta);
 	}
-		for(int i=0; i <asteroidBelt.size();i++)
+	for(int i=0; i <asteroidBelt.size();i++)
 	{
 		asteroidBelt.at(i).incrementLocation();
 	}
