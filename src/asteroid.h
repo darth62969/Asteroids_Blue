@@ -12,6 +12,7 @@ class asteroid
 		std::vector<point> getPoints();
 		std::vector<triangle> getTess();
 		float getRotation();
+		void incrementLocation();
 
 	private:
 		point center;

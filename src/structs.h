@@ -24,12 +24,15 @@ struct ship
 {
     triangle body;
     float rotation;
+    point aLocation;
 };
 
 struct bullet
 {
+    float theta;
     point location;
     point translation;
+    
 };
 
 #endif
