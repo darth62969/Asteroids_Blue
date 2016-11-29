@@ -158,6 +158,8 @@ void initiateGameDisplay()
 
 void initiateAsteroids()
 {
+	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+	asteroidLogger << "Generating " << NUMBER_OF_ASTEROIDS << " asteroids\n\n";
 	//Generate Asteroids
 	int i= 0;
 	while (i<NUMBER_OF_ASTEROIDS)
@@ -166,7 +168,7 @@ void initiateAsteroids()
 		asteroidBelt.push_back(a);
 		i++;
 	}
-	cout << asteroidBelt.size();
+	asteroidLogger << "\nGenerated " << asteroidBelt.size() << "asteroids\n";
 }
 
 void initiateShip()
@@ -320,6 +322,7 @@ int main(int argc, char** argv)
 	initiateShip();
 	initiateAsteroids();
 	initiateGameDisplay();
+	glutSetKeyRepeat(GLUT_KEY_REPEAT_ON);
 	glutKeyboardFunc(keyboard);
 	glutSpecialFunc(specialKeys); 
 	glutSpecialUpFunc(keyReleased);

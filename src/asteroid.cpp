@@ -21,7 +21,9 @@ asteroid::asteroid()
  * 	return asteroid
  */
 	numsides = rand()% (ASTEROID_MAX_SIZE-ASTEROID_MIN_SIZE + 1) + ASTEROID_MIN_SIZE;
-	cout << "number of sides to generate " << numsides;
+	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+	asteroidLogger << "number of sides to generate " << numsides;
+	asteroidLogger.close();
 	center.x = rand() % (WORLD_COORDINATE_MAX_X + 1) + WORLD_COORDINATE_MIN_X;
 	center.y = rand() % (WORLD_COORDINATE_MAX_Y + 1) + WORLD_COORDINATE_MIN_Y;
 	rotation = rand() % 360;
@@ -90,6 +92,28 @@ vector<asteroid> asteroid::breakupAsteroid()
 
 
 }
+point intersect(point v1, point v2, point v3, point v4)
+{
+	float ua_num = ((v3.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v3.y - v1.y));
+	float den = ((v2.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v2.y - v1.y));
+
+	float ub_num = ((v2.x - v1.x) * (v3.y - v1.y)) - ((v3.x - v1.x) * (v2.y - v1.y));
+
+	float ua = ua_num / den;
+	float ub = ub_num / den;
+
+	point v;
+	v.x = -100;
+	v.y = -100;
+
+	if((ua > 0.0) && (ua < 1.0) && (ub > 0.0) && (ub < 1.0))
+	{
+		v.x = v1.x + ua * (v2.x - v1.x);
+		v.y = v1.y + ua * (v2.y - v1.y);
+	}
+
+	return v;
+}
 
 void asteroid::tessilateAsteriod()
 {
@@ -154,17 +178,17 @@ void asteroid::tessilateAsteriod()
 			bool intersection = false;
 
 			// Check if the newly created diagonal intersects with any formed line segment.
-			//for(int n=0; n<points.size()-1; n++)
-			/*{
-				Vertex v = intersect(temp.at(i), temp.at(k), temp.at(n), temp.at(n+1));
+			for(int n=0; n<temp.size()-1; n++)
+			{
+				point v = intersect(temp.at(i), temp.at(k), temp.at(n), temp.at(n+1));
 				if(v.x != -100 && v.y != -100)
 					intersection = true;
-			}*/
+			}
 
 			// Check if the newly created diagonal intersects with the last line segment.
-			//Vertex v = intersect(points.at(i), points.at(k), points.back(), points.front());
-			//if(v.x != -100 && v.y != -100)
-			//	intersection = true;
+			point v = intersect(temp.at(i), temp.at(k), temp.back(), temp.front());
+			if(v.x != -100 && v.y != -100)
+				intersection = true;
 
 			// If no intersection has occurred and no CW winding occurs in the special circumstance, run the following code.
 			if(!intersection && z2 <= 0.0)
