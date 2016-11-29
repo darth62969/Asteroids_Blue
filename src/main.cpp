@@ -19,11 +19,11 @@ ofstream collisionLogger;
 ofstream bulletLogger;
 ofstream transformationLogger;
 
-const char* ASTEROID_LOG_PATH = "asteroid_log.txt";
-const char* SHIP_LOG_PATH = "ship_log.txt";
-const char* COLLISION_LOG_PATH = "collision_log.txt";
-const char* BULLET_LOG_PATH = "bullet_log.txt";
-const char* TRANSFORMATION_LOG_PATH = "transformation_log.txt";
+char* ASTEROID_LOG_PATH = "asteroid_log.txt";
+char* SHIP_LOG_PATH = "ship_log.txt";
+char* COLLISION_LOG_PATH = "collision_log.txt";
+char* BULLET_LOG_PATH = "bullet_log.txt";
+char* TRANSFORMATION_LOG_PATH = "transformation_log.txt";
 
 //Runtime Variables go here
 vector<asteroid> asteroidBelt;
@@ -31,8 +31,14 @@ vector<asteroid> asteroidBelt;
 vector<bullet> bullets;
 
 float deltaRot = 1.0;
+
 bool rightKeyPressed = false;
+bool rightReached10 = false;
+
 bool leftKeyPressed = false;
+bool leftReached10 = false;
+
+int timeKeyPressed = 0;
 //float shipRotation = 0.0;
 
 bool filled = false;
@@ -83,36 +89,54 @@ void gameView()
 
 void gameLoop()
 {
+	shipLogger.open(SHIP_LOG_PATH, ofstream::out|ofstream::app);
 	if (rightKeyPressed) 
 	{
-		if (deltaRot < 10)
+		if (deltaRot < 10.0 && !rightReached10)
 		{
 			deltaRot *= 1.1;
+			if (deltaRot >= 10)
+			{
+				rightReached10 = true;
+				deltaRot = 10;
+			}
+			
 		}
-		else 
-		{
-			deltaRot = 10; 
-		}
-		enterprise.rotation -= deltaRot;
+
+		enterprise.rotation = (int)(enterprise.rotation-deltaRot)%360;
+		
+		timeKeyPressed++;
+
+		shipLogger << endl << "Ship Rotation : " << enterprise.rotation << endl; 
+		shipLogger << "Delta Rot : " << deltaRot << endl;
+		shipLogger << "Time Right Arrow Pressed = " << timeKeyPressed;
+
+		
 	}
 	if (leftKeyPressed)
 	{
-
-		if (deltaRot < 10)
+		if (deltaRot < 10.0 && !leftReached10)
 		{
 			deltaRot *= 1.1;
-		}
-		else 
-		{
-			deltaRot = 10; 
+			if (deltaRot >= 10)
+			{
+				leftReached10 = true;
+				deltaRot = 10;
+			}
+			
 		}
 
-		enterprise.rotation += deltaRot;
+		enterprise.rotation = (int)(enterprise.rotation+deltaRot)%360;
+
+		timeKeyPressed++;
+
+		shipLogger << endl << "Ship Rotation : " << enterprise.rotation << endl; 
+		shipLogger << "Delta Rot : " << deltaRot << endl;
+		shipLogger << "Time Right Arrow Pressed = " << timeKeyPressed;
 	}
-	shipLogger.open(SHIP_LOG_PATH, ofstream::out|ofstream::app);
-	shipLogger << endl << "Ship Rotation : " << enterprise.rotation << endl; 
-	shipLogger << "Delta Rot : " << deltaRot << endl;
-	shipLogger.close();
+	
+
+	
 	for(int i=0; i <bullets.size();i++)
 	{
 		bullets.at(i).location.x += 2.0* cos(bullets.at(i).theta);
@@ -123,6 +147,7 @@ void gameLoop()
 		asteroidBelt.at(i).incrementLocation();
 	}
 	glutPostRedisplay();
+	shipLogger.close();
 }
 
 void initiateGameDisplay()
@@ -267,12 +292,14 @@ void keyReleased (int key, int x, int y){
 	switch (key) {
 		case GLUT_KEY_RIGHT:
 			deltaRot = 1.0;
+			timeKeyPressed = 0;
 			rightKeyPressed = false;
 			break;
 
 		case GLUT_KEY_LEFT:
 			deltaRot = 1.0;
 			leftKeyPressed = false;
+			timeKeyPressed = 0;
 			break;
 	}			
 }
