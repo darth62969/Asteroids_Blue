@@ -9,6 +9,8 @@
 # Modified by: Blue Squad
 #
 
+
+
 CC = g++ 
 CFLAGS = 
 COPTFLAGS = -O3 
@@ -16,10 +18,15 @@ LIBFLAGS = -lglut -lGLU -lGL
 HEADERS = src/headers.h src/structs.h src/globals.h src/prototypes.h
 OBJS = main.o asteroid.o ship.o bullets.o transformer.o
 
+
+debug ?= n
+ifeq ($(debug), y)
+	CFLAGS += -g 
+endif
 # Independent Targets - first is executable, second is object
 
 Asteroids : $(OBJS) $(HEADERS)
-	$(CC) -o bin/Asteroids $(OBJS) $(LIBFLAGS)
+	$(CC) -o bin/Asteroids $(OBJS) $(CFLAGS) $(LIBFLAGS)
 
 main.o : src/main.cpp $(HEADERS)
 	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/main.cpp

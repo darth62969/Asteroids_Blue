@@ -16,30 +16,14 @@ vector<asteroid> asteroidBelt;
 
 vector<bullet> bullets;
 
-bool newRotate = false;
-
+float deltaRot = 1.0;
+bool rightKeyPressed = false;
+bool leftKeyPressed = false;
 //float shipRotation = 0.0;
 
 bool filled = false;
 
 void initiateOctogon(void);
-
-void Pipeline(void){
-	//apply transformations
-		//ship
-		if(newRotate){
-			rotateShip(enterprise);
-			newRotate = false;
-		}
-		//asteroids
-		//bullets		
-		//collision detection
-
-		//clipping
-		
-		//tesselation
-	//
-}
 
 void debugDisplay(void)
 {
@@ -85,6 +69,34 @@ void gameView()
 
 void gameLoop()
 {
+	if (rightKeyPressed) 
+	{
+		if (deltaRot < 10)
+		{
+			deltaRot *= 1.1;
+		}
+		else 
+		{
+			deltaRot = 10; 
+		}
+		enterprise.rotation -= deltaRot;
+	}
+	if (leftKeyPressed)
+	{
+
+		if (deltaRot < 10)
+		{
+			deltaRot *= 1.1;
+		}
+		else 
+		{
+			deltaRot = 10; 
+		}
+
+		enterprise.rotation += deltaRot;
+	}
+	cout << "Ship Rotation" << enterprise.rotation << endl; 
+	cout << "Delta Rot" << deltaRot << endl;
 	for(int i=0; i <bullets.size();i++)
 	{
 		bullets.at(i).location.x += 2.0* cos(bullets.at(i).theta);
@@ -96,6 +108,7 @@ void gameLoop()
 	}
 	glutPostRedisplay();
 }
+
 void initiateGameDisplay()
 {
 	//build window dependencies
@@ -188,15 +201,13 @@ void keyboard(unsigned char key, int x, int y){
 		glutIdleFunc(gameLoop);
 	}
 
-	if(key == 'w' || key == 'W'){
+	if(key == 'a' || key == 'A'){
 		enterprise.rotation += 2.5;
-		newRotate = true;
 		glutIdleFunc(gameLoop);
 	}		
 
-	if(key == 's' || key == 'S'){
+	if(key == 'd' || key == 'D'){
 		enterprise.rotation -= 2.5;
-		newRotate = true;
 		glutIdleFunc(gameLoop);
 	}
 
@@ -215,27 +226,39 @@ void keyboard(unsigned char key, int x, int y){
 void specialKeys(int key, int x, int y){
 	switch(key){
 		case GLUT_KEY_RIGHT:
-			enterprise.rotation -= 2.5;
-			newRotate = true;
+			rightKeyPressed = true;
 			glutIdleFunc(gameLoop);
 			break;
 
 		case GLUT_KEY_LEFT:
-			enterprise.rotation += 2.5;
-			newRotate = true;
+			leftKeyPressed = true;
 			glutIdleFunc(gameLoop);
 			break;	
 
-		case SPACEBAR:
+		/*case SPACEBAR:
 			//fire missiles
 			bullet shot = createBullet();
 			bullets.push_back(shot);
 			fireBullet(shot);
 			glutIdleFunc(gameLoop);
-			break;		
+			break;		*/
 
-		//default: break;
+		default: break;
 	}
+}
+
+void keyReleased (int key, int x, int y){
+	switch (key) {
+		case GLUT_KEY_RIGHT:
+			deltaRot = 1.0;
+			rightKeyPressed = false;
+			break;
+
+		case GLUT_KEY_LEFT:
+			deltaRot = 1.0;
+			leftKeyPressed = false;
+			break;
+	}			
 }
 
 int main(int argc, char** argv)
@@ -248,6 +271,7 @@ int main(int argc, char** argv)
 	initiateGameDisplay();
 	glutKeyboardFunc(keyboard);
 	glutSpecialFunc(specialKeys); 
+	glutSpecialUpFunc(keyReleased);
 	glutDisplayFunc(gameView);
 	glutIdleFunc(gameLoop);
 	glutMainLoop();
