@@ -11,7 +11,9 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <fstream>
 #include "asteroid.h"
+//#include "detectcollision.h"
 
 using namespace std;
 
@@ -35,6 +37,11 @@ const int ASTEROID_MIN_SIZE = 4;
 
 //World Constants
 const int NUMBER_OF_ASTEROIDS = 50;
+
+//Log FilePaths
+
+
+
 
 //Other Constants
 

@@ -11,6 +11,20 @@
 //Global Varianbles
 ship enterprise = createShip();
 
+//Log Writers
+
+ofstream asteroidLogger;
+ofstream shipLogger;
+ofstream collisionLogger;
+ofstream bulletLogger;
+ofstream transformationLogger;
+
+const char* ASTEROID_LOG_PATH = "asteroid_log.txt";
+const char* SHIP_LOG_PATH = "ship_log.txt";
+const char* COLLISION_LOG_PATH = "collision_log.txt";
+const char* BULLET_LOG_PATH = "bullet_log.txt";
+const char* TRANSFORMATION_LOG_PATH = "transformation_log.txt";
+
 //Runtime Variables go here
 vector<asteroid> asteroidBelt;
 
@@ -95,8 +109,10 @@ void gameLoop()
 
 		enterprise.rotation += deltaRot;
 	}
-	cout << "Ship Rotation" << enterprise.rotation << endl; 
-	cout << "Delta Rot" << deltaRot << endl;
+	shipLogger.open(SHIP_LOG_PATH, ofstream::out|ofstream::app);
+	shipLogger << endl << "Ship Rotation : " << enterprise.rotation << endl; 
+	shipLogger << "Delta Rot : " << deltaRot << endl;
+	shipLogger.close();
 	for(int i=0; i <bullets.size();i++)
 	{
 		bullets.at(i).location.x += 2.0* cos(bullets.at(i).theta);
@@ -263,6 +279,9 @@ void keyReleased (int key, int x, int y){
 
 int main(int argc, char** argv)
 {
+	shipLogger.open(SHIP_LOG_PATH, ofstream::out|ofstream::trunc);
+	shipLogger << "Ship Logger Started" << endl;
+	shipLogger.close();
 	initiateWindow(argc, argv); /* Set up Window */
 	initiateGL();
 	initiateOctogon();

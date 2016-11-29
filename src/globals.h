@@ -4,7 +4,18 @@
 #include "structs.h"
 #include "headers.h"
 
+//The Ship
+
 extern ship enterprise;
+
+//Log Writers
+
+extern ofstream asteroidLogger;
+extern ofstream shipLogger;
+extern ofstream collisionLogger;
+extern ofstream bulletLogger;
+extern ofstream transformationLogger;
+
 /*
 extern const int WINDOW_MAX_X;
 extern const int WINDOW_MAX_Y;
