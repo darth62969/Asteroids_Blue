@@ -16,6 +16,13 @@ extern ofstream collisionLogger;
 extern ofstream bulletLogger;
 extern ofstream transformationLogger;
 
+extern char* ASTEROID_LOG_PATH;
+extern char* SHIP_LOG_PATH;
+extern char* COLLISION_LOG_PATH;
+extern char* BULLET_LOG_PATH;
+extern char* TRANSFORMATION_LOG_PATH;
+
+
 /*
 extern const int WINDOW_MAX_X;
 extern const int WINDOW_MAX_Y;

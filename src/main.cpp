@@ -132,7 +132,7 @@ void gameLoop()
 
 		shipLogger << endl << "Ship Rotation : " << enterprise.rotation << endl; 
 		shipLogger << "Delta Rot : " << deltaRot << endl;
-		shipLogger << "Time Right Arrow Pressed = " << timeKeyPressed;
+		shipLogger << "Time Right Arrow Pressed = " << timeKeyPressed << endl;
 	}
 	
 
@@ -294,18 +294,23 @@ void keyReleased (int key, int x, int y){
 			deltaRot = 1.0;
 			timeKeyPressed = 0;
 			rightKeyPressed = false;
+			rightReached10 = false;
 			break;
 
 		case GLUT_KEY_LEFT:
 			deltaRot = 1.0;
-			leftKeyPressed = false;
 			timeKeyPressed = 0;
+			leftKeyPressed = false;
+			leftReached10 = false;
 			break;
 	}			
 }
 
 int main(int argc, char** argv)
 {
+	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::trunc);
+	asteroidLogger << "Asteroid Logging Started" << endl;
+	asteroidLogger.close();
 	shipLogger.open(SHIP_LOG_PATH, ofstream::out|ofstream::trunc);
 	shipLogger << "Ship Logger Started" << endl;
 	shipLogger.close();
