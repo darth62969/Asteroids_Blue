@@ -3,12 +3,12 @@
 
 struct point
 {
-    float x, y, z, w;
+    float x, y, z, w, angle ;
 };
 
 struct triangle
 {
-    point a, b, c;    
+    point a, b, c;
 };
 /*
 struct asteriod
@@ -24,12 +24,15 @@ struct ship
 {
     triangle body;
     float rotation;
+    point aLocation;
 };
 
 struct bullet
 {
+    float theta;
     point location;
     point translation;
+    
 };
 
 #endif
