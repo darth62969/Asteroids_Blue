@@ -1,5 +1,5 @@
 /* 
- * Ship Operations for AsteroidsL RETURN OF METEOR
+ * Ship Operations for Asteroids: RETURN OF METEOR
  * 
  * Made by:
  * Jonathan Oakes
@@ -8,7 +8,7 @@
  * Chris Le
  * Emily Herron
  * 
- * for the Class:
+ * For the class:
  * Intro to Computer Graphics (CSC315)
  * 
  * At:

@@ -8,7 +8,7 @@
  * Chris Le
  * Emily Herron
  * 
- * for the Class:
+ * For the class:
  * Intro to Computer Graphics (CSC315)
  * 
  * At:

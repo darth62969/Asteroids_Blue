@@ -1,12 +1,25 @@
-# Makefile to build introgl example 
+# Makefile to build "Asteroids: RETURN OF METEOR"
+#
+# Origingally for use in Introgl Example 
+#
+# By:
 #
 # Andrew J. Pounds, Ph.D.
 # Departments of Chemistry and Computer Science
 # Mercer University
 # Fall 2016 
 #
-# Modified for use in: The Blue Team's Asteroids 
+# Modified for use in: "Asteroids: RETURN OF METEOR" 
 # Modified by: Blue Squad
+# For the class: Introduction to Computer Graphics (CSC315)
+# At: Mercer Univercity
+#
+# Blue Squad is:
+# Jonathan Oakes
+# Braeden Brettin
+# Ted Dorfeuille 
+# Chris Le
+# Emily Herron
 #
 
 
@@ -21,8 +34,9 @@ OBJS = main.o asteroid.o ship.o bullets.o transformer.o
 
 debug ?= n
 ifeq ($(debug), y)
-	CFLAGS += -g 
+	CFLAGS += -g -DDEBUG
 endif
+
 # Independent Targets - first is executable, second is object
 
 Asteroids : $(OBJS) $(HEADERS)

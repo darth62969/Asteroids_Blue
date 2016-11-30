@@ -1,3 +1,20 @@
+/* 
+ * Asteroid Class for Asteroids: RETURN OF METEOR
+ * 
+ * Made by:
+ * Jonathan Oakes
+ * Braeden Brettin
+ * Ted Dorfeuille 
+ * Chris Le
+ * Emily Herron
+ * 
+ * for the Class:
+ * Intro to Computer Graphics (CSC315)
+ * 
+ * At:
+ * Mercer Univercity  
+ */
+
 #include "headers.h"
 #include "structs.h"
 #include "globals.h"
@@ -112,7 +129,7 @@ void asteroid::clear()
 void asteroid::createAsteroid(triangle a, point location, point offset, int num)
 {
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-	asteroidLogger << "Creating Simple Asteroid\n";
+	asteroidLogger << "\nCreating Simple Asteroid #" << num << endl;
 	asteroidLogger.close();
 
 	astPnts.clear();

@@ -1,3 +1,20 @@
+/* 
+ * Asteroid Class Header for Asteroids: RETURN OF METEOR
+ * 
+ * Made by:
+ * Jonathan Oakes
+ * Braeden Brettin
+ * Ted Dorfeuille 
+ * Chris Le
+ * Emily Herron
+ * 
+ * for the Class:
+ * Intro to Computer Graphics (CSC315)
+ * 
+ * At:
+ * Mercer Univercity  
+ */
+
 #ifndef __ASTEROID_H_INCLUDED__
 #define __ASTEROID_H_INCLUDED__
 

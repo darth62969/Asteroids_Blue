@@ -1,5 +1,5 @@
 /* 
- * Main program for AsteroidsL RETURN OF METEOR
+ * Main program for Asteroids: RETURN OF METEOR
  * 
  * Made by:
  * Jonathan Oakes
@@ -8,12 +8,13 @@
  * Chris Le
  * Emily Herron
  * 
- * for the Class:
+ * For the class:
  * Intro to Computer Graphics (CSC315)
  * 
  * At:
  * Mercer Univercity  
  */
+
 #include "headers.h"
 #include "structs.h"
 #include "globals.h"
@@ -60,7 +61,9 @@ void initiateOctogon(void);
 
 void debugDisplay(void)
 {
-	initiateOctogon();  // Clear display window
+	char * debugText = "debug active";
+
+	/*initiateOctogon();  // Clear display window
     	glColor3f ( 0.1, 0.5, 0.0 );      // Set line segment color to green
 	glPointSize(4.0);
 
@@ -108,13 +111,67 @@ void debugDisplay(void)
 		
 	}
 
-	glutSwapBuffers();
+	glutSwapBuffers();*/
+
+
 }
 
 void gameView()
 {
 	//output game to window
+		initiateOctogon();  // Clear display window
+    	glColor3f ( 0.1, 0.5, 0.0 );      // Set line segment color to green
+	glPointSize(4.0);
+
+	//Pipeline();
+    switch(filled)
+	{
+		case 0:
+    		for (int i = 0; i < (asteroidBelt.size()); i++)
+    		{
+				vector<point> a = asteroidBelt.at(i).getPoints();
+				point b = asteroidBelt.at(i).getCenter();
+				for (int j = 0; j < (a.size()); j++)
+        		{
+					glBegin (GL_LINES);
+						glVertex2d(a.at(j).x + b.x, a.at(j).y + b.y);
+						glVertex2d( a.at((j+1)%a.size()).x + b.x, a.at((j+1)%a.size()).y +b.y);
+					glEnd ();         
+        		}
+			}
+			break;
+		case 1:
+			for (int i = 0; i < (asteroidBelt.size()); i++)
+    		{
+				vector<triangle> a = asteroidBelt.at(i).getTess();
+				point b = asteroidBelt.at(i).getCenter();
+				for (int j = 0; j < (a.size()); j++)
+        		{
+					glBegin (GL_TRIANGLES);
+						glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
+						glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
+						glVertex2d(a.at(j).c.x + b.x, a.at(j).c.y + b.y);
+						glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
+					glEnd ();         
+        		}
+			}
+	}
+
+	
+	drawShip(enterprise);		
+
+
+	glColor3f(1.0, 1.0, 0.0);
+	for(int i = 0; i < bullets.size(); i++){
+			drawBullet(bullets[i]);
+		
+	}
+#ifdef DEBUG
 	debugDisplay();
+#endif
+
+	glutSwapBuffers();
+
 
 }
 
