@@ -20,7 +20,7 @@ asteroid::asteroid()
  *	teslate points save as triangles
  * 	return asteroid
  */
-	numsides = rand()% (ASTEROID_MAX_SIZE-ASTEROID_MIN_SIZE + 1) + ASTEROID_MIN_SIZE;
+ 	numsides = rand()% (ASTEROID_MAX_SIZE-ASTEROID_MIN_SIZE + 1) + ASTEROID_MIN_SIZE;
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 	asteroidLogger << "Number of sides to generate : " << numsides << endl;
 	center.x = rand() % (WORLD_COORDINATE_MAX_X + 1) + WORLD_COORDINATE_MIN_X;
@@ -47,7 +47,35 @@ asteroid::asteroid()
 	asteroidLogger << "Rotation was set to : " << rotation << "\n\n";
 	asteroidLogger.close();
 }
+/*
+asteroid::asteroid(triangle a, point location, point offset, int num)
+{
+	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+	asteroidLogger << "Creating Simple Asteroid\n";
+	asteroidLogger.close();
 
+	astPnts.clear();
+	astPnts.push_back(a.a);
+	astPnts.push_back(a.b);
+	astPnts.push_back(a.c);
+	astTris.clear();	
+	astTris.push_back(a);
+
+	int j = rand();
+	srand (static_cast <unsigned> (time(0))*(num*(j+67)/10));	
+
+	rotation = rand() % 360;
+	rotation *= M_PI / 180.0;
+
+	center.x = location.x + offset.x;
+	center.y = location.y + offset.y;
+
+	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+	asteroidLogger << "Created Simple Asteroid\n";
+	asteroidLogger.close();
+
+}
+*/
 point asteroid::getCenter()
 {
 	return center;
@@ -77,22 +105,141 @@ void asteroid::incrementLocation()
 
 }
 
+void asteroid::clear()
+{
+	astPnts.clear();
+	astTris.clear();
+}
+void asteroid::createAsteroid(triangle a, point location, point offset, int num)
+{
+	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+	asteroidLogger << "Creating Simple Asteroid\n";
+	asteroidLogger.close();
+
+	astPnts.clear();
+	astPnts.push_back(a.a);
+	astPnts.push_back(a.b);
+	astPnts.push_back(a.c);
+	astTris.clear();	
+	astTris.push_back(a);
+
+	int j = rand();
+	srand (static_cast <unsigned> (time(0))*(num*(j+67)/10));	
+
+	rotation = rand() % 360;
+	rotation *= M_PI / 180.0;
+
+	center.x = location.x + offset.x;
+	center.y = location.y + offset.y;
+
+	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+	asteroidLogger << "Created Simple Asteroid\n";
+	asteroidLogger.close();
+
+}
 vector<asteroid> asteroid::breakupAsteroid()
 {
-/*	todo:
+/*
+ *	todo:
  *	get trinagle set to a.
  *	createAsteroid(traingle a)
  * 	repeat till last triangle pointer.
-*/
+ */
 
+	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+	asteroidLogger << "Breaking up asteroid into " << astTris.size() << " asteroids.\n";
+	
+
+	vector<asteroid> breakup;
 	for(int i = 0; i < astTris.size(); i++)
 	{
+		triangle tmpt = astTris.at(i);
+		point tmpp;
 
+		if (tmpt.a.x > tmpt.b.x)
+		{
+			if (tmpt.b.x > tmpt.c.x)
+			{
+				asteroidLogger << tmpt.b.x << ">" << tmpt.c.x << endl; 
+				tmpp.x=tmpt.c.x;
+				tmpt.a.x-=tmpp.x;
+				tmpt.b.x-=tmpp.x;
+				tmpt.c.x-=tmpp.x;
+			}
+			else
+			{
+				asteroidLogger << tmpt.c.x << ">" << tmpt.b.x << endl; 
+				tmpp.x=tmpt.b.x;
+				tmpt.a.x-=tmpp.x;
+				tmpt.b.x-=tmpp.x;
+				tmpt.c.x-=tmpp.x;
+			}
+		}
+		else
+		{
+			if (tmpt.a.x > tmpt.c.x)
+			{
+				asteroidLogger << tmpt.a.x << ">" << tmpt.c.x << endl; 
+				tmpp.x=tmpt.c.x;
+				tmpt.a.x-=tmpp.x;
+				tmpt.b.x-=tmpp.x;
+				tmpt.c.x-=tmpp.x;
+			}
+			else
+			{
+				asteroidLogger << tmpt.c.x << ">" << tmpt.a.x << endl; 
+				tmpp.x=tmpt.a.x;
+				tmpt.a.x-=tmpp.x;
+				tmpt.b.x-=tmpp.x;
+				tmpt.c.x-=tmpp.x;
+			}
+		}
+
+		if (tmpt.a.y > tmpt.b.y)
+		{
+			if (tmpt.b.y > tmpt.c.y)
+			{
+				tmpp.y=tmpt.c.y;
+				tmpt.a.y-=tmpp.y;
+				tmpt.b.y-=tmpp.y;
+				tmpt.c.y-=tmpp.y;
+			}
+			else
+			{
+				tmpp.y=tmpt.b.y;
+				tmpt.a.y-=tmpp.y;
+				tmpt.b.y-=tmpp.y;
+				tmpt.c.y-=tmpp.y;
+			}
+		}
+		else
+		{
+			if (tmpt.a.y > tmpt.c.y)
+			{
+				tmpp.y=tmpt.c.y;
+				tmpt.a.y-=tmpp.y;
+				tmpt.b.y-=tmpp.y;
+				tmpt.c.y-=tmpp.y;
+			}
+			else
+			{
+				tmpp.y=tmpt.a.y;
+				tmpt.a.y-=tmpp.y;
+				tmpt.b.y-=tmpp.y;
+				tmpt.c.y-=tmpp.y;
+			}
+		}
+		
+		asteroidLogger.close();
+		
+		asteroid a;
+		a.createAsteroid(tmpt, center, tmpp, i);
+		breakup.push_back(a);
 	}
+	return breakup;
  
-
-
 }
+
 point intersect(point v1, point v2, point v3, point v4)
 {
 	float ua_num = ((v3.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v3.y - v1.y));

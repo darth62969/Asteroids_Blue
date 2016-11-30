@@ -205,7 +205,7 @@ void initiateAsteroids()
 		i++;
 	}
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-	asteroidLogger << "\nGenerated " << asteroidBelt.size() << "asteroids\n";
+	asteroidLogger << "\nGenerated " << asteroidBelt.size() << " asteroids\n";
 	asteroidLogger.close();
 }
 
@@ -298,6 +298,15 @@ void keyboard(unsigned char key, int x, int y){
 		bullets.push_back(shot);
 		fireBullet(shot);
 		glutIdleFunc(gameLoop);
+	}
+	if(key == 'b')
+	{
+		vector<asteroid> temp = asteroidBelt.at(0).breakupAsteroid();
+		for (int i = 0; i < temp.size(); i++)
+		{
+			asteroidBelt.push_back(temp.at(i));
+		}
+		asteroidBelt.erase(asteroidBelt.begin());
 	}
 
 		
