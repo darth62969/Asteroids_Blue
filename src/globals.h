@@ -1,3 +1,20 @@
+/* 
+ * Globals Header for AsteroidsL RETURN OF METEOR
+ * 
+ * Made by:
+ * Jonathan Oakes
+ * Braeden Brettin
+ * Ted Dorfeuille 
+ * Chris Le
+ * Emily Herron
+ * 
+ * for the Class:
+ * Intro to Computer Graphics (CSC315)
+ * 
+ * At:
+ * Mercer Univercity  
+ */
+
 #ifndef GLOBALS
 #define GLOBALS
 

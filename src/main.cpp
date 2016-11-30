@@ -1,5 +1,18 @@
-/*
- *
+/* 
+ * Main program for AsteroidsL RETURN OF METEOR
+ * 
+ * Made by:
+ * Jonathan Oakes
+ * Braeden Brettin
+ * Ted Dorfeuille 
+ * Chris Le
+ * Emily Herron
+ * 
+ * for the Class:
+ * Intro to Computer Graphics (CSC315)
+ * 
+ * At:
+ * Mercer Univercity  
  */
 #include "headers.h"
 #include "structs.h"
@@ -61,10 +74,10 @@ void debugDisplay(void)
 				point b = asteroidBelt.at(i).getCenter();
 				for (int j = 0; j < (a.size()); j++)
         		{
-	           		glBegin (GL_LINES);
-    	  	       		glVertex2d(a.at(j).x + b.x, a.at(j).y + b.y);
-	    	    	   	glVertex2d( a.at((j+1)%a.size()).x + b.x, a.at((j+1)%a.size()).y +b.y);
-           			glEnd ();         
+					glBegin (GL_LINES);
+						glVertex2d(a.at(j).x + b.x, a.at(j).y + b.y);
+						glVertex2d( a.at((j+1)%a.size()).x + b.x, a.at((j+1)%a.size()).y +b.y);
+					glEnd ();         
         		}
 			}
 			break;
@@ -75,12 +88,12 @@ void debugDisplay(void)
 				point b = asteroidBelt.at(i).getCenter();
 				for (int j = 0; j < (a.size()); j++)
         		{
-	           		glBegin (GL_TRIANGLES);
-    	  	       		glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
+					glBegin (GL_TRIANGLES);
+						glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
 						glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
 						glVertex2d(a.at(j).c.x + b.x, a.at(j).c.y + b.y);
-	    	    	   	glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
-           			glEnd ();         
+						glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
+					glEnd ();         
         		}
 			}
 	}
