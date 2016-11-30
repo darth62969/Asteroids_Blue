@@ -41,7 +41,7 @@ bool leftReached10 = false;
 int timeKeyPressed = 0;
 //float shipRotation = 0.0;
 
-bool filled = false;
+int filled = 0;
 
 void initiateOctogon(void);
 
@@ -52,18 +52,37 @@ void debugDisplay(void)
 	glPointSize(4.0);
 
 	//Pipeline();
-    
-    	for (int i = 0; i < (asteroidBelt.size()); i++)
-    	{
-		vector<point> a = asteroidBelt.at(i).getPoints();
-		point b = asteroidBelt.at(i).getCenter();
-		for (int j = 0; j < (a.size()); j++)
-        	{
-           		glBegin (GL_LINES);
-      	       		glVertex2d(a.at(j).x + b.x, a.at(j).y + b.y);
-	           	glVertex2d( a.at((j+1)%a.size()).x + b.x, a.at((j+1)%a.size()).y +b.y);
-           		glEnd ();         
-        	}
+    switch(filled)
+	{
+		case 0:
+    		for (int i = 0; i < (asteroidBelt.size()); i++)
+    		{
+				vector<point> a = asteroidBelt.at(i).getPoints();
+				point b = asteroidBelt.at(i).getCenter();
+				for (int j = 0; j < (a.size()); j++)
+        		{
+	           		glBegin (GL_LINES);
+    	  	       		glVertex2d(a.at(j).x + b.x, a.at(j).y + b.y);
+	    	    	   	glVertex2d( a.at((j+1)%a.size()).x + b.x, a.at((j+1)%a.size()).y +b.y);
+           			glEnd ();         
+        		}
+			}
+			break;
+		case 1:
+			for (int i = 0; i < (asteroidBelt.size()); i++)
+    		{
+				vector<triangle> a = asteroidBelt.at(i).getTess();
+				point b = asteroidBelt.at(i).getCenter();
+				for (int j = 0; j < (a.size()); j++)
+        		{
+	           		glBegin (GL_TRIANGLES);
+    	  	       		glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
+						glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
+						glVertex2d(a.at(j).c.x + b.x, a.at(j).c.y + b.y);
+	    	    	   	glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
+           			glEnd ();         
+        		}
+			}
 	}
 
 	
@@ -160,15 +179,21 @@ void initiateAsteroids()
 {
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 	asteroidLogger << "Generating " << NUMBER_OF_ASTEROIDS << " asteroids\n\n";
+	asteroidLogger.close();
 	//Generate Asteroids
 	int i= 0;
 	while (i<NUMBER_OF_ASTEROIDS)
 	{	
+		asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+		asteroidLogger << "Asteroid #" << i << endl;
+		asteroidLogger.close();
 		asteroid a = asteroid();
 		asteroidBelt.push_back(a);
 		i++;
 	}
+	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 	asteroidLogger << "\nGenerated " << asteroidBelt.size() << "asteroids\n";
+	asteroidLogger.close();
 }
 
 void initiateShip()
@@ -235,12 +260,12 @@ void keyboard(unsigned char key, int x, int y){
 		exit(0);
 
 	if(key == 't' || key == 'T'){
-		filled = false;
+		filled = 0;
 		glutIdleFunc(gameLoop);
 	}
 
 	if(key == 'f' || key == 'F'){
-		filled = true;	
+		filled = 1;	
 		glutIdleFunc(gameLoop);
 	}
 

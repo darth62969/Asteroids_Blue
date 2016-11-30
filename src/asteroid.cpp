@@ -22,13 +22,12 @@ asteroid::asteroid()
  */
 	numsides = rand()% (ASTEROID_MAX_SIZE-ASTEROID_MIN_SIZE + 1) + ASTEROID_MIN_SIZE;
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-	asteroidLogger << "number of sides to generate " << numsides;
-	asteroidLogger.close();
+	asteroidLogger << "Number of sides to generate : " << numsides << endl;
 	center.x = rand() % (WORLD_COORDINATE_MAX_X + 1) + WORLD_COORDINATE_MIN_X;
 	center.y = rand() % (WORLD_COORDINATE_MAX_Y + 1) + WORLD_COORDINATE_MIN_Y;
 	rotation = rand() % 360;
 	rotation *= M_PI / 180.0;
-	cout << "\tcenter of asteroid at " << center.x << " " << center.y << endl;
+	asteroidLogger << "Bottom Left corner of asteroid at : " << center.x << " " << center.y << endl;
 	int i = rand();
 	for (int j = 0; j < numsides; j++)
 	{
@@ -42,9 +41,11 @@ asteroid::asteroid()
 	}
 
 	sortPoints();
+	tessilateAsteriod();
 	//rotation = drand48();
 	float rotation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-	cout << "rotation was set to " << rotation << std::endl;
+	asteroidLogger << "Rotation was set to : " << rotation << "\n\n";
+	asteroidLogger.close();
 }
 
 point asteroid::getCenter()
@@ -126,7 +127,7 @@ void asteroid::tessilateAsteriod()
 	int i=0;
 
 	// While there are more than three vertices left in points, run the following code.
-	while(astPnts.size() > 3)
+	while(temp.size() > 3)
 	{
 		// Set the middle vertex as the vertex immediately following i. Set the third vertex as the vertex immediately following j.
 		int j=i+1;
