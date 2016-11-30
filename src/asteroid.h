@@ -7,7 +7,7 @@ class asteroid
 {
 	public:
         explicit asteroid();
-		//explicit asteroid(triangle a, point location, point offset, int num);
+		explicit asteroid(triangle a, point location, point offset, int num);
 		point getCenter();
 		std::vector<asteroid> breakupAsteroid();
 		std::vector<point> getPoints();

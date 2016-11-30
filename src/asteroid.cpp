@@ -47,18 +47,17 @@ asteroid::asteroid()
 	asteroidLogger << "Rotation was set to : " << rotation << "\n\n";
 	asteroidLogger.close();
 }
-/*
+
 asteroid::asteroid(triangle a, point location, point offset, int num)
 {
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 	asteroidLogger << "Creating Simple Asteroid\n";
 	asteroidLogger.close();
 
-	astPnts.clear();
 	astPnts.push_back(a.a);
 	astPnts.push_back(a.b);
 	astPnts.push_back(a.c);
-	astTris.clear();	
+
 	astTris.push_back(a);
 
 	int j = rand();
@@ -75,7 +74,7 @@ asteroid::asteroid(triangle a, point location, point offset, int num)
 	asteroidLogger.close();
 
 }
-*/
+
 point asteroid::getCenter()
 {
 	return center;
@@ -232,8 +231,8 @@ vector<asteroid> asteroid::breakupAsteroid()
 		
 		asteroidLogger.close();
 		
-		asteroid a;
-		a.createAsteroid(tmpt, center, tmpp, i);
+		asteroid a(tmpt, center, tmpp, i);
+		//a.createAsteroid(tmpt, center, tmpp, i);
 		breakup.push_back(a);
 	}
 	return breakup;
