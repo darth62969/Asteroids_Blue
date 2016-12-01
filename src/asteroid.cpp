@@ -90,9 +90,14 @@ vector<asteroid> asteroid::breakupAsteroid()
 
 
 }
-void tessellate( void )
+
+void asteroid::tessilateAsteriod()
 {
-	vector<point> temp = astPnts;
+/* 	todo:
+ * 	Organize points in astPnts in counterclockwise direction
+ *	Create Triangles from astPnts and save them in to astTris
+ */
+ 	vector<point> temp = astPnts;
 	// Begin at vertex 0.
 	int i=0;
 
@@ -189,14 +194,6 @@ void tessellate( void )
 	t.b = temp.at(1);
 	t.c = temp.back();
 	astTris.push_back(t);
-}
-
-void asteroid::tessilateAsteriod()
-{
-/* 	todo:
- * 	Organize points in astPnts in counterclockwise direction
- *	Create Triangles from astPnts and save them in to astTris
- */
 }
 
 void asteroid::sortPoints()
