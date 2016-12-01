@@ -56,6 +56,7 @@ int timeKeyPressed = 0;
 //float shipRotation = 0.0;
 
 int filled = 0;
+int tess = 0;
 
 void initiateOctogon(void);
 
@@ -124,7 +125,7 @@ void gameView()
 	glPointSize(4.0);
 
 	//Pipeline();
-    switch(filled)
+	switch(filled)
 	{
 		case 0:
     		for (int i = 0; i < (asteroidBelt.size()); i++)
@@ -157,9 +158,32 @@ void gameView()
 			}
 	}
 
+	switch(tess)
+	{
+		case 1:
+		for (int i = 0; i < (asteroidBelt.size()); i++)
+    		{
+			vector<triangle> a = asteroidBelt.at(i).getTess();
+			point b = asteroidBelt.at(i).getCenter();
+			for (int j = 0; j < (a.size()); j++)
+        		{
+				glBegin (GL_LINES);
+						glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
+						glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
+						glVertex2d(a.at(j).c.x + b.x, a.at(j).c.y + b.y);
+						glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
+//					glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
+//					glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
+//					glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
+//					glVertex2d(a.at(j).c.x + b.x, a.at(j).c.y + b.y);
+//					glVertex2d(a.at(j).c.x + b.x, a.at(j).c.y + b.y);
+//					glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
+				glEnd();
+			}
+		}
+	}
 	
 	drawShip(enterprise);		
-
 
 	glColor3f(1.0, 1.0, 0.0);
 	for(int i = 0; i < bullets.size(); i++){
@@ -331,11 +355,19 @@ void keyboard(unsigned char key, int x, int y){
 
 	if(key == 't' || key == 'T'){
 		filled = 0;
+		if(tess == 0)
+			tess = 1;
+		else
+			tess = 0;
 		glutIdleFunc(gameLoop);
 	}
 
 	if(key == 'f' || key == 'F'){
-		filled = 1;	
+		if(filled == 0)
+			filled = 1;
+		else
+			filled = 0;
+		tess = 0;
 		glutIdleFunc(gameLoop);
 	}
 
