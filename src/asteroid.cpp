@@ -1,3 +1,20 @@
+/* 
+ * Asteroid Class for Asteroids: RETURN OF METEOR
+ * 
+ * Made by:
+ * Jonathan Oakes
+ * Braeden Brettin
+ * Ted Dorfeuille 
+ * Chris Le
+ * Emily Herron
+ * 
+ * for the Class:
+ * Intro to Computer Graphics (CSC315)
+ * 
+ * At:
+ * Mercer Univercity  
+ */
+
 #include "headers.h"
 #include "structs.h"
 #include "globals.h"
@@ -20,13 +37,14 @@ asteroid::asteroid()
  *	teslate points save as triangles
  * 	return asteroid
  */
-	numsides = rand()% (ASTEROID_MAX_SIZE-ASTEROID_MIN_SIZE + 1) + ASTEROID_MIN_SIZE;
-	cout << "number of sides to generate " << numsides;
+ 	numsides = rand()% (ASTEROID_MAX_SIZE-ASTEROID_MIN_SIZE + 1) + ASTEROID_MIN_SIZE;
+	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+	asteroidLogger << "Number of sides to generate : " << numsides << endl;
 	center.x = rand() % (WORLD_COORDINATE_MAX_X + 1) + WORLD_COORDINATE_MIN_X;
 	center.y = rand() % (WORLD_COORDINATE_MAX_Y + 1) + WORLD_COORDINATE_MIN_Y;
 	rotation = rand() % 360;
 	rotation *= M_PI / 180.0;
-	cout << "\tcenter of asteroid at " << center.x << " " << center.y << endl;
+	asteroidLogger << "Bottom Left corner of asteroid at : " << center.x << " " << center.y << endl;
 	int i = rand();
 	for (int j = 0; j < numsides; j++)
 	{
@@ -40,9 +58,38 @@ asteroid::asteroid()
 	}
 
 	sortPoints();
+	tessilateAsteriod();
 	//rotation = drand48();
 	float rotation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-	cout << "rotation was set to " << rotation << std::endl;
+	asteroidLogger << "Rotation was set to : " << rotation << "\n\n";
+	asteroidLogger.close();
+}
+
+asteroid::asteroid(triangle a, point location, point offset, int num)
+{
+	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+	asteroidLogger << "Creating Simple Asteroid\n";
+	asteroidLogger.close();
+
+	astPnts.push_back(a.a);
+	astPnts.push_back(a.b);
+	astPnts.push_back(a.c);
+
+	astTris.push_back(a);
+
+	int j = rand();
+	srand (static_cast <unsigned> (time(0))*(num*(j+67)/10));	
+
+	rotation = rand() % 360;
+	rotation *= M_PI / 180.0;
+
+	center.x = location.x + offset.x;
+	center.y = location.y + offset.y;
+
+	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+	asteroidLogger << "Created Simple Asteroid\n";
+	asteroidLogger.close();
+
 }
 
 point asteroid::getCenter()
@@ -74,21 +121,162 @@ void asteroid::incrementLocation()
 
 }
 
+void asteroid::clear()
+{
+	astPnts.clear();
+	astTris.clear();
+}
+void asteroid::createAsteroid(triangle a, point location, point offset, int num)
+{
+	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+	asteroidLogger << "\nCreating Simple Asteroid #" << num << endl;
+	asteroidLogger.close();
+
+	astPnts.clear();
+	astPnts.push_back(a.a);
+	astPnts.push_back(a.b);
+	astPnts.push_back(a.c);
+	astTris.clear();	
+	astTris.push_back(a);
+
+	int j = rand();
+	srand (static_cast <unsigned> (time(0))*(num*(j+67)/10));	
+
+	rotation = rand() % 360;
+	rotation *= M_PI / 180.0;
+
+	center.x = location.x + offset.x;
+	center.y = location.y + offset.y;
+
+	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+	asteroidLogger << "Created Simple Asteroid\n";
+	asteroidLogger.close();
+
+}
 vector<asteroid> asteroid::breakupAsteroid()
 {
-/*	todo:
+/*
+ *	todo:
  *	get trinagle set to a.
  *	createAsteroid(traingle a)
  * 	repeat till last triangle pointer.
-*/
+ */
 
+	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+	asteroidLogger << "Breaking up asteroid into " << astTris.size() << " asteroids.\n";
+	
+
+	vector<asteroid> breakup;
 	for(int i = 0; i < astTris.size(); i++)
 	{
+		triangle tmpt = astTris.at(i);
+		point tmpp;
 
+		if (tmpt.a.x > tmpt.b.x)
+		{
+			if (tmpt.b.x > tmpt.c.x)
+			{
+				asteroidLogger << tmpt.b.x << ">" << tmpt.c.x << endl; 
+				tmpp.x=tmpt.c.x;
+				tmpt.a.x-=tmpp.x;
+				tmpt.b.x-=tmpp.x;
+				tmpt.c.x-=tmpp.x;
+			}
+			else
+			{
+				asteroidLogger << tmpt.c.x << ">" << tmpt.b.x << endl; 
+				tmpp.x=tmpt.b.x;
+				tmpt.a.x-=tmpp.x;
+				tmpt.b.x-=tmpp.x;
+				tmpt.c.x-=tmpp.x;
+			}
+		}
+		else
+		{
+			if (tmpt.a.x > tmpt.c.x)
+			{
+				asteroidLogger << tmpt.a.x << ">" << tmpt.c.x << endl; 
+				tmpp.x=tmpt.c.x;
+				tmpt.a.x-=tmpp.x;
+				tmpt.b.x-=tmpp.x;
+				tmpt.c.x-=tmpp.x;
+			}
+			else
+			{
+				asteroidLogger << tmpt.c.x << ">" << tmpt.a.x << endl; 
+				tmpp.x=tmpt.a.x;
+				tmpt.a.x-=tmpp.x;
+				tmpt.b.x-=tmpp.x;
+				tmpt.c.x-=tmpp.x;
+			}
+		}
+
+		if (tmpt.a.y > tmpt.b.y)
+		{
+			if (tmpt.b.y > tmpt.c.y)
+			{
+				tmpp.y=tmpt.c.y;
+				tmpt.a.y-=tmpp.y;
+				tmpt.b.y-=tmpp.y;
+				tmpt.c.y-=tmpp.y;
+			}
+			else
+			{
+				tmpp.y=tmpt.b.y;
+				tmpt.a.y-=tmpp.y;
+				tmpt.b.y-=tmpp.y;
+				tmpt.c.y-=tmpp.y;
+			}
+		}
+		else
+		{
+			if (tmpt.a.y > tmpt.c.y)
+			{
+				tmpp.y=tmpt.c.y;
+				tmpt.a.y-=tmpp.y;
+				tmpt.b.y-=tmpp.y;
+				tmpt.c.y-=tmpp.y;
+			}
+			else
+			{
+				tmpp.y=tmpt.a.y;
+				tmpt.a.y-=tmpp.y;
+				tmpt.b.y-=tmpp.y;
+				tmpt.c.y-=tmpp.y;
+			}
+		}
+		
+		asteroidLogger.close();
+		
+		asteroid a(tmpt, center, tmpp, i);
+		//a.createAsteroid(tmpt, center, tmpp, i);
+		breakup.push_back(a);
 	}
+	return breakup;
  
+}
 
+point intersect(point v1, point v2, point v3, point v4)
+{
+	float ua_num = ((v3.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v3.y - v1.y));
+	float den = ((v2.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v2.y - v1.y));
 
+	float ub_num = ((v2.x - v1.x) * (v3.y - v1.y)) - ((v3.x - v1.x) * (v2.y - v1.y));
+
+	float ua = ua_num / den;
+	float ub = ub_num / den;
+
+	point v;
+	v.x = -100;
+	v.y = -100;
+
+	if((ua > 0.0) && (ua < 1.0) && (ub > 0.0) && (ub < 1.0))
+	{
+		v.x = v1.x + ua * (v2.x - v1.x);
+		v.y = v1.y + ua * (v2.y - v1.y);
+	}
+
+	return v;
 }
 
 void asteroid::tessilateAsteriod()
@@ -102,7 +290,7 @@ void asteroid::tessilateAsteriod()
 	int i=0;
 
 	// While there are more than three vertices left in points, run the following code.
-	while(astPnts.size() > 3)
+	while(temp.size() > 3)
 	{
 		// Set the middle vertex as the vertex immediately following i. Set the third vertex as the vertex immediately following j.
 		int j=i+1;
@@ -154,17 +342,17 @@ void asteroid::tessilateAsteriod()
 			bool intersection = false;
 
 			// Check if the newly created diagonal intersects with any formed line segment.
-			//for(int n=0; n<points.size()-1; n++)
-			/*{
-				Vertex v = intersect(temp.at(i), temp.at(k), temp.at(n), temp.at(n+1));
+			for(int n=0; n<temp.size()-1; n++)
+			{
+				point v = intersect(temp.at(i), temp.at(k), temp.at(n), temp.at(n+1));
 				if(v.x != -100 && v.y != -100)
 					intersection = true;
-			}*/
+			}
 
 			// Check if the newly created diagonal intersects with the last line segment.
-			//Vertex v = intersect(points.at(i), points.at(k), points.back(), points.front());
-			//if(v.x != -100 && v.y != -100)
-			//	intersection = true;
+			point v = intersect(temp.at(i), temp.at(k), temp.back(), temp.front());
+			if(v.x != -100 && v.y != -100)
+				intersection = true;
 
 			// If no intersection has occurred and no CW winding occurs in the special circumstance, run the following code.
 			if(!intersection && z2 <= 0.0)

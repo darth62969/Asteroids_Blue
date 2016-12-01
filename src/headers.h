@@ -1,9 +1,27 @@
+/* 
+ * Header File for Asteroids: RETURN OF METEOR
+ * 
+ * Made by:
+ * Jonathan Oakes
+ * Braeden Brettin
+ * Ted Dorfeuille 
+ * Chris Le
+ * Emily Herron
+ * 
+ * for the Class:
+ * Intro to Computer Graphics (CSC315)
+ * 
+ * At:
+ * Mercer Univercity  
+ */
+
 #ifndef HEADERS
 #define HEADERS
 
 /*
  * #include stuff
  */
+
 #include <cmath>
 #include <GL/glut.h>
 #include <stdio.h>
@@ -40,10 +58,6 @@ const int NUMBER_OF_ASTEROIDS = 50;
 
 //Log FilePaths
 
-
-
-
 //Other Constants
-
 
 #endif
