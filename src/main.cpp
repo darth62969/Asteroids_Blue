@@ -1,0 +1,353 @@
+/*
+ *
+ */
+#include "headers.h"
+#include "structs.h"
+#include "globals.h"
+#include "prototypes.h"
+
+#define SPACEBAR 32
+
+//Global Varianbles
+ship enterprise = createShip();
+
+//Runtime Variables go here
+vector<asteroid> asteroidBelt;
+
+vector<bullet> bullets;
+
+float deltaRot = 1.0;
+bool rightKeyPressed = false;
+bool leftKeyPressed = false;
+//float shipRotation = 0.0;
+
+int bulletsFired = 0;
+
+bool filled = false;
+
+void *currentfont;
+
+void initiateOctogon(void);
+
+void drawString(GLuint x, GLuint y, const char* string);
+
+void setFont(void *font){
+	currentfont = font;
+}
+
+void displayScore(void){
+
+	double hitRatio;
+
+	int astHits = NUMBER_OF_ASTEROIDS - asteroidBelt.size();
+	
+	if (astHits != 0)
+		hitRatio = bulletsFired/(NUMBER_OF_ASTEROIDS - asteroidBelt.size() * 100);
+	else 
+		hitRatio = 0;
+
+	setFont(GLUT_BITMAP_HELVETICA_12);
+
+	//string astsOnScr = "Asteroids on Screen: "; // + asteroidBelt.size();
+
+	//string astsHit = "Asteroids hit: "; // + (NUMBER_OF_ASTEROIDS - asteroidBelt.size());
+
+	//string hrStr = "Hit Ratio : " + hitRatio;
+
+	//ss << "Hit Ratio: " << hitRatio;
+
+	//string hrStr = ss.str();
+
+	//drawString(180, 180, bulletsFiredStr.c_str());
+
+	char bulletsFiredStr[50];
+	char astsOnScr1[50];
+	char astsOnScr2[50]; 
+	char astsHit[50];
+	char hrStr[50];
+
+	sprintf(bulletsFiredStr, "Bullets Fired: %3d", bulletsFired);
+	sprintf(astsOnScr1, "%s", "Asteroids on "); 
+	sprintf(astsOnScr2, "Screen: %3d", asteroidBelt.size()); 
+	sprintf(astsHit, "Asteroids Hit: %4d", astHits);
+	sprintf(hrStr, "Hit Ratio:  %5.2f %%", hitRatio);
+
+
+	glColor3f(0.0, 0.0, 0.0);
+	
+	drawString(20, 30, bulletsFiredStr);
+	drawString(20, 70, astsOnScr1);
+	drawString(20, 55, astsOnScr2);
+	
+	drawString(480, 30, astsHit);
+	drawString(480, 65, hrStr);
+}
+
+
+void drawString(GLuint x, GLuint y, const char* string){
+
+	const char *c;
+
+	glRasterPos2i(x, y);
+	//glColor3f(1.0, 0.0, 0.0);
+	for(c=string; *c!='\0'; c++){
+		glutBitmapCharacter(currentfont, *c);
+	}
+
+	
+}
+
+void debugDisplay(void)
+{
+	initiateOctogon();  // Clear display window
+    	glColor3f ( 0.1, 0.5, 0.0 );      // Set line segment color to green
+	glPointSize(4.0);
+
+	//Pipeline();
+    
+    	for (int i = 0; i < (asteroidBelt.size()); i++)
+    	{
+		vector<point> a = asteroidBelt.at(i).getPoints();
+		point b = asteroidBelt.at(i).getCenter();
+		for (int j = 0; j < (a.size()); j++)
+        	{
+           		glBegin (GL_LINES);
+      	       		glVertex2d(a.at(j).x + b.x, a.at(j).y + b.y);
+	           	glVertex2d( a.at((j+1)%a.size()).x + b.x, a.at((j+1)%a.size()).y +b.y);
+           		glEnd ();         
+        	}
+	}
+
+	
+	drawShip(enterprise);		
+
+
+	glColor3f(1.0, 1.0, 0.0);
+	for(int i = 0; i < bullets.size(); i++){
+			drawBullet(bullets[i]);
+		
+	}
+
+	displayScore();
+
+	glutSwapBuffers();
+}
+
+void gameView()
+{
+	//output game to window
+	debugDisplay();
+
+}
+
+
+void gameLoop()
+{
+	if (rightKeyPressed) 
+	{
+		if (deltaRot < 10)
+		{
+			deltaRot *= 1.1;
+		}
+		else 
+		{
+			deltaRot = 10; 
+		}
+		enterprise.rotation -= deltaRot;
+	}
+	if (leftKeyPressed)
+	{
+
+		if (deltaRot < 10)
+		{
+			deltaRot *= 1.1;
+		}
+		else 
+		{
+			deltaRot = 10; 
+		}
+
+		enterprise.rotation += deltaRot;
+	}
+	cout << "Ship Rotation" << enterprise.rotation << endl; 
+	cout << "Delta Rot" << deltaRot << endl;
+	for(int i=0; i <bullets.size();i++)
+	{
+		bullets.at(i).location.x += 2.0* cos(bullets.at(i).theta);
+		bullets.at(i).location.y += 2.0*sin(bullets.at(i).theta);
+	}
+	for(int i=0; i <asteroidBelt.size();i++)
+	{
+		asteroidBelt.at(i).incrementLocation();
+	}
+	glutPostRedisplay();
+}
+
+void initiateGameDisplay()
+{
+	//build window dependencies
+}
+
+
+void initiateAsteroids()
+{
+	//Generate Asteroids
+	int i= 0;
+	while (i<NUMBER_OF_ASTEROIDS)
+	{	
+		asteroid a = asteroid();
+		asteroidBelt.push_back(a);
+		i++;
+	}
+	cout << asteroidBelt.size();
+}
+
+void initiateShip()
+{
+	//Build Ship and ship dependencies.
+	enterprise = createShip();
+	
+
+}
+
+void initiateWindow(int argc, char** argv)
+{
+	//build window
+    glutInit(&argc,argv);
+	//glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB); /* default, not needed */
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+	glutInitWindowSize(WINDOW_MAX_X,WINDOW_MAX_Y); /* set pixel window */
+	glutInitWindowPosition(WINDOW_POSITION_X, WINDOW_POSITION_Y);
+	glutCreateWindow("Asteroids: RETURN OF METEOR");
+}
+void initiateGL( void )
+{
+	glClearColor(1.0,1.0,1.0,1.0); /* white background */
+    	glColor3f(1.0, 0.0, 0.0); /* draw in red */
+    	glPointSize(10.0);
+
+    	glMatrixMode(GL_PROJECTION);
+    	glLoadIdentity();
+	gluOrtho2D(WORLD_COORDINATE_MIN_X, WORLD_COORDINATE_MAX_X,
+        WORLD_COORDINATE_MIN_Y, WORLD_COORDINATE_MAX_Y);
+	glMatrixMode(GL_MODELVIEW);
+}
+
+void initiateOctogon(void){
+	glClear(GL_COLOR_BUFFER_BIT);
+	vector<point> pts; 
+	point p = {WORLD_COORDINATE_MIN_X ,WORLD_COORDINATE_MAX_Y / 2,0,1};
+	
+	rotatePoint(p,45.0/2.0);
+	pts.push_back(p);
+	
+	for (int i = 0; i < 7; i++){
+		rotatePoint(p,45);
+		pts.push_back(p);
+	}	
+
+	glColor3f(0.0,0.0,0.0);
+	glBegin(GL_POLYGON);
+		for(int i = 0; i < pts.size(); i ++){
+			glVertex2f( pts[i].x , pts[i].y);
+		}
+	glEnd();
+}
+
+void keyboard(unsigned char key, int x, int y){
+	
+	//if(key == 's' || key == 'S')
+		// start game
+
+	//if(key == 'p' || key == 'P')
+		//pause movement
+
+	if(key == 'q' || key == 'Q')
+		exit(0);
+
+	if(key == 't' || key == 'T'){
+		filled = false;
+		glutIdleFunc(gameLoop);
+	}
+
+	if(key == 'f' || key == 'F'){
+		filled = true;	
+		glutIdleFunc(gameLoop);
+	}
+
+	if(key == 'a' || key == 'A'){
+		enterprise.rotation += 2.5;
+		glutIdleFunc(gameLoop);
+	}		
+
+	if(key == 'd' || key == 'D'){
+		enterprise.rotation -= 2.5;
+		glutIdleFunc(gameLoop);
+	}
+
+	if(key == ' ')
+	{
+		bullet shot = createBullet();
+		bullets.push_back(shot);
+		fireBullet(shot);
+		bulletsFired++;
+		glutIdleFunc(gameLoop);
+	}
+
+		
+
+}
+
+void specialKeys(int key, int x, int y){
+	switch(key){
+		case GLUT_KEY_RIGHT:
+			rightKeyPressed = true;
+			glutIdleFunc(gameLoop);
+			break;
+
+		case GLUT_KEY_LEFT:
+			leftKeyPressed = true;
+			glutIdleFunc(gameLoop);
+			break;	
+
+		/*case SPACEBAR:
+			//fire missiles
+			bullet shot = createBullet();
+			bullets.push_back(shot);
+			fireBullet(shot);
+			glutIdleFunc(gameLoop);
+			break;		*/
+
+		default: break;
+	}
+}
+
+void keyReleased (int key, int x, int y){
+	switch (key) {
+		case GLUT_KEY_RIGHT:
+			deltaRot = 1.0;
+			rightKeyPressed = false;
+			break;
+
+		case GLUT_KEY_LEFT:
+			deltaRot = 1.0;
+			leftKeyPressed = false;
+			break;
+	}			
+}
+
+int main(int argc, char** argv)
+{
+	initiateWindow(argc, argv); /* Set up Window */
+	initiateGL();
+	initiateOctogon();
+	initiateShip();
+	initiateAsteroids();
+	initiateGameDisplay();
+	glutKeyboardFunc(keyboard);
+	glutSpecialFunc(specialKeys); 
+	glutSpecialUpFunc(keyReleased);
+	glutDisplayFunc(gameView);
+	glutIdleFunc(gameLoop);
+	glutMainLoop();
+}

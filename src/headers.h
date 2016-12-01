@@ -12,6 +12,7 @@
 #include <iostream>
 #include <algorithm>
 #include "asteroid.h"
+#include <sstream>
 
 using namespace std;
 
