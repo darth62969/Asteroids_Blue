@@ -31,13 +31,13 @@ int numsides = 0;
 asteroid::asteroid()
 {
 /*	todo:
- *	generate raondome number between 0 and 8;
- * 	add 12 to that number
- *	genreate randome points between max_x and max_y
- *	teslate points save as triangles
+ *	generate random number between 0 and 8;
+ * 	add 4 to that number
+ *	genreate random points between max_x and max_y
+ *	tessellate points and save as triangles
  * 	return asteroid
  */
- 	numsides = rand()% (ASTEROID_MAX_SIZE-ASTEROID_MIN_SIZE + 1) + ASTEROID_MIN_SIZE;
+ 	numsides = rand()% (ASTEROID_MAX_SIZE - ASTEROID_MIN_SIZE + 1) + ASTEROID_MIN_SIZE;
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 	asteroidLogger << "Number of sides to generate : " << numsides << endl;
 	center.x = rand() % (WORLD_COORDINATE_MAX_X + 1) + WORLD_COORDINATE_MIN_X;
@@ -54,11 +54,10 @@ asteroid::asteroid()
 		b.y = rand() % (ASTEROID_MAX_Y+1);
 		astPnts.push_back(b);
 		i++;
-	//	std::cout << "generated x: " << b.x << " generated y:" << b.y << std::endl;
 	}
 
 	sortPoints();
-	tessilateAsteriod();
+	tessellateAsteriod();
 	//rotation = drand48();
 	float rotation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 	asteroidLogger << "Rotation was set to : " << rotation << "\n\n";
@@ -89,7 +88,6 @@ asteroid::asteroid(triangle a, point location, point offset, int num)
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 	asteroidLogger << "Created Simple Asteroid\n";
 	asteroidLogger.close();
-
 }
 
 point asteroid::getCenter()
@@ -99,26 +97,28 @@ point asteroid::getCenter()
 
 void asteroid::incrementLocation()
 {
-	center.x+=cos(rotation)/2;
-	center.y+=sin(rotation)/2;
-	switch((int)center.x)
+	center.x += cos(rotation)/2;
+	center.y += sin(rotation)/2;
+	
+	switch((int) center.x)
 	{
 		case WORLD_COORDINATE_MAX_X:
-			center.x=WORLD_COORDINATE_MIN_X+1;
+			center.x = WORLD_COORDINATE_MIN_X+1;
 			break;
 		case WORLD_COORDINATE_MIN_X:
-			center.x=WORLD_COORDINATE_MAX_X-1;
+			center.x = WORLD_COORDINATE_MAX_X-1;
 			break;
-	}
-	switch((int)center.y)
-	{
-		case WORLD_COORDINATE_MAX_Y:
-			center.y=WORLD_COORDINATE_MIN_Y+1;
-			break;
-		case WORLD_COORDINATE_MIN_Y:
-			center.y=WORLD_COORDINATE_MAX_Y-1    ;
 	}
 
+	switch((int) center.y)
+	{
+		case WORLD_COORDINATE_MAX_Y:
+			center.y = WORLD_COORDINATE_MIN_Y+1;
+			break;
+		case WORLD_COORDINATE_MIN_Y:
+			center.y = WORLD_COORDINATE_MAX_Y-1;
+			break;
+	}
 }
 
 void asteroid::clear()
@@ -126,6 +126,7 @@ void asteroid::clear()
 	astPnts.clear();
 	astTris.clear();
 }
+
 void asteroid::createAsteroid(triangle a, point location, point offset, int num)
 {
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
@@ -159,9 +160,8 @@ vector<asteroid> asteroid::breakupAsteroid()
  *	todo:
  *	get trinagle set to a.
  *	createAsteroid(traingle a)
- * 	repeat till last triangle pointer.
+ * 	repeat through last triangle pointer.
  */
-
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 	asteroidLogger << "Breaking up asteroid into " << astTris.size() << " asteroids.\n";
 	
@@ -252,8 +252,8 @@ vector<asteroid> asteroid::breakupAsteroid()
 		//a.createAsteroid(tmpt, center, tmpp, i);
 		breakup.push_back(a);
 	}
+
 	return breakup;
- 
 }
 
 point intersect(point v1, point v2, point v3, point v4)
@@ -279,7 +279,7 @@ point intersect(point v1, point v2, point v3, point v4)
 	return v;
 }
 
-void asteroid::tessilateAsteriod()
+void asteroid::tessellateAsteriod()
 {
 /* 	todo:
  * 	Organize points in astPnts in counterclockwise direction

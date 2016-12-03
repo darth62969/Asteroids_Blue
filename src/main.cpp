@@ -22,184 +22,102 @@
 
 #define SPACEBAR 32
 
-//Global Varianbles
+//Global Variables
 
 //The Ship
 ship enterprise = createShip();
 
 //Log Writers
-
 ofstream asteroidLogger;		// Asteroid loggger, records information about the asteroids into the asteroid log file.
 ofstream shipLogger;			// Ship logger, records information about the ship into the ship log.
 ofstream collisionLogger;		// Collision logger, records information about colitions into the collision log.
 ofstream bulletLogger;			// Bullet Logger, records information about bullets into the bullet log.
-ofstream transformationLogger;	// Transfomration logger, records information about transforms into tranformmation log.
+ofstream transformationLogger;		// Transfomration logger, records information about transforms into tranformmation log.
 
-// Log paths. Should be relative to where the executable is but...
-// These should be self explanitory. 
-
+// Log paths
 char* ASTEROID_LOG_PATH = "asteroid_log.txt";
 char* SHIP_LOG_PATH = "ship_log.txt";
 char* COLLISION_LOG_PATH = "collision_log.txt";
 char* BULLET_LOG_PATH = "bullet_log.txt";
 char* TRANSFORMATION_LOG_PATH = "transformation_log.txt";
 
-//Runtime Variables go here
+//Runtime Variables
 vector<asteroid> asteroidBelt; 	// Holds all asteroids
-
-vector<bullet> bullets; 		// Holds all bullets
-
-float deltaRot = 1.0; 			// For use in the accelleration of ship rotation 
-
+vector<bullet> bullets; 	// Holds all bullets
+float deltaRot = 1.0; 		// For use in the accelleration of ship rotation 
 bool rightKeyPressed = false;	// These are for the ship rotation functions
-bool rightReached10 = false;	//
-
+bool rightReached10 = false;	// right rotation reached 10
 bool leftKeyPressed = false;	// Also for ship rotation, tells us if the ship's
-bool leftReached10 = false;		// rotatition reached 10
-
-int timeKeyPressed = 0;			// Iterator for Debug reasons
-
-int filled = 0;					// 0 if lines should be drawn, 1 if filled (asteroids)   
+bool leftReached10 = false;	// left rotation reached 10
+int timeKeyPressed = 0;		// Iterator for Debug reasons
+int filled = 0;			// 0 if lines should be drawn, 1 if filled (asteroids)   
 int tess = 0;
-//float shipRotation = 0.0;		// Unused variable
-
-void initiateOctogon(void);
-
-/*
- * Debug Display Funtion:
- * Displays information about the current game state like FPS and Asteroid Count.
- */
-
-void debugDisplay(void)
-{
-	char * debugText = "debug active";
-
-	/*initiateOctogon();  // Clear display window
-    	glColor3f ( 0.1, 0.5, 0.0 );      // Set line segment color to green
-	glPointSize(4.0);
-
-	//Pipeline();
-    switch(filled)
-	{
-		case 0:
-    		for (int i = 0; i < (asteroidBelt.size()); i++)
-    		{
-				vector<point> a = asteroidBelt.at(i).getPoints();
-				point b = asteroidBelt.at(i).getCenter();
-				for (int j = 0; j < (a.size()); j++)
-        		{
-					glBegin (GL_LINES);
-						glVertex2d(a.at(j).x + b.x, a.at(j).y + b.y);
-						glVertex2d( a.at((j+1)%a.size()).x + b.x, a.at((j+1)%a.size()).y +b.y);
-					glEnd ();         
-        		}
-			}
-			break;
-		case 1:
-			for (int i = 0; i < (asteroidBelt.size()); i++)
-    		{
-				vector<triangle> a = asteroidBelt.at(i).getTess();
-				point b = asteroidBelt.at(i).getCenter();
-				for (int j = 0; j < (a.size()); j++)
-        		{
-					glBegin (GL_TRIANGLES);
-						glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
-						glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
-						glVertex2d(a.at(j).c.x + b.x, a.at(j).c.y + b.y);
-						glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
-					glEnd ();         
-        		}
-			}
-	}
-
-	
-	drawShip(enterprise);		
-
-
-	glColor3f(1.0, 1.0, 0.0);
-	for(int i = 0; i < bullets.size(); i++){
-			drawBullet(bullets[i]);
-		
-	}
-
-	glutSwapBuffers();*/
-
-
-}
+void initiateOctogon();
 
 /*
  * Main Display Fucntion
  * Displays everything from the Asteroids to the Bullets to the Scoreboard 
  */
-
 void gameView()
 {
 	//output game to window
-	initiateOctogon();  				// Draw the Octogon on Screen 
-    glColor3f ( 0.1, 0.5, 0.0 );      	// Set draw color to green
-	glPointSize(4.0);					// Set the Point size to 4
+	initiateOctogon();  			// Draw the Octogon on Screen 
+    	glColor3f (0.1, 0.5, 0.0);      	// Set draw color to green
+	glPointSize(4.0);			// Set the Point size to 4
 
-	//Pipeline();
 	//Draw the asteroids
 	switch(filled)
 	{
-		//If not filled
+		// If not filled
 		case 0:
-    		for (int i = 0; i < (asteroidBelt.size()); i++)
-    		{
+    			for (int i = 0; i < (asteroidBelt.size()); i++)
+    			{
 				vector<point> a = asteroidBelt.at(i).getPoints();
 				point b = asteroidBelt.at(i).getCenter();
 				for (int j = 0; j < (a.size()); j++)
-        		{
+        			{
 					glBegin (GL_LINES);
 						glVertex2d(a.at(j).x + b.x, a.at(j).y + b.y);
 						glVertex2d( a.at((j+1)%a.size()).x + b.x, a.at((j+1)%a.size()).y +b.y);
 					glEnd ();         
-        		}
+        			}
 			}
 			break;
 
 		// If filled
 		case 1:
 			for (int i = 0; i < (asteroidBelt.size()); i++)
-    		{
+    			{
 				// Get the tesslated Triangles for the Asteroid.
 				vector<triangle> a = asteroidBelt.at(i).getTess();
 				// Get the center
 				point b = asteroidBelt.at(i).getCenter();
 				// Draw the triangles
 				for (int j = 0; j < (a.size()); j++)
-        		{
+        			{
 					glBegin (GL_TRIANGLES);
 						glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
 						glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
 						glVertex2d(a.at(j).c.x + b.x, a.at(j).c.y + b.y);
-//						glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
 					glEnd ();         
-        		}
+        			}
 			}
 	}
 
-	switch(tess)
+	// If tess is 1, show the tessellation lines on every asteroid.
+	if(tess == 1)
 	{
-		case 1:
 		for (int i = 0; i < (asteroidBelt.size()); i++)
-    		{
+	    	{
 			vector<triangle> a = asteroidBelt.at(i).getTess();
 			point b = asteroidBelt.at(i).getCenter();
 			for (int j = 0; j < (a.size()); j++)
-        		{
+			{
 				glBegin (GL_LINES);
 						glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
 						glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
 						glVertex2d(a.at(j).c.x + b.x, a.at(j).c.y + b.y);
 						glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
-//					glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
-//					glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
-//					glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
-//					glVertex2d(a.at(j).c.x + b.x, a.at(j).c.y + b.y);
-//					glVertex2d(a.at(j).c.x + b.x, a.at(j).c.y + b.y);
-//					glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
 				glEnd();
 			}
 		}
@@ -210,22 +128,12 @@ void gameView()
 
 	// Draw the bullets.
 	glColor3f(1.0, 1.0, 0.0);
-	for(int i = 0; i < bullets.size(); i++){
-			drawBullet(bullets[i]);
-		
-	}
-
-#ifdef DEBUG
-	// If DEBUG has been defined, draw the debug display.
-	debugDisplay();
-#endif
+	for(int i = 0; i < bullets.size(); i++)
+		drawBullet(bullets[i]);
 
 	// Swap the buffers.
 	glutSwapBuffers();
-
-
 }
-
 
 void gameLoop()
 {
@@ -238,14 +146,13 @@ void gameLoop()
 	{
 		if (deltaRot < 10.0 && !rightReached10)
 		{
-			deltaRot *= 1.1;			// Multiply deltaRot by 1.1.
+			deltaRot *= 1.1;		// Multiply deltaRot by 1.1.
 
 			if (deltaRot >= 10) 		// If deltaRot reached or 
-			{							// went above 10 reset it 
+			{				// went above 10 reset it 
 				rightReached10 = true;	// to 10.
 				deltaRot = 10;
-			}
-			
+			}			
 		}
 
 		// Decrement ship rotation by deltaRot (counterclockwise)
@@ -266,14 +173,13 @@ void gameLoop()
 	{
 		if (deltaRot < 10.0 && !leftReached10)
 		{
-			deltaRot *= 1.1;			// Multiply deltaRot by 1.1.
+			deltaRot *= 1.1;		// Multiply deltaRot by 1.1.
 			
-			if (deltaRot >= 10)			// If deltaRot reached o
-			{							// went above 10 reset it
+			if (deltaRot >= 10)		// If deltaRot reached o
+			{				// went above 10 reset it
 				leftReached10 = true;	// to 10.
 				deltaRot = 10;
-			}
-			
+			}		
 		}
 		
 		// Decrement ship rotation by deltaRot (counterclockwise)
@@ -310,25 +216,23 @@ void gameLoop()
 		asteroidBelt.at(i).incrementLocation();
 	}
 
-	//glutPostRedisplay();	
+	glutPostRedisplay();	
 }
 
 /* 
- * This is supposed to build game window dependencies. Like the storeboard  
+ * This is supposed to build game window dependencies. Like the scoreboard  
  * and other variables that would need to be initiallized. It is currently empty
  */
-
 void initiateGameDisplay()
 {
 	//build window dependencies
 }
 
 /*
- * This function intitiates the number of asteroids that are supposed ot be displayed.
+ * This function intitiates the number of asteroids that are supposed to be displayed.
  * It generates that set number and logs the information about the asteroids into the 
  * asteroid log file.
  */
-
 void initiateAsteroids()
 {
 	// Open log file, record number of asteroids we are going to gnerate, then close to 
@@ -339,7 +243,7 @@ void initiateAsteroids()
 
 	//Generate Asteroids
 	int i = 0;
-	while (i<NUMBER_OF_ASTEROIDS)
+	while (i < NUMBER_OF_ASTEROIDS)
 	{	
 		// Open log file, record the asteroid we are on, then close to save changes.
 		asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
@@ -348,7 +252,7 @@ void initiateAsteroids()
 		// Create an asteroid then push it into the asteroidBelt.
 		asteroid a = asteroid();
 		asteroidBelt.push_back(a);
-		i++;		//increment i.
+		i++;
 	}
 
 	// Open log file, record that we have generated asteroidBelt.size() asteroids,
@@ -359,23 +263,12 @@ void initiateAsteroids()
 }
 
 /*
- * This function initiates the enterprise, we might not need this.
- */
-
-void initiateShip()
-{
-	//Build Ship and ship dependencies.
-	enterprise = createShip();
-}
-
-/*
  * This function initiates the window. 
  */
-
 void initiateWindow(int argc, char** argv)
 {
 	//build window
-    glutInit(&argc,argv);
+   	glutInit(&argc,argv);
 	//glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB); /* default, not needed */
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(WINDOW_MAX_X, WINDOW_MAX_Y); /* set pixel window */
@@ -384,26 +277,22 @@ void initiateWindow(int argc, char** argv)
 }
 
 /*
- * This funtion also initiates the window... sets the interior mainly.  
+ * This funtion also initiates the window. Primarily sets the interior.  
  */
-void initiateGL( void )
+void initiateGL(void)
 {
 	glClearColor(0.0,0.0,0.0,1.0); /* black background */
-	
-	//glColor3f(1.0, 0.0, 0.0); /* draw in red */
-    //glPointSize(10.0);
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
+    	glMatrixMode(GL_PROJECTION);
+    	glLoadIdentity();
 	gluOrtho2D(WORLD_COORDINATE_MIN_X, WORLD_COORDINATE_MAX_X,
         WORLD_COORDINATE_MIN_Y, WORLD_COORDINATE_MAX_Y);
 	glMatrixMode(GL_MODELVIEW);
 }
 
 /*
- * We draw the octogon here, we should probubly save the points generated by the octogon though... 
+ * We draw the octogon here.
  */
-
 void initiateOctogon(void)
 {
 	// Clear the buffer
@@ -427,18 +316,17 @@ void initiateOctogon(void)
 	// Set color to grean then draw the octogon as lines.
 	glColor3f(0.1,0.5,0.0);
 	glBegin(GL_LINES);
-		for(int i = 0; i < pts.size(); i ++){
-			glVertex2f( pts[i].x , pts[i].y);
-			glVertex2f( pts[(i+1)%pts.size()].x , pts[(i+1)%pts.size()].y);
+		for(int i = 0; i < pts.size(); i ++)
+		{
+			glVertex2f(pts[i].x, pts[i].y);
+			glVertex2f(pts[(i+1)%pts.size()].x, pts[(i+1)%pts.size()].y);
 		}
 	glEnd();
 }
 
 /*
- * Keyboard Function, we need these to 
- *
+ * Keyboard Functions
  */
-
 void keyboard(unsigned char key, int x, int y)
 {
 	
@@ -448,9 +336,11 @@ void keyboard(unsigned char key, int x, int y)
 	//if(key == 'p' || key == 'P')
 		//pause movement
 
+	// Exits the game.
 	if(key == 'q' || key == 'Q')
 		exit(0);
 
+	// Shows tessellation lines for every asteroid
 	if(key == 't' || key == 'T')
 	{
 		filled = 0;
@@ -461,6 +351,7 @@ void keyboard(unsigned char key, int x, int y)
 		glutIdleFunc(gameLoop);
 	}
 
+	// Fills the asteroids.
 	if(key == 'f' || key == 'F'){
 		if(filled == 0)
 			filled = 1;
@@ -470,18 +361,7 @@ void keyboard(unsigned char key, int x, int y)
 		glutIdleFunc(gameLoop);
 	}
 
-	if(key == 'a' || key == 'A')
-	{
-		enterprise.rotation += 2.5;
-		glutIdleFunc(gameLoop);
-	}		
-
-	if(key == 'd' || key == 'D')
-	{
-		enterprise.rotation -= 2.5;
-		glutIdleFunc(gameLoop);
-	}
-
+	// Fires a bullet.
 	if(key == ' ')
 	{
 		bullet shot = createBullet();
@@ -489,6 +369,8 @@ void keyboard(unsigned char key, int x, int y)
 		fireBullet(shot);
 		glutIdleFunc(gameLoop);
 	}
+
+	// WILL BE REMOVED LATER
 	if(key == 'b')
 	{
 		vector<asteroid> temp = asteroidBelt.at(0).breakupAsteroid();
@@ -500,8 +382,11 @@ void keyboard(unsigned char key, int x, int y)
 	}
 }
 
-void specialKeys(int key, int x, int y){
-	switch(key){
+// Handles the rotation of the ship.
+void specialKeys(int key, int x, int y)
+{
+	switch(key)
+	{
 		case GLUT_KEY_RIGHT:
 			rightKeyPressed = true;
 			glutIdleFunc(gameLoop);
@@ -510,22 +395,17 @@ void specialKeys(int key, int x, int y){
 		case GLUT_KEY_LEFT:
 			leftKeyPressed = true;
 			glutIdleFunc(gameLoop);
-			break;	
-
-		/*case SPACEBAR:
-			//fire missiles
-			bullet shot = createBullet();
-			bullets.push_back(shot);
-			fireBullet(shot);
-			glutIdleFunc(gameLoop);
-			break;		*/
+			break;
 
 		default: break;
 	}
 }
 
-void keyReleased (int key, int x, int y){
-	switch (key) {
+// Handles the rotation of the ship.
+void keyReleased (int key, int x, int y)
+{
+	switch(key)
+	{
 		case GLUT_KEY_RIGHT:
 			deltaRot = 1.0;
 			timeKeyPressed = 0;
@@ -553,7 +433,6 @@ int main(int argc, char** argv)
 	initiateWindow(argc, argv); /* Set up Window */
 	initiateGL();
 	initiateOctogon();
-	initiateShip();
 	initiateAsteroids();
 	initiateGameDisplay();
 	glutSetKeyRepeat(GLUT_KEY_REPEAT_ON);

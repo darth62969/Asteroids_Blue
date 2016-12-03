@@ -18,10 +18,6 @@
 #ifndef HEADERS
 #define HEADERS
 
-/*
- * #include stuff
- */
-
 #include <cmath>
 #include <GL/glut.h>
 #include <stdio.h>
@@ -51,13 +47,7 @@ const int ASTEROID_MAX_Y = 20;
 const int ASTEROID_MAX_SIZE = 12;
 const int ASTEROID_MIN_SIZE = 4;
 
-//Ship Constants
-
 //World Constants
 const int NUMBER_OF_ASTEROIDS = 50;
-
-//Log FilePaths
-
-//Other Constants
 
 #endif
