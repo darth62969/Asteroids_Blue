@@ -34,7 +34,7 @@ OBJS = main.o asteroid.o ship.o bullets.o transformer.o
 
 debug ?= n
 ifeq ($(debug), y)
-	CFLAGS += -g -DDEBUG
+	CFLAGS += -g -DDEBUG -pg
 endif
 
 # Independent Targets - first is executable, second is object

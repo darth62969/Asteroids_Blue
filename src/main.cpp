@@ -50,6 +50,7 @@ bool rightReached10 = false;	// right rotation reached 10
 bool leftKeyPressed = false;	// Also for ship rotation, tells us if the ship's
 bool leftReached10 = false;	// left rotation reached 10
 bool spacePressed = false;	// This is for firing bullets.
+bool paused = true;
 int timeKeyPressed = 0;		// Iterator for Debug reasons
 int filled = 0;			// 0 if lines should be drawn, 1 if filled (asteroids)   
 int tess = 0;
@@ -138,6 +139,10 @@ void gameView()
 
 void gameLoop()
 {
+	if(paused)
+	{
+		return;
+	}
 	// Open the Ship Log file to record debug information.
 	shipLogger.open(SHIP_LOG_PATH, ofstream::out|ofstream::app);
 
@@ -334,7 +339,13 @@ void keyboard(unsigned char key, int x, int y)
 	//if(key == 's' || key == 'S')
 		// start game
 
-	//if(key == 'p' || key == 'P')
+	if(key == 'p' || key == 'P')
+	{
+		if (paused)
+			paused = false;
+		else
+			paused = true;
+	}
 		//pause movement
 
 	// Exits the game.
@@ -349,7 +360,7 @@ void keyboard(unsigned char key, int x, int y)
 			tess = 1;
 		else
 			tess = 0;
-		glutIdleFunc(gameLoop);
+		//glutIdleFunc(gameLoop);
 	}
 
 	// Fills the asteroids.
@@ -359,7 +370,7 @@ void keyboard(unsigned char key, int x, int y)
 		else
 			filled = 0;
 		tess = 0;
-		glutIdleFunc(gameLoop);
+		//glutIdleFunc(gameLoop);
 	}
 
 	// Fires a bullet.
@@ -396,7 +407,7 @@ void keyReleased(unsigned char key, int x, int y)
 			bullet shot = createBullet();
 			bullets.push_back(shot);
 			fireBullet(shot);
-			glutIdleFunc(gameLoop);
+			//glutIdleFunc(gameLoop);
 		}
 
 		spacePressed = false;
@@ -410,12 +421,12 @@ void specialKeys(int key, int x, int y)
 	{
 		case GLUT_KEY_RIGHT:
 			rightKeyPressed = true;
-			glutIdleFunc(gameLoop);
+			//glutIdleFunc(gameLoop);
 			break;
 
 		case GLUT_KEY_LEFT:
 			leftKeyPressed = true;
-			glutIdleFunc(gameLoop);
+			//glutIdleFunc(gameLoop);
 			break;
 
 		default: break;
