@@ -33,28 +33,72 @@ ofstream shipLogger;			// Ship logger, records information about the ship into t
 ofstream collisionLogger;		// Collision logger, records information about colitions into the collision log.
 ofstream bulletLogger;			// Bullet Logger, records information about bullets into the bullet log.
 ofstream transformationLogger;		// Transfomration logger, records information about transforms into tranformmation log.
+ofstream generalLogger;
 
 // Log paths
-char* ASTEROID_LOG_PATH = "asteroid_log.txt";
-char* SHIP_LOG_PATH = "ship_log.txt";
-char* COLLISION_LOG_PATH = "collision_log.txt";
-char* BULLET_LOG_PATH = "bullet_log.txt";
-char* TRANSFORMATION_LOG_PATH = "transformation_log.txt";
+char* ASTEROID_LOG_PATH = "logs/asteroid_log.txt";
+char* SHIP_LOG_PATH = "logs/ship_log.txt";
+char* COLLISION_LOG_PATH = "logs/collision_log.txt";
+char* BULLET_LOG_PATH = "logs/bullet_log.txt";
+char* TRANSFORMATION_LOG_PATH = "logs/transformation_log.txt";
+char* GENERAL_LOG_PATH = "logs/general_log.txt";
 
 //Runtime Variables
 vector<asteroid> asteroidBelt; 	// Holds all asteroids
 vector<bullet> bullets; 	// Holds all bullets
+
 float deltaRot = 1.0; 		// For use in the accelleration of ship rotation 
+
+double FPS = 0.0;	// FPS calcuatitions 
+double avgFPS;
+
 bool rightKeyPressed = false;	// These are for the ship rotation functions
 bool rightReached10 = false;	// right rotation reached 10
 bool leftKeyPressed = false;	// Also for ship rotation, tells us if the ship's
-bool leftReached10 = false;	// left rotation reached 10
-bool spacePressed = false;	// This is for firing bullets.
-bool paused = true;
+bool leftReached10 = false;		// left rotation reached 10
+bool spacePressed = false;		// This is for firing bullets.
+bool paused = true;				// For pause screen 
+
 int timeKeyPressed = 0;		// Iterator for Debug reasons
 int filled = 0;			// 0 if lines should be drawn, 1 if filled (asteroids)   
 int tess = 0;
+int frames = 0;
+int timeC = 0;
+int timeP = 0;
+
+
+
+
 void initiateOctogon();
+
+void debugDisplay()
+{
+	//get FPS
+	frames++;
+	timeC = glutGet(GLUT_ELAPSED_TIME);
+	FPS = 1000.0/(double)(timeC - timeP);
+	avgFPS= ((avgFPS*(frames-1))+FPS)/frames;
+	timeP = timeC;
+	
+	//display FPS
+
+	generalLogger.open( GENERAL_LOG_PATH, ofstream::out|ofstream::app);
+	generalLogger << "FPS : " << FPS << endl;
+	generalLogger << "avgFPS : " << avgFPS << endl; 
+	// Count Asteroid Triangles
+	int triCount = 0;
+
+	for (int i = 0; i < asteroidBelt.size(); i++)
+	{
+		triCount += asteroidBelt[i].getTess().size();
+	} 
+
+	generalLogger << "Triangles on Screen : " << triCount << endl << endl;
+	generalLogger.close();
+
+	//Display Triangle Count
+}
+
 
 /*
  * Main Display Fucntion
@@ -135,6 +179,10 @@ void gameView()
 
 	// Swap the buffers.
 	glutSwapBuffers();
+
+	#ifdef DEBUG
+	debugDisplay();
+	#endif
 }
 
 void gameLoop()
@@ -462,6 +510,10 @@ int main(int argc, char** argv)
 	shipLogger.open(SHIP_LOG_PATH, ofstream::out|ofstream::trunc);
 	shipLogger << "Ship Logger Started" << endl;
 	shipLogger.close();
+	generalLogger.open(GENERAL_LOG_PATH, ofstream::out|ofstream::trunc);
+	generalLogger << "General Logging Started " << endl;
+	generalLogger.close();
+
 	initiateWindow(argc, argv); /* Set up Window */
 	initiateGL();
 	initiateOctogon();
