@@ -49,6 +49,7 @@ bool rightKeyPressed = false;	// These are for the ship rotation functions
 bool rightReached10 = false;	// right rotation reached 10
 bool leftKeyPressed = false;	// Also for ship rotation, tells us if the ship's
 bool leftReached10 = false;	// left rotation reached 10
+bool spacePressed = false;	// This is for firing bullets.
 int timeKeyPressed = 0;		// Iterator for Debug reasons
 int filled = 0;			// 0 if lines should be drawn, 1 if filled (asteroids)   
 int tess = 0;
@@ -364,11 +365,13 @@ void keyboard(unsigned char key, int x, int y)
 	// Fires a bullet.
 	if(key == ' ')
 	{
+		spacePressed = true;
+/*	
 		bullet shot = createBullet();
 		bullets.push_back(shot);
 		fireBullet(shot);
 		glutIdleFunc(gameLoop);
-	}
+*/	}
 
 	// WILL BE REMOVED LATER
 	if(key == 'b')
@@ -379,6 +382,24 @@ void keyboard(unsigned char key, int x, int y)
 			asteroidBelt.push_back(temp.at(i));
 		}
 		asteroidBelt.erase(asteroidBelt.begin());
+	}
+}
+
+// Handles the firing of bullets.
+void keyReleased(unsigned char key, int x, int y)
+{
+	// When the space key is released after being tapped, fire a bullet.
+	if(key == ' ')
+	{
+		if(spacePressed)
+		{
+			bullet shot = createBullet();
+			bullets.push_back(shot);
+			fireBullet(shot);
+			glutIdleFunc(gameLoop);
+		}
+
+		spacePressed = false;
 	}
 }
 
@@ -402,7 +423,7 @@ void specialKeys(int key, int x, int y)
 }
 
 // Handles the rotation of the ship.
-void keyReleased (int key, int x, int y)
+void specialKeyReleased(int key, int x, int y)
 {
 	switch(key)
 	{
@@ -437,8 +458,9 @@ int main(int argc, char** argv)
 	initiateGameDisplay();
 	glutSetKeyRepeat(GLUT_KEY_REPEAT_ON);
 	glutKeyboardFunc(keyboard);
+	glutKeyboardUpFunc(keyReleased);
 	glutSpecialFunc(specialKeys); 
-	glutSpecialUpFunc(keyReleased);
+	glutSpecialUpFunc(specialKeyReleased);
 	glutDisplayFunc(gameView);
 	glutIdleFunc(gameLoop);
 	glutMainLoop();
