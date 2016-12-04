@@ -155,9 +155,11 @@ void debugDisplay()
 	drawString(20, WORLD_COORDINATE_MAX_Y-20, FPSStr);
 	drawString(20, WORLD_COORDINATE_MAX_Y-35, avgFPSStr);
 
+#ifdef LOGGING
 	generalLogger.open( GENERAL_LOG_PATH, ofstream::out|ofstream::app);
-	generalLogger << "FPS : " << FPS << endl;
-	generalLogger << "avgFPS : " << avgFPS << endl; 
+	generalLogger << FPSStr << endl;
+	generalLogger << avgFPSStr << endl;
+#endif 
 	// Count Asteroid Triangles
 
 	int triCount = 0;
@@ -171,10 +173,10 @@ void debugDisplay()
 
 	sprintf(triCountStr, "Triangles On Screen : %3d", triCount);
 	drawString(20, WORLD_COORDINATE_MAX_Y-50, triCountStr);
-
+#ifdef LOGGING
 	generalLogger << "Triangles on Screen : " << triCount << endl << endl;
 	generalLogger.close();
-
+#endif
 	//Display Triangle Count
 }
 
@@ -258,9 +260,9 @@ void gameView()
 
 	displayScore();
 
-	#ifdef DEBUG
+#ifdef DEBUG
 	debugDisplay();
-	#endif
+#endif
 
 	// Swap the buffers.
 	glutSwapBuffers();
@@ -273,8 +275,9 @@ void gameLoop()
 		return;
 	}
 	// Open the Ship Log file to record debug information.
+#ifdef LOGGING
 	shipLogger.open(SHIP_LOG_PATH, ofstream::out|ofstream::app);
-
+#endif
 	// If the right arrow key has been pressed rotate the ship
 	// Starting at 1 degree then moving to 10 degrees at a time.
 	if (rightKeyPressed) 
@@ -297,9 +300,11 @@ void gameLoop()
 		timeKeyPressed++;
 
 		// Log Changes
+#ifdef LOGGING
 		shipLogger << endl << "Ship Rotation : " << enterprise.rotation << endl; 
 		shipLogger << "Delta Rot : " << deltaRot << endl;
 		shipLogger << "Time Right Arrow Pressed = " << timeKeyPressed;
+#endif
 	}
 
 	// If the left arrow key has been pressed rotate the ship
@@ -324,13 +329,17 @@ void gameLoop()
 		timeKeyPressed++;
 
 		// Log Changes
+#ifdef LOGGING
 		shipLogger << endl << "Ship Rotation : " << enterprise.rotation << endl; 
 		shipLogger << "Delta Rot : " << deltaRot << endl;
 		shipLogger << "Time Right Arrow Pressed = " << timeKeyPressed << endl;
+#endif
 	}
 	
 	//Close the ship logger to save changes.
+#ifdef LOGGING
 	shipLogger.close();
+#endif
 
 	// Iterate through and Increment each bullet's location
 	for(int i=0; i <bullets.size();i++)
@@ -372,18 +381,21 @@ void initiateAsteroids()
 {
 	// Open log file, record number of asteroids we are going to gnerate, then close to 
 	// save changes.
+#ifdef LOGGING
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 	asteroidLogger << "\nGenerating " << NUMBER_OF_ASTEROIDS << " asteroids\n\n";
 	asteroidLogger.close();
-
+#endif
 	//Generate Asteroids
 	int i = 0;
 	while (i < NUMBER_OF_ASTEROIDS)
 	{	
 		// Open log file, record the asteroid we are on, then close to save changes.
+#ifdef LOGGING
 		asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 		asteroidLogger << "Asteroid #" << i << endl;
 		asteroidLogger.close();
+#endif
 		// Create an asteroid then push it into the asteroidBelt.
 		asteroid a = asteroid();
 		asteroidBelt.push_back(a);
@@ -392,9 +404,11 @@ void initiateAsteroids()
 
 	// Open log file, record that we have generated asteroidBelt.size() asteroids,
 	// then close to save changes.
+#ifdef LOGGING	
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 	asteroidLogger << "\nGenerated " << asteroidBelt.size() << " asteroids\n";
 	asteroidLogger.close();
+#endif
 }
 
 /*
@@ -586,6 +600,7 @@ void specialKeyReleased(int key, int x, int y)
 
 int main(int argc, char** argv)
 {
+#ifdef LOGGING
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::trunc);
 	asteroidLogger << "Asteroid Logging Started" << endl;
 	asteroidLogger.close();
@@ -595,7 +610,7 @@ int main(int argc, char** argv)
 	generalLogger.open(GENERAL_LOG_PATH, ofstream::out|ofstream::trunc);
 	generalLogger << "General Logging Started " << endl;
 	generalLogger.close();
-
+#endif
 	initiateWindow(argc, argv); /* Set up Window */
 	initiateGL();
 	initiateOctogon();

@@ -38,13 +38,17 @@ asteroid::asteroid()
  * 	return asteroid
  */
  	numsides = rand()% (ASTEROID_MAX_SIZE - ASTEROID_MIN_SIZE + 1) + ASTEROID_MIN_SIZE;
+#ifdef LOGGING	 
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 	asteroidLogger << "Number of sides to generate : " << numsides << endl;
+#endif
 	center.x = rand() % (WORLD_COORDINATE_MAX_X + 1) + WORLD_COORDINATE_MIN_X;
 	center.y = rand() % (WORLD_COORDINATE_MAX_Y + 1) + WORLD_COORDINATE_MIN_Y;
 	rotation = rand() % 360;
 	rotation *= M_PI / 180.0;
+#ifdef LOGGING
 	asteroidLogger << "Bottom Left corner of asteroid at : " << center.x << " " << center.y << endl;
+#endif
 	int i = rand();
 	for (int j = 0; j < numsides; j++)
 	{
@@ -60,16 +64,19 @@ asteroid::asteroid()
 	tessellateAsteriod();
 	//rotation = drand48();
 	float rotation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+#ifdef LOGGING	
 	asteroidLogger << "Rotation was set to : " << rotation << "\n\n";
 	asteroidLogger.close();
+#endif
 }
 
 asteroid::asteroid(triangle a, point location, point offset, int num)
 {
+#ifdef LOGGING
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-	asteroidLogger << "Creating Simple Asteroid\n";
+	asteroidLogger << "Creating Simple Asteroid #" << num << endl;
 	asteroidLogger.close();
-
+#endif
 	astPnts.push_back(a.a);
 	astPnts.push_back(a.b);
 	astPnts.push_back(a.c);
@@ -84,10 +91,11 @@ asteroid::asteroid(triangle a, point location, point offset, int num)
 
 	center.x = location.x + offset.x;
 	center.y = location.y + offset.y;
-
+#ifdef LOGGING
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-	asteroidLogger << "Created Simple Asteroid\n";
+	asteroidLogger << "Created Simple Asteroid\n\n";
 	asteroidLogger.close();
+#endif
 }
 
 point asteroid::getCenter()
@@ -129,10 +137,11 @@ void asteroid::clear()
 
 void asteroid::createAsteroid(triangle a, point location, point offset, int num)
 {
+#ifdef LOGGING
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-	asteroidLogger << "\nCreating Simple Asteroid #" << num << endl;
+	asteroidLogger << "Creating Simple Asteroid #" << num << endl;
 	asteroidLogger.close();
-
+#endif
 	astPnts.clear();
 	astPnts.push_back(a.a);
 	astPnts.push_back(a.b);
@@ -148,12 +157,13 @@ void asteroid::createAsteroid(triangle a, point location, point offset, int num)
 
 	center.x = location.x + offset.x;
 	center.y = location.y + offset.y;
-
+#ifdef LOGGING
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-	asteroidLogger << "Created Simple Asteroid\n";
+	asteroidLogger << "Created Simple Asteroid\n" << endl;
 	asteroidLogger.close();
-
+#endif
 }
+
 vector<asteroid> asteroid::breakupAsteroid()
 {
 /*
@@ -162,13 +172,18 @@ vector<asteroid> asteroid::breakupAsteroid()
  *	createAsteroid(traingle a)
  * 	repeat through last triangle pointer.
  */
+#ifdef LOGGING
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 	asteroidLogger << "Breaking up asteroid into " << astTris.size() << " asteroids.\n";
-	
+	asteroidLogger.close();
+#endif
 
 	vector<asteroid> breakup;
 	for(int i = 0; i < astTris.size(); i++)
 	{
+		if (astTris.size()==1)
+			break;
+
 		triangle tmpt = astTris.at(i);
 		point tmpp;
 
@@ -176,7 +191,11 @@ vector<asteroid> asteroid::breakupAsteroid()
 		{
 			if (tmpt.b.x > tmpt.c.x)
 			{
+#ifdef LOGGING
+				asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 				asteroidLogger << tmpt.b.x << ">" << tmpt.c.x << endl; 
+				asteroidLogger.close();
+#endif
 				tmpp.x=tmpt.c.x;
 				tmpt.a.x-=tmpp.x;
 				tmpt.b.x-=tmpp.x;
@@ -184,7 +203,11 @@ vector<asteroid> asteroid::breakupAsteroid()
 			}
 			else
 			{
-				asteroidLogger << tmpt.c.x << ">" << tmpt.b.x << endl; 
+#ifdef LOGGING				
+				asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+				asteroidLogger << tmpt.c.x << ">" << tmpt.b.x << endl;
+				asteroidLogger.close();
+#endif
 				tmpp.x=tmpt.b.x;
 				tmpt.a.x-=tmpp.x;
 				tmpt.b.x-=tmpp.x;
@@ -195,7 +218,11 @@ vector<asteroid> asteroid::breakupAsteroid()
 		{
 			if (tmpt.a.x > tmpt.c.x)
 			{
-				asteroidLogger << tmpt.a.x << ">" << tmpt.c.x << endl; 
+#ifdef LOGGING
+				asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+				asteroidLogger << tmpt.a.x << ">" << tmpt.c.x << endl;
+				asteroidLogger.close(); 
+#endif
 				tmpp.x=tmpt.c.x;
 				tmpt.a.x-=tmpp.x;
 				tmpt.b.x-=tmpp.x;
@@ -203,7 +230,11 @@ vector<asteroid> asteroid::breakupAsteroid()
 			}
 			else
 			{
-				asteroidLogger << tmpt.c.x << ">" << tmpt.a.x << endl; 
+#ifdef LOGGING
+				asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+				asteroidLogger << tmpt.c.x << ">" << tmpt.a.x << endl;
+				asteroidLogger.close(); 
+#endif
 				tmpp.x=tmpt.a.x;
 				tmpt.a.x-=tmpp.x;
 				tmpt.b.x-=tmpp.x;
@@ -246,7 +277,6 @@ vector<asteroid> asteroid::breakupAsteroid()
 			}
 		}
 		
-		asteroidLogger.close();
 		
 		asteroid a(tmpt, center, tmpp, i);
 		//a.createAsteroid(tmpt, center, tmpp, i);

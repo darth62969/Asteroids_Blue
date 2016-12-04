@@ -31,10 +31,14 @@ LIBFLAGS = -lglut -lGLU -lGL
 HEADERS = src/headers.h src/structs.h src/globals.h src/prototypes.h
 OBJS = main.o asteroid.o ship.o bullets.o transformer.o
 
-
+logging ?= y
 debug ?= n
 ifeq ($(debug), y)
 	CFLAGS += -g -DDEBUG -pg
+endif
+
+ifeq ($(logging), y)
+	CFLAGS += -DLOGGING
 endif
 
 # Independent Targets - first is executable, second is object
