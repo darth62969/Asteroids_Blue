@@ -9,6 +9,10 @@
 typedef point edge[2];
 typedef point pointArray[200];        /* MAX is a declared constant */
 
+
+vector<asteroid> allGood;
+
+
 void Intersect(point first, point second, point *clipBoundary,
                           point *intersectPt)
 {
@@ -40,31 +44,32 @@ bool Inside(point testPoint, point *clipBoundary)
         return 0;
 }
 
-bool insideOctogon(point p){
+int insideOctogon(point p){
 	double slope, line;
 
-	bool in = 1;
+	int in = 1;
 	if (p.x < octogon[0].x) in *= 0;
 	if (p.x > octogon[5].x) in *= 0;
-	if (p.y < octogon[2].y) in *= 0;
-	if (p.y > octogon[7].y) in *= 0;
+	if (p.y > octogon[2].y) in *= 0;
+	if (p.y < octogon[7].y) in *= 0;
 
 	slope = (octogon[7].y - octogon[0].y) / (octogon[7].x - octogon[0].x);
 	line = slope*(p.x - octogon[0].x)+ octogon[0].y;
-	if (p.y > line) in *= 0;
+	if (p.y < line) in *= 0;
 	
 	slope = (octogon[6].y - octogon[5].y) / (octogon[6].x - octogon[5].x);
 	line = slope*(p.x - octogon[6].x)+ octogon[6].y;
-	if (p.y > line) in *= 0;
+	if (p.y < line) in *= 0;
 	
 	slope = (octogon[5].y - octogon[4].y) / (octogon[5].x - octogon[4].x);
 	line = slope*(p.x - octogon[5].x)+ octogon[5].y;
-	if (p.y < line) in *= 0;
+	if (p.y > line) in *= 0;
 
 	slope = (octogon[2].y - octogon[1].y) / (octogon[2].x - octogon[1].x);
 	line = slope*(p.x - octogon[2].x)+ octogon[2].y;
-	if (p.y < line) in *= 0;
+	if (p.y > line) in *= 0;
 
+	return in;
 }
 
 
@@ -160,6 +165,69 @@ void clipOctogon(vector<point>& v){
 
 	arrayToVector(v, in, *outSize);	
 }
+
 void clipTrapazoid(vector<point>& v, vector<point> t){
+	pointArray in;
+	pointArray out;
+	int *outSize = new int;
+	
+
+	edge clipBounds;
+	clipBounds[0] = t[0];
+	clipBounds[1] = t[1];
+		
+	vectorToArray(v,in);
+
+	SutherlandHodgmanPolygonClip(in,out,v.size(),outSize,clipBounds);
+	
+	clipBounds[0] = t[1]; clipBounds[1] = t[2];
+	SutherlandHodgmanPolygonClip(out,in,*outSize,outSize,clipBounds);
+	
+	clipBounds[0] = t[2]; clipBounds[1] = t[3];
+	SutherlandHodgmanPolygonClip(in,out,*outSize,outSize,clipBounds);
+	
+	clipBounds[0] = t[3]; clipBounds[1] = t[0];
+	SutherlandHodgmanPolygonClip(out,in,*outSize,outSize,clipBounds);
+		
+	arrayToVector(v, in, *outSize);	
 
 }
+
+void clip(){
+	allGood.clear();
+	for (int i = 0; i < asteroidBelt.size(); i++){
+		bool allIn = 1;
+		int total = 0;
+
+		vector<point> ast = asteroidBelt[i].getPoints();
+		for (int j = 0; j < ast.size(); j++){
+			
+			int result = insideOctogon(ast[i]);
+			allIn *= result;
+			total += result;
+		}	
+
+		if (allIn) allGood.push_back(asteroidBelt[i]);
+		else{
+			vector<point> v = asteroidBelt[i].getPoints();;
+			clipOctogon(v);
+			asteroid fake = asteroidBelt[i];
+			fake.setPoints(v);
+			allGood.push_back(fake);
+		}
+		/*else if (total > 0){
+			asteroid a = asteroidBelt[i];
+			asteroid b = asteroidBelt[i];
+			
+			
+		}
+		else{
+			moveIt(asteroidBelt[i]);
+		}*/
+			
+	}
+}
+
+
+
+

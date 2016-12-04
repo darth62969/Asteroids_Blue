@@ -50,7 +50,9 @@ void debugDisplay(void)
 	glPointSize(4.0);
 
 	Pipeline();
-    
+   
+	//clip();
+ 
     	for (int i = 0; i < (asteroidBelt.size()); i++)
     	{
 		vector<point> a = asteroidBelt.at(i).getPoints();
@@ -179,7 +181,13 @@ void drawOctogon(void){
 		}
 	glEnd();
 }
+void debugMe(int x, int y){
+	point p = {x,y,0,1};
 
+	int result = insideOctogon(p);
+	
+	if (result) printf("        ");
+}
 void keyboard(unsigned char key, int x, int y){
 	
 	//if(key == 's' || key == 'S')
@@ -251,6 +259,15 @@ void specialKeys(int key, int x, int y){
 	}
 }
 
+void mouse(int button, int state, int x, int y){
+        if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN){
+                       
+        }
+        if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN){
+                       debugMe(x,y);
+        }
+}
+
 int main(int argc, char** argv)
 {
 	initiateWindow(argc, argv); /* Set up Window */
@@ -260,6 +277,7 @@ int main(int argc, char** argv)
 	initiateShip();
 	initiateAsteroids();
 	initiateGameDisplay();
+	glutMouseFunc(mouse);
 	glutKeyboardFunc(keyboard);
 	glutSpecialFunc(specialKeys); 
 	glutDisplayFunc(gameView);

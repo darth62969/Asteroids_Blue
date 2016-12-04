@@ -26,5 +26,7 @@ void applyTransformation( point& pnt, float (&TM)[4][4]);
 
 void pmatm (int SIZE, float (&TM) [4][4], point& pnt);
 
+void clip();
 
+int insideOctogon(point p);
 #endif

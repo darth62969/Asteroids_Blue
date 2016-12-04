@@ -74,6 +74,11 @@ void asteroid::incrementLocation()
 
 }
 
+void asteroid::setPoints(std::vector<point> v){
+	astPnts = v;
+
+}
+
 vector<asteroid> asteroid::breakupAsteroid()
 {
 /*	todo:
