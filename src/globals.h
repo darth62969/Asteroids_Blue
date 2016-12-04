@@ -5,6 +5,8 @@
 #include "headers.h"
 
 extern ship enterprise;
+extern vector<point> octogon;// defines octogon in ccw order
+extern vector<point> clipPts;// contains points needed for clipping
 /*
 extern const int WINDOW_MAX_X;
 extern const int WINDOW_MAX_Y;

@@ -14,7 +14,7 @@ CFLAGS =
 COPTFLAGS = -O3 
 LIBFLAGS = -lglut -lGLU -lGL
 HEADERS = src/headers.h src/structs.h src/globals.h src/prototypes.h
-OBJS = main.o asteroid.o ship.o bullets.o transformer.o
+OBJS = main.o asteroid.o ship.o bullets.o transformer.o clipper.o
 
 # Independent Targets - first is executable, second is object
 
@@ -36,6 +36,9 @@ ship.o: src/ship.cpp
 transformer.o: src/transformer.cpp $(HEADERS)
 	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/transformer.cpp
 
+clipper.o: src/clipper.cpp $(HEADERS)
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/clipper.cpp
+
 # Default Targets for Cleaning up the Environment
 
 clean :
@@ -47,4 +50,4 @@ pristine :
 	touch *.cpp  
 
 ctags :
-	ctags src/*.h *.cpp
+	ctags src/*.h src/*.cpp

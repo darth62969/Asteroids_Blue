@@ -10,6 +10,8 @@
 
 //Global Varianbles
 ship enterprise = createShip();
+vector<point> octogon; bool noOctogon = 1;
+vector<point> clipPts;
 
 //Runtime Variables go here
 vector<asteroid> asteroidBelt;
@@ -22,7 +24,7 @@ bool newRotate = false;
 
 bool filled = false;
 
-void initiateOctogon(void);
+void drawOctogon(void);
 
 void Pipeline(void){
 	//apply transformations
@@ -43,7 +45,7 @@ void Pipeline(void){
 
 void debugDisplay(void)
 {
-	initiateOctogon();  // Clear display window
+	drawOctogon();  // Clear display window
     	glColor3f ( 0.1, 0.5, 0.0 );      // Set line segment color to green
 	glPointSize(4.0);
 
@@ -75,7 +77,7 @@ void debugDisplay(void)
 	glutSwapBuffers();
 }
 
-void gameView()
+void gameView()// Why is this a method? - Ted
 {
 	//output game to window
 	debugDisplay();
@@ -147,22 +149,33 @@ void initiateGL( void )
 }
 
 void initiateOctogon(void){
-	glClear(GL_COLOR_BUFFER_BIT);
-	vector<point> pts; 
+
 	point p = {WORLD_COORDINATE_MIN_X ,WORLD_COORDINATE_MAX_Y / 2,0,1};
-	
+	point c = {WORLD_COORDINATE_MAX_X / 4, WORLD_COORDINATE_MAX_Y / 2, 0,1};	
 	rotatePoint(p,45.0/2.0);
-	pts.push_back(p);
+	rotatePoint(c,45.0/2.0);
+
+	octogon.push_back(p);
+	clipPts.push_back(c);
 	
 	for (int i = 0; i < 7; i++){
-		rotatePoint(p,45);
-		pts.push_back(p);
+		rotatePoint(p,-45);
+		rotatePoint(c,-45);
+
+		octogon.push_back(p);
+		clipPts.push_back(c);
 	}	
+
+	noOctogon = 0;
+}
+
+void drawOctogon(void){
+	glClear(GL_COLOR_BUFFER_BIT);
 
 	glColor3f(0.0,0.0,0.0);
 	glBegin(GL_POLYGON);
-		for(int i = 0; i < pts.size(); i ++){
-			glVertex2f( pts[i].x , pts[i].y);
+		for(int i = 0; i < octogon.size(); i ++){
+			glVertex2f( octogon[i].x , octogon[i].y);
 		}
 	glEnd();
 }
@@ -242,7 +255,8 @@ int main(int argc, char** argv)
 {
 	initiateWindow(argc, argv); /* Set up Window */
 	initiateGL();
-	initiateOctogon();
+	if (noOctogon) {initiateOctogon();}
+	drawOctogon();
 	initiateShip();
 	initiateAsteroids();
 	initiateGameDisplay();
