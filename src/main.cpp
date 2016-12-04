@@ -229,26 +229,24 @@ void gameView()
 					glEnd ();         
         			}
 			}
-	}
-
-	// If tess is 1, show the tessellation lines on every asteroid.
-	if(tess == 1)
-	{
-		for (int i = 0; i < (asteroidBelt.size()); i++)
-	    	{
-			vector<triangle> a = asteroidBelt.at(i).getTess();
-			point b = asteroidBelt.at(i).getCenter();
-			for (int j = 0; j < (a.size()); j++)
-			{
-				glBegin (GL_LINES);
+			break;
+		// If filled == 2
+		case 2: 
+			for (int i = 0; i < (asteroidBelt.size()); i++)
+	    		{
+				vector<triangle> a = asteroidBelt.at(i).getTess();
+				point b = asteroidBelt.at(i).getCenter();
+				for (int j = 0; j < (a.size()); j++)
+				{
+					glBegin (GL_LINES);
 						glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
 						glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
 						glVertex2d(a.at(j).c.x + b.x, a.at(j).c.y + b.y);
 						glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
-				glEnd();
+					glEnd();
+				}
 			}
 		}
-	}
 	
 	// Draw the ship
 	drawShip(enterprise);		
@@ -292,9 +290,10 @@ void gameLoop()
 				deltaRot = 10;
 			}			
 		}
+		
 
 		// Decrement ship rotation by deltaRot (counterclockwise)
-		enterprise.rotation = (int)(enterprise.rotation-deltaRot)%360;
+		enterprise.rotation = ((int)(enterprise.rotation-(deltaRot*(60/FPS)))%360);
 		
 		// Increment Timekey pressed
 		timeKeyPressed++;
@@ -323,7 +322,7 @@ void gameLoop()
 		}
 		
 		// Decrement ship rotation by deltaRot (counterclockwise)
-		enterprise.rotation = (int)(enterprise.rotation+deltaRot)%360;
+		enterprise.rotation = ((int)(enterprise.rotation+(deltaRot*(60/FPS)))%360);
 
 		// Increment Timekey pressed
 		timeKeyPressed++;
@@ -498,11 +497,10 @@ void keyboard(unsigned char key, int x, int y)
 	// Shows tessellation lines for every asteroid
 	if(key == 't' || key == 'T')
 	{
-		filled = 0;
-		if(tess == 0)
-			tess = 1;
+		if(filled == 2)
+			filled = 0;
 		else
-			tess = 0;
+			filled = 2;
 		//glutIdleFunc(gameLoop);
 	}
 
@@ -528,7 +526,7 @@ void keyboard(unsigned char key, int x, int y)
 		glutIdleFunc(gameLoop);
 */	}
 
-	// WILL BE REMOVED LATER
+	// WILL BE REMOVED LATER (will not be removed later... hidden freature/cheat :P we can just ifdef it...)
 	if(key == 'b')
 	{
 		vector<asteroid> temp = asteroidBelt.at(0).breakupAsteroid();

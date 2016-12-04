@@ -36,4 +36,6 @@ extern char* COLLISION_LOG_PATH;
 extern char* BULLET_LOG_PATH;
 extern char* TRANSFORMATION_LOG_PATH;
 
+extern double FPS;
+
 #endif
