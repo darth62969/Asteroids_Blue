@@ -26,6 +26,8 @@
 
 //The Ship
 ship enterprise = createShip();
+vector<point> octogon; bool noOctogon = 1;
+vector<point> clipPts;
 
 //Log Writers
 ofstream asteroidLogger;		// Asteroid loggger, records information about the asteroids into the asteroid log file.
@@ -70,14 +72,17 @@ int bulletsFired = 0;
 void *currentfont;
 
 void initiateOctogon();
+void drawOctogon(void);
 
 void drawString(GLuint x, GLuint y, const char* string);
 
-void setFont(void *font){
+void setFont(void *font)
+{
 	currentfont = font;
 }
 
-void displayScore(void){
+void displayScore(void)
+{
 
 	double hitRatio;
 
@@ -179,28 +184,31 @@ void debugDisplay()
 		triCount += asteroidBelt[i].getTess().size();
 	}
 
+//Display Triangle Count
 	sprintf(triCountStr, "Triangles On Screen : %3d", triCount);
 	drawString(20, WORLD_COORDINATE_MAX_Y-50, triCountStr);
 #ifdef LOGGING
-	generalLogger << "Triangles on Screen : " << triCount << endl << endl;
+	generalLogger << triCountStr << endl;
 	generalLogger.close();
 #endif
-	//Display Triangle Count
+	
 }
-
 
 /*
  * Main Display Fucntion
  * Displays everything from the Asteroids to the Bullets to the Scoreboard 
  */
+
+ // Q: Why is this a method? - Ted
+ // A: Because it is the Main Game Display Fucntion - Jonathan
 void gameView()
 {
-	calculateFPS();
 	//output game to window
-	initiateOctogon();  			// Draw the Octogon on Screen 
-    	glColor3f (0.1, 0.5, 0.0);      	// Set draw color to green
+	calculateFPS();				// Calculate the interval between this frame and the last.
+								// We use this to make game speed independent of framerate.
+    glColor3f (0.1, 0.5, 0.0); 	// Set draw color to green
 	glPointSize(4.0);			// Set the Point size to 4
-
+	drawOctogon();				// Draw the Octogon on Screen 
 	//Draw the asteroids
 	switch(filled)
 	{
@@ -250,12 +258,14 @@ void gameView()
 					glBegin (GL_LINES);
 						glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
 						glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
+						glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
+						glVertex2d(a.at(j).c.x + b.x, a.at(j).c.y + b.y);
 						glVertex2d(a.at(j).c.x + b.x, a.at(j).c.y + b.y);
 						glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
 					glEnd();
 				}
 			}
-		}
+	}
 	
 	// Draw the ship
 	drawShip(enterprise);		
@@ -457,36 +467,60 @@ void initiateOctogon(void)
 
 	// Set the first point, rotate it then push it to the vector of points.
 	point p = {WORLD_COORDINATE_MIN_X ,WORLD_COORDINATE_MAX_Y / 2,0,1};
+	point c = {WORLD_COORDINATE_MAX_X / 4, WORLD_COORDINATE_MAX_Y / 2, 0,1};	
+
+
 	rotatePoint(p,45.0/2.0);
-	pts.push_back(p);
+	rotatePoint(c,45.0/2.0);
+
+	octogon.push_back(p);
+	clipPts.push_back(c);
 	
-	// Repeat the rotation of the next 7 points.
 	for (int i = 0; i < 7; i++)
 	{
-		rotatePoint(p,45);
-		pts.push_back(p);
+		rotatePoint(p,-45);
+		rotatePoint(c,-45);
+
+		octogon.push_back(p);
+		clipPts.push_back(c);
 	}	
 
-	// Set color to grean then draw the octogon as lines.
+	noOctogon = 0;
+}
+
+void drawOctogon(void)
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+
 	glColor3f(0.1,0.5,0.0);
+	
 	glBegin(GL_LINES);
-		for(int i = 0; i < pts.size(); i ++)
+		for(int i = 0; i < octogon.size(); i ++)
 		{
-			glVertex2f(pts[i].x, pts[i].y);
-			glVertex2f(pts[(i+1)%pts.size()].x, pts[(i+1)%pts.size()].y);
+			glVertex2f(octogon[i].x, octogon[i].y);
+			glVertex2f(octogon[(i+1)%octogon.size()].x, octogon[(i+1)%octogon.size()].y);
 		}
 	glEnd();
+}
+
+void debugMe(int x, int y)
+{
+	point p = {x,y,0,1};
+	int result = insideOctogon(p);
+	if (result) printf("        ");
+
 }
 
 /*
  * Keyboard Functions
  */
 void keyboard(unsigned char key, int x, int y)
-{
-	
-	//if(key == 's' || key == 'S')
-		// start game
+{	
+	// start game
+	if(key == 's' || key == 'S')
+		paused = false;
 
+	// pause movement
 	if(key == 'p' || key == 'P')
 	{
 		if (paused)
@@ -494,7 +528,6 @@ void keyboard(unsigned char key, int x, int y)
 		else
 			paused = true;
 	}
-		//pause movement
 
 	// Exits the game.
 	if(key == 'q' || key == 'Q')
@@ -503,26 +536,28 @@ void keyboard(unsigned char key, int x, int y)
 	// Shows tessellation lines for every asteroid
 	if(key == 't' || key == 'T')
 	{
-		if(filled == 2)
-			filled = 0;
-		else
+		if(filled != 2)
 			filled = 2;
+		else
+			filled = 0;
 		//glutIdleFunc(gameLoop);
 	}
 
 	// Fills the asteroids.
-	if(key == 'f' || key == 'F'){
-		if(filled == 0)
+	if(key == 'f' || key == 'F')
+	{
+		if(filled != 1)
 			filled = 1;
 		else
 			filled = 0;
-		tess = 0;
+		//tess = 0;
 		//glutIdleFunc(gameLoop);
 	}
 
 	// Fires a bullet.
-	if(key == ' ')
+	if(key == ' ' && !paused)
 	{
+		glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
 		if(!spacePressed)
 		{
 			spacePressed = true;
@@ -542,6 +577,7 @@ void keyboard(unsigned char key, int x, int y)
 */	}
 
 	// WILL BE REMOVED LATER (will not be removed later... hidden freature/cheat :P we can just ifdef it...)
+#ifdef DEBUG	
 	if(key == 'b')
 	{
 		vector<asteroid> temp = asteroidBelt.at(0).breakupAsteroid();
@@ -551,7 +587,9 @@ void keyboard(unsigned char key, int x, int y)
 		}
 		asteroidBelt.erase(asteroidBelt.begin());
 	}
+#endif
 }
+
 
 // Handles the firing of bullets.
 void keyReleased(unsigned char key, int x, int y)
@@ -559,6 +597,7 @@ void keyReleased(unsigned char key, int x, int y)
 	// When the space key is released after being tapped, fire a bullet.
 	if(key == ' ')
 	{
+		glutSetKeyRepeat(GLUT_KEY_REPEAT_ON);
 		spacePressed = false;
 	}
 }
@@ -581,8 +620,6 @@ void specialKeys(int key, int x, int y)
 		default: break;
 	}
 }
-
-// Handles the rotation of the ship.
 void specialKeyReleased(int key, int x, int y)
 {
 	switch(key)
@@ -600,7 +637,17 @@ void specialKeyReleased(int key, int x, int y)
 			leftKeyPressed = false;
 			leftReached10 = false;
 			break;
-	}			
+	}	
+}		
+void mouse(int button, int state, int x, int y){
+        if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
+		{
+                       
+        }
+        if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+		{
+                       debugMe(x,y);
+        }
 }
 
 int main(int argc, char** argv)
@@ -622,6 +669,7 @@ int main(int argc, char** argv)
 	initiateAsteroids();
 	initiateGameDisplay();
 	glutSetKeyRepeat(GLUT_KEY_REPEAT_ON);
+	glutMouseFunc(mouse);
 	glutKeyboardFunc(keyboard);
 	glutKeyboardUpFunc(keyReleased);
 	glutSpecialFunc(specialKeys); 
@@ -630,3 +678,9 @@ int main(int argc, char** argv)
 	glutIdleFunc(gameLoop);
 	glutMainLoop();
 }
+
+
+// temporary cold storage.
+/*
+
+*/
