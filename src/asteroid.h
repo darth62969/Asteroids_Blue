@@ -1,3 +1,20 @@
+/* 
+ * Asteroid Class Header for Asteroids: RETURN OF METEOR
+ * 
+ * Made by:
+ * Jonathan Oakes
+ * Braeden Brettin
+ * Ted Dorfeuille 
+ * Chris Le
+ * Emily Herron
+ * 
+ * for the Class:
+ * Intro to Computer Graphics (CSC315)
+ * 
+ * At:
+ * Mercer Univercity  
+ */
+
 #ifndef __ASTEROID_H_INCLUDED__
 #define __ASTEROID_H_INCLUDED__
 
@@ -7,6 +24,7 @@ class asteroid
 {
 	public:
         	explicit asteroid();
+		explicit asteroid(triangle a, point location, point offset, int num);
 		point getCenter();
 		std::vector<asteroid> breakupAsteroid();
 		std::vector<point> getPoints();
@@ -17,16 +35,14 @@ class asteroid
 	private:
 		point center;
 	    	float rotation;
-        	point translation;
-    		std::vector<point> astPnts;
-    		std::vector<triangle> astTris;
-    		bool clipped;
-        	int numsides;
-        	//asteroid createAsteroid(triangle a);
-		//triangle * triptr;
-		//triangle * nexttriptr;
-		// point origin;
-	    	void tessilateAsteriod();
+		point translation;
+	    	std::vector<point> astPnts;
+	    	std::vector<triangle> astTris;
+	    	bool clipped;
+		int numsides;
+		void createAsteroid(triangle a, point center, point offset, int num);
+	   	void tessellateAsteriod();
 		void sortPoints();
+		void clear();
 };
 #endif

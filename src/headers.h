@@ -1,9 +1,23 @@
+/* 
+ * Header File for Asteroids: RETURN OF METEOR
+ * 
+ * Made by:
+ * Jonathan Oakes
+ * Braeden Brettin
+ * Ted Dorfeuille 
+ * Chris Le
+ * Emily Herron
+ * 
+ * for the Class:
+ * Intro to Computer Graphics (CSC315)
+ * 
+ * At:
+ * Mercer Univercity  
+ */
+
 #ifndef HEADERS
 #define HEADERS
 
-/*
- * #include stuff
- */
 #include <cmath>
 #include <GL/glut.h>
 #include <stdio.h>
@@ -11,7 +25,10 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <fstream>
 #include "asteroid.h"
+#include <sstream>
+//#include "detectcollision.h"
 
 using namespace std;
 
@@ -31,12 +48,7 @@ const int ASTEROID_MAX_Y = 20;
 const int ASTEROID_MAX_SIZE = 12;
 const int ASTEROID_MIN_SIZE = 4;
 
-//Ship Constants
-
 //World Constants
 const int NUMBER_OF_ASTEROIDS = 50;
-
-//Other Constants
-
 
 #endif
