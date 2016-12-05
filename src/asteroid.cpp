@@ -245,10 +245,11 @@ void asteroid::newRotation ()
 	rotation = -1*rotation; 
 }
 
-asteroid asteroid::snip()
+vector<point> asteroid::getTesPoints()
 {
-	
+	return astPosPonts; 
 }
+
 vector <asteroid> asteroid::breakupAsteroid(asteroid a)
 {
 /*	todo:
@@ -256,7 +257,24 @@ vector <asteroid> asteroid::breakupAsteroid(asteroid a)
  *	createAsteroid(traingle a)
  * 	repeat till last triangle pointer.
 */
+	asteroid tmp; asteroid tmp2;
+	vector <asteroid> tri; 
+	vector <point> pts; vector<point> tmppts;
+	int index = a.size()/2; 
 	
-	
+	for (int i = 0; i < index; i++)
+	{
+		tmppts[i]= a[i];
+	}
+	for (int i = index; i < a.size(); i++)
+	{
+		pts[i] = a[i];
+	}
+	pts.push_back(a[i];
 
+	//insert making the asteroid. 
+
+
+	tri.push_back(tmp); tri.push_back(tmp2);
+	return tri; 
 }

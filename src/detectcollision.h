@@ -4,9 +4,10 @@
 class detectCollision 
 {
 	public: 
-		bool detectCollision (vector<asteroid> a, vector<bullets> b, ship c)
-			
+		void detectCollision (vector<asteroid> a, vector<bullets> b, ship c);
+		bool intersect(vertex a, vertex b, vertex c, vertex d);
+	
 	private:
 		
-}
+};
 				
