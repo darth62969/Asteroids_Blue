@@ -472,18 +472,3 @@ vector<triangle> asteroid::getTess()
 	return astTris;
 }
 
-float asteroid::getRotation()
-{
-	return rotation;
-}
-
-/*void asteroid::newRotation ()
-{
-	rotation = -1*rotation; 
-}*/
-/*
-asteroid asteroid::snip()
-{
-	
-}
-*/
