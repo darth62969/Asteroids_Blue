@@ -105,6 +105,8 @@ point asteroid::getCenter()
 
 void asteroid::incrementLocation()
 {
+	if(paused)
+		return;
 	center.x += cos(rotation)/2*(60/FPS);
 	center.y += sin(rotation)/2*(60/FPS);
 	

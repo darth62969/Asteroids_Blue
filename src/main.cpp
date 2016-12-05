@@ -136,15 +136,23 @@ void drawString(GLuint x, GLuint y, const char* string){
 	}	
 }
 
-void debugDisplay()
+void calculateFPS()
 {
-	//get FPS
+	/*if (paused)
+	{
+		FPS=60;
+		return;
+	}*/
+		
 	frames++;
 	timeC = glutGet(GLUT_ELAPSED_TIME);
 	FPS = 1000.0/(double)(timeC - timeP);
 	avgFPS= ((avgFPS*(frames-1))+FPS)/frames;
 	timeP = timeC;
-	
+}
+
+void debugDisplay()
+{
 	//display FPS
 	char FPSStr[50];
 	char avgFPSStr[50];
@@ -187,6 +195,7 @@ void debugDisplay()
  */
 void gameView()
 {
+	calculateFPS();
 	//output game to window
 	initiateOctogon();  			// Draw the Octogon on Screen 
     	glColor3f (0.1, 0.5, 0.0);      	// Set draw color to green
@@ -268,17 +277,13 @@ void gameView()
 
 void gameLoop()
 {
-	if(paused)
-	{
-		return;
-	}
 	// Open the Ship Log file to record debug information.
 #ifdef LOGGING
 	shipLogger.open(SHIP_LOG_PATH, ofstream::out|ofstream::app);
 #endif
 	// If the right arrow key has been pressed rotate the ship
 	// Starting at 1 degree then moving to 10 degrees at a time.
-	if (rightKeyPressed) 
+	if (rightKeyPressed && !paused) 
 	{
 		if (deltaRot < 10.0 && !rightReached10)
 		{
@@ -308,7 +313,7 @@ void gameLoop()
 
 	// If the left arrow key has been pressed rotate the ship
 	// Starting at 1 degree then moving to 10 degrees at a time.
-	if (leftKeyPressed)
+	if (leftKeyPressed && !paused)
 	{
 		if (deltaRot < 10.0 && !leftReached10)
 		{
@@ -517,7 +522,16 @@ void keyboard(unsigned char key, int x, int y)
 	// Fires a bullet.
 	if(key == ' ')
 	{
-		spacePressed = true;
+		if(!spacePressed)
+		{
+			spacePressed = true;
+			bullet shot = createBullet();
+			bullets.push_back(shot);
+			//fireBullet(shot);
+			//glutIdleFunc(gameLoop);
+		}
+		
+
 /*	
 		bullet shot = createBullet();
 		bullets.push_back(shot);
@@ -544,14 +558,6 @@ void keyReleased(unsigned char key, int x, int y)
 	// When the space key is released after being tapped, fire a bullet.
 	if(key == ' ')
 	{
-		if(spacePressed)
-		{
-			bullet shot = createBullet();
-			bullets.push_back(shot);
-			fireBullet(shot);
-			//glutIdleFunc(gameLoop);
-		}
-
 		spacePressed = false;
 	}
 }

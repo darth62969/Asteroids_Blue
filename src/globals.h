@@ -38,4 +38,6 @@ extern char* TRANSFORMATION_LOG_PATH;
 
 extern double FPS;
 
+extern bool paused;
+
 #endif

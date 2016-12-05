@@ -37,10 +37,3 @@ void drawBullet(bullet shot)
 		glVertex2f(shot.location.x, shot.location.y);
 	glEnd();	
 }
-
-void fireBullet(bullet shot)
-{
-	glBegin(GL_POINTS);
-		glVertex2f(shot.location.x, shot.location.y);
-	glEnd();
-}
