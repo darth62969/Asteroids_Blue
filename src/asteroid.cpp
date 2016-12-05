@@ -167,6 +167,11 @@ void asteroid::createAsteroid(triangle a, point location, point offset, int num)
 #endif
 }
 
+void asteroid::setPoints(std::vector<point> v){
+	astPnts = v;
+
+}
+
 vector<asteroid> asteroid::breakupAsteroid()
 {
 /*
