@@ -72,7 +72,7 @@ clean :
 
 pristine :
 	rm *.o
-	touch *.cpp  
+	touch src/*.cpp  
 
 ctags :
 	ctags src/*.h src/*.cpp
