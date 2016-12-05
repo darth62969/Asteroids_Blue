@@ -15,10 +15,13 @@
  * Mercer Univercity  
  */
 
+#include <vector>
+
+
 class detectCollision 
 {
 	public: 
-		bool detectCollision (vector<asteroid> a, vector<bullets> b, ship c)
+		bool detectCollision (std::vector<asteroid> a, std::vector<bullets> b, ship c);
 			
 	private:
 		

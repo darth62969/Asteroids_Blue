@@ -24,6 +24,7 @@ point center;
 float rotation;
 point translation;
 vector<point> astPnts;
+vector<point> astPosPnts;
 vector<triangle> astTris;
 bool clipped;
 int numsides = 0;
@@ -470,3 +471,14 @@ float asteroid::getRotation()
 {
 	return rotation;
 }
+
+/*void asteroid::newRotation ()
+{
+	rotation = -1*rotation; 
+}*/
+/*
+asteroid asteroid::snip()
+{
+	
+}
+*/

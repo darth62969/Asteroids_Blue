@@ -364,7 +364,8 @@ void gameLoop()
 		asteroidBelt.at(i).incrementLocation();
 	}
 
-	glutPostRedisplay();	
+//	detectCollision(asteroidBelt, bullets, enterprise);
+	glutPostRedisplay();
 }
 
 /* 
