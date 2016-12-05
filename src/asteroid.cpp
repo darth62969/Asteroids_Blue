@@ -7,6 +7,7 @@ point center;
 float rotation;
 point translation;
 vector<point> astPnts;
+vector<point> astPosPnts;
 vector<triangle> astTris;
 bool clipped;
 int numsides = 0;
@@ -74,22 +75,7 @@ void asteroid::incrementLocation()
 
 }
 
-vector<asteroid> asteroid::breakupAsteroid()
-{
-/*	todo:
- *	get trinagle set to a.
- *	createAsteroid(traingle a)
- * 	repeat till last triangle pointer.
-*/
 
-	for(int i = 0; i < astTris.size(); i++)
-	{
-
-	}
- 
-
-
-}
 void tessellate( void )
 {
 	vector<point> temp = astPnts;
@@ -252,4 +238,25 @@ vector<triangle> asteroid::getTess()
 float asteroid::getRotation()
 {
 	return rotation;
+}
+
+void asteroid::newRotation ()
+{
+	rotation = -1*rotation; 
+}
+
+asteroid asteroid::snip()
+{
+	
+}
+vector <asteroid> asteroid::breakupAsteroid(asteroid a)
+{
+/*	todo:
+ *	get trinagle set to a.
+ *	createAsteroid(traingle a)
+ * 	repeat till last triangle pointer.
+*/
+	
+	
+
 }

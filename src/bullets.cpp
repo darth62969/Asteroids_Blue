@@ -46,5 +46,7 @@ void fireBullet(bullet shot){
 	//drawBullet(shot);
 }
 
-
-
+void deleteBullet()
+{
+	 
+}

@@ -106,6 +106,7 @@ void gameLoop()
 	{
 		asteroidBelt.at(i).incrementLocation();
 	}
+	detectCollision(asteroidBelt, bullets, enterprise);
 	glutPostRedisplay();
 }
 
