@@ -258,12 +258,14 @@ void gameView()
 					glBegin (GL_LINES);
 						glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
 						glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
+						glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
+						glVertex2d(a.at(j).c.x + b.x, a.at(j).c.y + b.y);
 						glVertex2d(a.at(j).c.x + b.x, a.at(j).c.y + b.y);
 						glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
 					glEnd();
 				}
 			}
-		}
+	}
 	
 	// Draw the ship
 	drawShip(enterprise);		
@@ -486,7 +488,8 @@ void initiateOctogon(void)
 	noOctogon = 0;
 }
 
-void drawOctogon(void){
+void drawOctogon(void)
+{
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glColor3f(0.1,0.5,0.0);
@@ -499,6 +502,7 @@ void drawOctogon(void){
 		}
 	glEnd();
 }
+
 void debugMe(int x, int y)
 {
 	point p = {x,y,0,1};
@@ -506,15 +510,17 @@ void debugMe(int x, int y)
 	if (result) printf("        ");
 
 }
+
 /*
  * Keyboard Functions
  */
+void keyboard(unsigned char key, int x, int y)
+{	
+	// start game
+	if(key == 's' || key == 'S')
+		paused = false;
 
-void keyboard(unsigned char key, int x, int y){
-	
-	//if(key == 's' || key == 'S')
-		// start game
-
+	// pause movement
 	if(key == 'p' || key == 'P')
 	{
 		if (paused)
@@ -522,7 +528,6 @@ void keyboard(unsigned char key, int x, int y){
 		else
 			paused = true;
 	}
-		//pause movement
 
 	// Exits the game.
 	if(key == 'q' || key == 'Q')
@@ -531,20 +536,21 @@ void keyboard(unsigned char key, int x, int y){
 	// Shows tessellation lines for every asteroid
 	if(key == 't' || key == 'T')
 	{
-		if(filled == 2)
-			filled = 0;
-		else
+		if(filled != 2)
 			filled = 2;
+		else
+			filled = 0;
 		//glutIdleFunc(gameLoop);
 	}
 
 	// Fills the asteroids.
-	if(key == 'f' || key == 'F'){
-		if(filled == 0)
+	if(key == 'f' || key == 'F')
+	{
+		if(filled != 1)
 			filled = 1;
 		else
 			filled = 0;
-		tess = 0;
+		//tess = 0;
 		//glutIdleFunc(gameLoop);
 	}
 
