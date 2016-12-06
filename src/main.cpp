@@ -63,11 +63,11 @@ bool paused = true;				// For pause screen
 
 int timeKeyPressed = 0;		// Iterator for Debug reasons
 int filled = 0;			// 0 if lines should be drawn, 1 if filled (asteroids)   
-int tess = 0;
 int frames = 0;
 int timeC = 0;
 int timeP = 0;
 int bulletsFired = 0;
+int bulletsHit = 0;
 
 void *currentfont;
 
@@ -85,27 +85,13 @@ void displayScore(void)
 {
 
 	double hitRatio;
-
-	int astHits = NUMBER_OF_ASTEROIDS - asteroidBelt.size();
 	
-	if (astHits != 0)
-		hitRatio = bulletsFired/(NUMBER_OF_ASTEROIDS - asteroidBelt.size() * 100);
+	if (bulletsHit != 0)
+		hitRatio = (double)bulletsHit/(double)bulletsFired*100.0;
 	else 
 		hitRatio = 0;
 
 	setFont(GLUT_BITMAP_HELVETICA_12);
-
-	//string astsOnScr = "Asteroids on Screen: "; // + asteroidBelt.size();
-
-	//string astsHit = "Asteroids hit: "; // + (NUMBER_OF_ASTEROIDS - asteroidBelt.size());
-
-	//string hrStr = "Hit Ratio : " + hitRatio;
-
-	//ss << "Hit Ratio: " << hitRatio;
-
-	//string hrStr = ss.str();
-
-	//drawString(180, 180, bulletsFiredStr.c_str());
 
 	char bulletsFiredStr[50];
 	char astsOnScr1[50];
@@ -116,7 +102,7 @@ void displayScore(void)
 	sprintf(bulletsFiredStr, "Bullets Fired: %3d", bulletsFired);
 	sprintf(astsOnScr1, "%s", "Asteroids on "); 
 	sprintf(astsOnScr2, "Screen: %3d", (int)asteroidBelt.size()); 
-	sprintf(astsHit, "Asteroids Hit: %4d", astHits);
+	sprintf(astsHit, "Asteroids Hit: %4d", bulletsHit);
 	sprintf(hrStr, "Hit Ratio:  %5.2f %%", hitRatio);
 
 	glColor3f(0.2, 0.5, 0.0);
@@ -130,15 +116,14 @@ void displayScore(void)
 }
 
 
-void drawString(GLuint x, GLuint y, const char* string){
-
+void drawString(GLuint x, GLuint y, const char* string)
+{
 	const char *c;
 
 	glRasterPos2i(x, y);
 	//glColor3f(1.0, 0.0, 0.0);
-	for(c=string; *c!='\0'; c++){
-		glutBitmapCharacter(currentfont, *c);
-	}	
+	for(c=string; *c!='\0'; c++)
+		glutBitmapCharacter(currentfont, *c);	
 }
 
 void calculateFPS()
@@ -190,8 +175,7 @@ void debugDisplay()
 #ifdef LOGGING
 	generalLogger << triCountStr << endl;
 	generalLogger.close();
-#endif
-	
+#endif	
 }
 
 /*
@@ -433,7 +417,6 @@ void initiateWindow(int argc, char** argv)
 {
 	//build window
    	glutInit(&argc,argv);
-	//glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB); /* default, not needed */
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(WINDOW_MAX_X, WINDOW_MAX_Y); /* set pixel window */
 	glutInitWindowPosition(WINDOW_POSITION_X, WINDOW_POSITION_Y);
@@ -540,7 +523,6 @@ void keyboard(unsigned char key, int x, int y)
 			filled = 2;
 		else
 			filled = 0;
-		//glutIdleFunc(gameLoop);
 	}
 
 	// Fills the asteroids.
@@ -550,8 +532,6 @@ void keyboard(unsigned char key, int x, int y)
 			filled = 1;
 		else
 			filled = 0;
-		//tess = 0;
-		//glutIdleFunc(gameLoop);
 	}
 
 	// Fires a bullet.
@@ -563,20 +543,10 @@ void keyboard(unsigned char key, int x, int y)
 			spacePressed = true;
 			bullet shot = createBullet();
 			bullets.push_back(shot);
-			//fireBullet(shot);
-			//glutIdleFunc(gameLoop);
+			bulletsFired++;
 		}
-		
+	}
 
-/*	
-		bullet shot = createBullet();
-		bullets.push_back(shot);
-		fireBullet(shot);
-		bulletsFired++;
-		glutIdleFunc(gameLoop);
-*/	}
-
-	// WILL BE REMOVED LATER (will not be removed later... hidden freature/cheat :P we can just ifdef it...)
 #ifdef DEBUG	
 	if(key == 'b')
 	{
@@ -586,6 +556,8 @@ void keyboard(unsigned char key, int x, int y)
 			asteroidBelt.push_back(temp.at(i));
 		}
 		asteroidBelt.erase(asteroidBelt.begin());
+		// REMOVE LATER
+		bulletsHit++;
 	}
 #endif
 }
