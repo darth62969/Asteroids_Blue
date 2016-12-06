@@ -38,9 +38,15 @@ void drawBullet(bullet shot)
 	glEnd();	
 }
 
-void fireBullet(bullet shot)
-{
+void fireBullet(bullet shot){
+	
+	//glTranslatef(shot.translation.x, shot.translation.y, 0.0);
+ 	point trans = shot.location;
+	//rotatePoint(trans, shot.theta);
 	glBegin(GL_POINTS);
-		glVertex2f(shot.location.x, shot.location.y);
+		glVertex2f(trans.x, trans.y);
 	glEnd();
+	
+	//drawBullet(shot);
 }
+

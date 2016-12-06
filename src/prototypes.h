@@ -19,6 +19,8 @@
 #define PROTOTYPES
 
 #include "structs.h"
+#include "asteroid.h"
+
 
 ship createShip(void);
 void rotatePoint(point& p, double theta);
@@ -30,8 +32,13 @@ void drawShip(ship a);
 void fireBullet(bullet shot);
 bullet createBullet();
 void drawBullet(bullet shot);
+void drawString(GLuint x, GLuint y, const char* string);
 void buildTranslate( float x, float y, float z, float (&TM) [4][4]);
 void applyTransformation( point& pnt, float (&TM)[4][4]);
 void pmatm (int SIZE, float (&TM) [4][4], point& pnt);
+void clip();
+int insideOctogon(point p);
+point intersect (point v1, point v2, point v3, point v4);
+void detectCollision(vector <asteroid> a, vector <bullet> b, ship c); 
 
 #endif

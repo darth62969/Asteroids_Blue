@@ -27,6 +27,7 @@
 #include <algorithm>
 #include <fstream>
 #include "asteroid.h"
+#include <sstream>
 //#include "detectcollision.h"
 
 using namespace std;
