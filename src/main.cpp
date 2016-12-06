@@ -520,6 +520,7 @@ void keyboard(unsigned char key, int x, int y)
 		bulletsFired=0;
 		paused=true;
 		enterprise.rotation=0;
+		bulletsHit = 0;
 	}
 
 
