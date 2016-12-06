@@ -65,13 +65,17 @@ void displayScore(void){
 	char astsOnScr2[50]; 
 	char astsHit[50];
 	char hrStr[50];
+	char gameOver[25];
+	char youWin[25];
+
 
 	sprintf(bulletsFiredStr, "Bullets Fired: %3d", bulletsFired);
 	sprintf(astsOnScr1, "%s", "Asteroids on "); 
 	sprintf(astsOnScr2, "Screen: %3d", asteroidBelt.size()); 
 	sprintf(astsHit, "Asteroids Hit: %4d", astHits);
 	sprintf(hrStr, "Hit Ratio:  %5.2f %%", hitRatio);
-
+	sprintf(gameOver, "%s", "GAME OVER" );
+	sprintf(youWin, "%s", "YOU WIN!");
 
 	glColor3f(0.0, 0.0, 0.0);
 	
@@ -81,8 +85,23 @@ void displayScore(void){
 	
 	drawString(480, 30, astsHit);
 	drawString(480, 65, hrStr);
+
 }
 
+void printGameOver(void){
+	       char gameOver[25];
+		setFont(GLUT_BITMAP_TIMES_ROMAN_24); 
+               //setFont(GLUT_BITMAP_HELVETICA_18);
+	       sprintf(gameOver, "%s", "GAME OVER");
+		//glLoadIdentity();
+		//glPushMatrix();
+
+		//glScalef(0.005,0.005,1);
+		//glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)"The game over!");
+		//glScalef(2.0, 2.0, 2.0);
+                drawString(240, 295, gameOver);
+		//glPopMatrix();
+}
 
 void drawString(GLuint x, GLuint y, const char* string){
 
@@ -104,7 +123,9 @@ void debugDisplay(void)
 	glPointSize(4.0);
 
 	//Pipeline();
-    
+    	
+	printGameOver();
+
     	for (int i = 0; i < (asteroidBelt.size()); i++)
     	{
 		vector<point> a = asteroidBelt.at(i).getPoints();
@@ -128,8 +149,8 @@ void debugDisplay(void)
 		
 	}
 
-	displayScore();
-
+	//displayScore();
+	printGameOver();
 	glutSwapBuffers();
 }
 
