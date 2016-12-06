@@ -528,6 +528,17 @@ void keyboard(unsigned char key, int x, int y)
 		else
 			paused = true;
 	}
+	// pause movement
+	if(key == 'r' || key == 'R')
+	{
+		asteroidBelt.clear();
+		bullets.clear();
+		initiateAsteroids();
+		bulletsFired=0;
+		paused=true;
+		enterprise.rotation=0;
+	}
+
 
 	// Exits the game.
 	if(key == 'q' || key == 'Q')
