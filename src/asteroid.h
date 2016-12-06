@@ -47,3 +47,4 @@ class asteroid
 		void clear();
 };
 #endif
+

@@ -160,3 +160,4 @@ void detectCollision(vector <asteroids> a, vector <bullets> b, ship c)
 		}	
 	}
 }	
+

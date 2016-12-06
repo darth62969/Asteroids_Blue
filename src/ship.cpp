@@ -78,3 +78,4 @@ void drawShip(ship a)
 		}
 	glEnd();
 }
+

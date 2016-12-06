@@ -98,24 +98,14 @@ void displayScore(void)
 	char astsOnScr2[50]; 
 	char astsHit[50];
 	char hrStr[50];
-	char gameOver[25];
-	char youWin[25];
-
 
 	sprintf(bulletsFiredStr, "Bullets Fired: %3d", bulletsFired);
 	sprintf(astsOnScr1, "%s", "Asteroids on "); 
 	sprintf(astsOnScr2, "Screen: %3d", (int)asteroidBelt.size()); 
 	sprintf(astsHit, "Asteroids Hit: %4d", bulletsHit);
 	sprintf(hrStr, "Hit Ratio:  %5.2f %%", hitRatio);
-<<<<<<< HEAD
-	sprintf(gameOver, "%s", "GAME OVER" );
-	sprintf(youWin, "%s", "YOU WIN!");
-
-	glColor3f(0.0, 0.0, 0.0);
-=======
 
 	glColor3f(0.2, 0.5, 0.0);
->>>>>>> 34a9e6e28b30ab792dbdb84da2f5e2d5c7b89a43
 	
 	drawString(20, 30, bulletsFiredStr);
 	drawString(20, 70, astsOnScr1);
@@ -123,23 +113,29 @@ void displayScore(void)
 	
 	drawString(480, 30, astsHit);
 	drawString(480, 65, hrStr);
-
 }
 
 void printGameOver(void){
-	       char gameOver[25];
-		setFont(GLUT_BITMAP_TIMES_ROMAN_24); 
-               //setFont(GLUT_BITMAP_HELVETICA_18);
-	       sprintf(gameOver, "%s", "GAME OVER");
-		//glLoadIdentity();
-		//glPushMatrix();
+               
 
-		//glScalef(0.005,0.005,1);
-		//glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)"The game over!");
-		//glScalef(2.0, 2.0, 2.0);
-                drawString(240, 295, gameOver);
-		//glPopMatrix();
+		char gameOver[25];
+                setFont(GLUT_BITMAP_TIMES_ROMAN_24);
+               
+               sprintf(gameOver, "%s", "GAME OVER");
+   
+		//sprintf();
+
+                drawString(225, 320, gameOver);
 }
+
+void printYouWin(void){
+	char youWin[25];
+	//setFont(GLUT_BITMAP_9_BY_15);
+	setFont(GLUT_BITMAP_TIMES_ROMAN_24);
+	sprintf(youWin, "%s", "YOU WIN!!!");
+	drawString(235, 320, youWin);
+}
+
 
 void drawString(GLuint x, GLuint y, const char* string)
 {
@@ -153,28 +149,6 @@ void drawString(GLuint x, GLuint y, const char* string)
 
 void calculateFPS()
 {
-<<<<<<< HEAD
-	initiateOctogon();  // Clear display window
-    	glColor3f ( 0.1, 0.5, 0.0 );      // Set line segment color to green
-	glPointSize(4.0);
-
-	//Pipeline();
-    	
-	printGameOver();
-
-    	for (int i = 0; i < (asteroidBelt.size()); i++)
-    	{
-		vector<point> a = asteroidBelt.at(i).getPoints();
-		point b = asteroidBelt.at(i).getCenter();
-		for (int j = 0; j < (a.size()); j++)
-        	{
-           		glBegin (GL_LINES);
-      	       		glVertex2d(a.at(j).x + b.x, a.at(j).y + b.y);
-	           	glVertex2d( a.at((j+1)%a.size()).x + b.x, a.at((j+1)%a.size()).y +b.y);
-           		glEnd ();         
-        	}
-	}
-=======
 	/*if (paused)
 	{
 		FPS=60;
@@ -187,7 +161,6 @@ void calculateFPS()
 	avgFPS= ((avgFPS*(frames-1))+FPS)/frames;
 	timeP = timeC;
 }
->>>>>>> 34a9e6e28b30ab792dbdb84da2f5e2d5c7b89a43
 
 void debugDisplay()
 {
@@ -208,11 +181,6 @@ void debugDisplay()
 #endif 
 	// Count Asteroid Triangles
 
-<<<<<<< HEAD
-	//displayScore();
-	printGameOver();
-	glutSwapBuffers();
-=======
 	int triCount = 0;
 
 	char triCountStr[50];
@@ -229,7 +197,6 @@ void debugDisplay()
 	generalLogger << triCountStr << endl;
 	generalLogger.close();
 #endif	
->>>>>>> 34a9e6e28b30ab792dbdb84da2f5e2d5c7b89a43
 }
 
 /*
@@ -248,6 +215,10 @@ void gameView()
 	glPointSize(4.0);			// Set the Point size to 4
 	drawOctogon();				// Draw the Octogon on Screen 
 	//Draw the asteroids
+
+	//printGameOver();
+	printYouWin();
+
 	switch(filled)
 	{
 		// If not filled
@@ -722,3 +693,4 @@ int main(int argc, char** argv)
 /*
 
 */
+

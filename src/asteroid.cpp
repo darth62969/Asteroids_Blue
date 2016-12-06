@@ -471,4 +471,3 @@ vector<triangle> asteroid::getTess()
 {
 	return astTris;
 }
-
