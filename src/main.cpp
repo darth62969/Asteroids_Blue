@@ -177,14 +177,8 @@ void debugDisplay()
 	drawString(20, WORLD_COORDINATE_MAX_Y-50, triCountStr);
 #ifdef LOGGING/*
 	generalLogger << triCountStr << endl;
-<<<<<<< HEAD
-	generalLogger.close();
-#endif	
-=======
 	generalLogger.close();*/
 #endif
-	
->>>>>>> 8bf9b9066380ba11aaf488b77a6c7613f560016d
 }
 
 /*
