@@ -85,7 +85,7 @@ asteroid::asteroid()
 #endif
 }
 
-asteroid::asteroid(triangle a, point location, point offset, int num)
+asteroid::asteroid(triangle a, point location, point offset, int num, float Orotation)
 {
 #ifdef LOGGING
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
@@ -98,10 +98,10 @@ asteroid::asteroid(triangle a, point location, point offset, int num)
 
 	astTris.push_back(a);
 
-	int j = rand();
-	srand (static_cast <unsigned> (time(0))*(num*(j+67)/10));	
-
-	rotation = rand() % 360;
+	//int j = rand();
+	//srand (static_cast <unsigned> (time(0))*(num*(j+67)/10));	
+	Orotation *= 180/M_PI;
+	rotation = Orotation+num*2;
 	rotation *= M_PI / 180.0;
 
 	center.x = location.x + offset.x;
@@ -306,7 +306,7 @@ vector<asteroid> asteroid::breakupAsteroid()
 		}
 		
 		
-		asteroid a(tmpt, center, tmpp, i);
+		asteroid a(tmpt, center, tmpp, i, rotation);
 		//a.createAsteroid(tmpt, center, tmpp, i);
 		breakup.push_back(a);
 	}
@@ -513,4 +513,3 @@ vector<triangle> asteroid::getTess()
 {
 	return astTris;
 }
-

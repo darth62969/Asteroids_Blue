@@ -61,6 +61,7 @@ bool leftKeyPressed = false;	// Also for ship rotation, tells us if the ship's
 bool leftReached10 = false;		// left rotation reached 10
 bool spacePressed = false;		// This is for firing bullets.
 bool paused = true;				// For pause screen 
+bool gameOver = false;
 
 int timeKeyPressed = 0;		// Iterator for Debug reasons
 int filled = 0;			// 0 if lines should be drawn, 1 if filled (asteroids)   
@@ -116,6 +117,27 @@ void displayScore(void)
 	
 	drawString(480, 30, astsHit);
 	drawString(480, 65, hrStr);
+}
+
+void printGameOver(void){
+               
+
+		char gameOver[25];
+                setFont(GLUT_BITMAP_TIMES_ROMAN_24);
+               
+               sprintf(gameOver, "%s", "GAME OVER");
+   
+		//sprintf();
+
+                drawString(225, 320, gameOver);
+}
+
+void printYouWin(void){
+	char youWin[25];
+	//setFont(GLUT_BITMAP_9_BY_15);
+	setFont(GLUT_BITMAP_TIMES_ROMAN_24);
+	sprintf(youWin, "%s", "YOU WIN!!!");
+	drawString(235, 320, youWin);
 }
 
 
@@ -198,6 +220,16 @@ void gameView()
 	glPointSize(4.0);			// Set the Point size to 4
 	drawOctogon();				// Draw the Octogon on Screen 
 	//Draw the asteroids
+
+	//printGameOver();
+	if (asteroidBelt.size()==0)
+		printYouWin();
+	if (gameOver)
+	{
+		printGameOver();
+		paused = true;
+	}
+		
 	switch(filled)
 	{
 		// If not filled
@@ -275,6 +307,7 @@ void gameView()
 
 void gameLoop()
 {
+	if (!paused){
 	// Open the Ship Log file to record debug information.
 #ifdef LOGGING/*
 	shipLogger.open(SHIP_LOG_PATH, ofstream::out|ofstream::app);*/
@@ -379,7 +412,7 @@ void gameLoop()
 	}
 
 	
-
+	}
 	glutPostRedisplay();
 }
 
@@ -521,11 +554,11 @@ void debugMe(int x, int y)
 void keyboard(unsigned char key, int x, int y)
 {	
 	// start game
-	if(key == 's' || key == 'S')
+	if((key == 's' || key == 'S') && !gameOver)
 		paused = false;
 
 	// pause movement
-	if(key == 'p' || key == 'P')
+	if((key == 'p' || key == 'P') && !gameOver)
 	{
 		if (paused)
 			paused = false;
@@ -540,6 +573,7 @@ void keyboard(unsigned char key, int x, int y)
 		initiateAsteroids();
 		bulletsFired=0;
 		paused=true;
+		gameOver = false;
 		enterprise.rotation=0;
 		bulletsHit = 0;
 	}
@@ -692,3 +726,4 @@ int main(int argc, char** argv)
 /*
 
 */
+

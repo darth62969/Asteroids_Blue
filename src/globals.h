@@ -32,7 +32,7 @@ extern double origin;//Center of the octagon
 extern vector<bullet> bullets;
 extern vector<asteroid> asteroidBelt;
 extern vector<asteroid> allGood;
-
+extern bool gameOver;
 
 // Log Writers
 extern ofstream asteroidLogger;
@@ -51,3 +51,4 @@ extern double FPS;
 extern bool paused;
 
 #endif
+

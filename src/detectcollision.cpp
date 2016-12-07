@@ -164,6 +164,7 @@ void detectCollision( int i)
 							collisionLogger.close();
 #endif
 							//gameover code
+							gameOver = true;
 						}
 					}
 					else if(j == a1.size()-1)
@@ -175,6 +176,7 @@ void detectCollision( int i)
 							collisionLogger << "Game Over\n";
 							collisionLogger.close();
 #endif
+							gameOver = true;
 							//gameover code
 						}	
 					}
@@ -187,6 +189,7 @@ void detectCollision( int i)
 							collisionLogger << "Game Over\n";
 							collisionLogger.close();
 #endif	
+							gameOver = true;
 							//gameover code
 						}	
 					}
@@ -199,6 +202,7 @@ void detectCollision( int i)
 							collisionLogger << "Game Over\n";
 							collisionLogger.close();
 #endif	
+							gameOver = true;
 							//gameover code
 						}
 					}
@@ -449,9 +453,10 @@ void detectCollision( int i)
 					}
 				}	
 			}
-			//if (collision == 1) i--;
-		}
-	//}
+		//	if (collision == 1) i--;
+		//}
+
+	}
 	if(n.size() != 0)
 	{
 		asteroidBelt.insert(asteroidBelt.end(),n.begin(),n.end());
