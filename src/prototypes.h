@@ -41,7 +41,7 @@ void pmatm (int SIZE, float (&TM) [4][4], point& pnt);
 void clip();
 int insideOctogon(point p);
 bool intersect (point v1, point v2, point v3, point v4);
-void detectCollision(); 
+void detectCollision (int i); 
 bool asteroidProximity (asteroid ast1, asteroid ast2);
 bool bulletProximity (asteroid ast1, bullet b1);
 bool shipProximity (asteroid ast1, std::vector <point> b2);
