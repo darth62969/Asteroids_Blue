@@ -53,6 +53,7 @@ float deltaRot = 1.0; 		// For use in the accelleration of ship rotation
 
 double FPS = 0.0;	// FPS calcuatitions 
 double avgFPS;
+double origin = (WORLD_COORDINATE_MAX_X / 2);
 
 bool rightKeyPressed = false;	// These are for the ship rotation functions
 bool rightReached10 = false;	// right rotation reached 10
@@ -75,6 +76,8 @@ void initiateOctogon();
 void drawOctogon(void);
 
 void drawString(GLuint x, GLuint y, const char* string);
+
+
 
 void setFont(void *font)
 {
@@ -153,10 +156,10 @@ void debugDisplay()
 	drawString(20, WORLD_COORDINATE_MAX_Y-20, FPSStr);
 	drawString(20, WORLD_COORDINATE_MAX_Y-35, avgFPSStr);
 
-#ifdef LOGGING
+#ifdef LOGGING/*
 	generalLogger.open( GENERAL_LOG_PATH, ofstream::out|ofstream::app);
 	generalLogger << FPSStr << endl;
-	generalLogger << avgFPSStr << endl;
+	generalLogger << avgFPSStr << endl;*/
 #endif 
 	// Count Asteroid Triangles
 
@@ -172,10 +175,16 @@ void debugDisplay()
 //Display Triangle Count
 	sprintf(triCountStr, "Triangles On Screen : %3d", triCount);
 	drawString(20, WORLD_COORDINATE_MAX_Y-50, triCountStr);
-#ifdef LOGGING
+#ifdef LOGGING/*
 	generalLogger << triCountStr << endl;
+<<<<<<< HEAD
 	generalLogger.close();
 #endif	
+=======
+	generalLogger.close();*/
+#endif
+	
+>>>>>>> 8bf9b9066380ba11aaf488b77a6c7613f560016d
 }
 
 /*
@@ -185,6 +194,7 @@ void debugDisplay()
 
  // Q: Why is this a method? - Ted
  // A: Because it is the Main Game Display Fucntion - Jonathan
+ // R: Hmm, I see - Ted
 void gameView()
 {
 	//output game to window
@@ -272,8 +282,8 @@ void gameView()
 void gameLoop()
 {
 	// Open the Ship Log file to record debug information.
-#ifdef LOGGING
-	shipLogger.open(SHIP_LOG_PATH, ofstream::out|ofstream::app);
+#ifdef LOGGING/*
+	shipLogger.open(SHIP_LOG_PATH, ofstream::out|ofstream::app);*/
 #endif
 	// If the right arrow key has been pressed rotate the ship
 	// Starting at 1 degree then moving to 10 degrees at a time.
@@ -298,10 +308,10 @@ void gameLoop()
 		timeKeyPressed++;
 
 		// Log Changes
-#ifdef LOGGING
+#ifdef LOGGING/*
 		shipLogger << endl << "Ship Rotation : " << enterprise.rotation << endl; 
 		shipLogger << "Delta Rot : " << deltaRot << endl;
-		shipLogger << "Time Right Arrow Pressed = " << timeKeyPressed;
+		shipLogger << "Time Right Arrow Pressed = " << timeKeyPressed;*/
 #endif
 	}
 
@@ -327,26 +337,42 @@ void gameLoop()
 		timeKeyPressed++;
 
 		// Log Changes
-#ifdef LOGGING
+#ifdef LOGGING/*
 		shipLogger << endl << "Ship Rotation : " << enterprise.rotation << endl; 
 		shipLogger << "Delta Rot : " << deltaRot << endl;
-		shipLogger << "Time Right Arrow Pressed = " << timeKeyPressed << endl;
+		shipLogger << "Time Right Arrow Pressed = " << timeKeyPressed << endl;*/
 #endif
 	}
 	
 	//Close the ship logger to save changes.
-#ifdef LOGGING
-	shipLogger.close();
+#ifdef LOGGING/*
+	shipLogger.close();*/
 #endif
+#ifdef LOGGING
+		collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
+		collisionLogger << "\nRunning Collision Detection checks\n";
+		collisionLogger << asteroidBelt.size() << endl;
+		collisionLogger.close();
+#endif
+	for (int i = 0; i < asteroidBelt.size(); i++)
+	{
+
+		detectCollision(i);
+	}
 
 	// Iterate through and Increment each bullet's location
-	for(int i=0; i <bullets.size();i++)
+	for(int i=0; i < bullets.size();i++)
 	{
 		// We use sine and cosine because we need to tesslate them 
 		// along the direction they need to be going or the direction
-		// they were shot. We are moving them by 2 each time. 
-		bullets.at(i).location.x += 2.0 * cos(bullets.at(i).theta); 
-		bullets.at(i).location.y += 2.0 * sin(bullets.at(i).theta);
+		// they were shot. We are moving them by 2 each time.
+
+		bullets.at(i).location.x += 2.0 * cos(bullets.at(i).theta)*(60/FPS); 
+		bullets.at(i).location.y += 2.0 * sin(bullets.at(i).theta)*(60/FPS);
+		if(!insideOctogon(bullets[i].location) && bullets.size() > 1 && i <bullets.size())
+		{
+			bullets.erase(bullets.begin() + i);
+		}
 	}
 
 	// Iterate through and Increment each asteroid's location
@@ -358,7 +384,8 @@ void gameLoop()
 		asteroidBelt.at(i).incrementLocation();
 	}
 
-//	detectCollision(asteroidBelt, bullets, enterprise);
+	
+
 	glutPostRedisplay();
 }
 
@@ -646,6 +673,9 @@ int main(int argc, char** argv)
 	generalLogger.open(GENERAL_LOG_PATH, ofstream::out|ofstream::trunc);
 	generalLogger << "General Logging Started " << endl;
 	generalLogger.close();
+	collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::trunc);
+	collisionLogger << "Collision Logging Started " << endl;
+	collisionLogger.close();
 #endif
 	initiateWindow(argc, argv); /* Set up Window */
 	initiateGL();

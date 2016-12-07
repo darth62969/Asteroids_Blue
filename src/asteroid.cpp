@@ -43,8 +43,22 @@ asteroid::asteroid()
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 	asteroidLogger << "Number of sides to generate : " << numsides << endl;
 #endif
-	center.x = rand() % (WORLD_COORDINATE_MAX_X + 1) + WORLD_COORDINATE_MIN_X;
-	center.y = rand() % (WORLD_COORDINATE_MAX_Y + 1) + WORLD_COORDINATE_MIN_Y;
+	center.x = 0;
+	center.y = 0;
+	while(!insideOctogon(center))
+	{
+		center.x = rand() % (WORLD_COORDINATE_MAX_X + 1) + WORLD_COORDINATE_MIN_X;
+		center.y = rand() % (WORLD_COORDINATE_MAX_Y + 1) + WORLD_COORDINATE_MIN_Y;
+		bool nv = false;
+		for (int i = 0; i < asteroidBelt.size(); i++)
+		{
+			if (abs(center.x - asteroidBelt[i].getCenter().x) <= 20 && abs(center.y - asteroidBelt[i].getCenter().y) <= 20)
+			{
+				center.x = 0;
+				center.y = 0;
+			}
+		}
+	}
 	rotation = rand() % 360;
 	rotation *= M_PI / 180.0;
 #ifdef LOGGING
@@ -110,7 +124,7 @@ void asteroid::incrementLocation()
 		return;
 	center.x += cos(rotation)/2*(60/FPS);
 	center.y += sin(rotation)/2*(60/FPS);
-	
+	/*	
 	switch((int) center.x)
 	{
 		case WORLD_COORDINATE_MAX_X:
@@ -129,6 +143,12 @@ void asteroid::incrementLocation()
 		case WORLD_COORDINATE_MIN_Y:
 			center.y = WORLD_COORDINATE_MAX_Y-1;
 			break;
+	}
+	*/
+	if(!insideOctogon(center)){
+		point position {center.x-origin,center.y-origin,0,1};
+		center.x -= 2*position.x; 
+		center.y -= 2*position.y; 
 	}
 }
 
@@ -199,10 +219,10 @@ vector<asteroid> asteroid::breakupAsteroid()
 		{
 			if (tmpt.b.x > tmpt.c.x)
 			{
-#ifdef LOGGING
+#ifdef LOGGING/*
 				asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 				asteroidLogger << tmpt.b.x << ">" << tmpt.c.x << endl; 
-				asteroidLogger.close();
+				asteroidLogger.close();*/
 #endif
 				tmpp.x=tmpt.c.x;
 				tmpt.a.x-=tmpp.x;
@@ -211,10 +231,10 @@ vector<asteroid> asteroid::breakupAsteroid()
 			}
 			else
 			{
-#ifdef LOGGING				
+#ifdef LOGGING	/*			
 				asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 				asteroidLogger << tmpt.c.x << ">" << tmpt.b.x << endl;
-				asteroidLogger.close();
+				asteroidLogger.close();*/
 #endif
 				tmpp.x=tmpt.b.x;
 				tmpt.a.x-=tmpp.x;
@@ -226,10 +246,10 @@ vector<asteroid> asteroid::breakupAsteroid()
 		{
 			if (tmpt.a.x > tmpt.c.x)
 			{
-#ifdef LOGGING
+#ifdef LOGGING/*
 				asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 				asteroidLogger << tmpt.a.x << ">" << tmpt.c.x << endl;
-				asteroidLogger.close(); 
+				asteroidLogger.close();*/ 
 #endif
 				tmpp.x=tmpt.c.x;
 				tmpt.a.x-=tmpp.x;
@@ -238,10 +258,10 @@ vector<asteroid> asteroid::breakupAsteroid()
 			}
 			else
 			{
-#ifdef LOGGING
+#ifdef LOGGING/*
 				asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 				asteroidLogger << tmpt.c.x << ">" << tmpt.a.x << endl;
-				asteroidLogger.close(); 
+				asteroidLogger.close();*/ 
 #endif
 				tmpp.x=tmpt.a.x;
 				tmpt.a.x-=tmpp.x;
@@ -294,7 +314,7 @@ vector<asteroid> asteroid::breakupAsteroid()
 	return breakup;
 }
 
-point intersect(point v1, point v2, point v3, point v4)
+bool intersect(point v1, point v2, point v3, point v4)
 {
 	float ua_num = ((v3.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v3.y - v1.y));
 	float den = ((v2.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v2.y - v1.y));
@@ -304,17 +324,39 @@ point intersect(point v1, point v2, point v3, point v4)
 	float ua = ua_num / den;
 	float ub = ub_num / den;
 
+#ifdef LOGGING
+/*
+if(!paused)
+{
+	collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
+	collisionLogger << "\nv1 = (" << v1.x << "," << v1.y << ") : "; 
+	collisionLogger << "v2 = (" << v2.x << "," << v2.y << ") : ";
+	collisionLogger << "v3 = (" << v3.x << "," << v3.y << ") : ";
+	collisionLogger << "v1 = (" << v4.x << "," << v4.y << ")";
+	collisionLogger << "\nua_num = " << ua_num;
+	collisionLogger << "; ndem = " << den;
+	collisionLogger << "; nub_num = " << ub_num;
+	collisionLogger << "; ua = " << ua;
+	collisionLogger << "; ub = " << ub;
+	collisionLogger <<"\nua > 0.0 = " << (ua > 0.0) << " | " << "ua < 1.0 " << (ua < 1.0);
+	collisionLogger <<"\nub > 0.0 = " << (ub > 0.0) << " | " << "ub < 1.0 " << (ub < 1.0);
+	collisionLogger.close();
+}*/
+#endif
+
 	point v;
 	v.x = -100;
 	v.y = -100;
 
 	if((ua > 0.0) && (ua < 1.0) && (ub > 0.0) && (ub < 1.0))
 	{
-		v.x = v1.x + ua * (v2.x - v1.x);
-		v.y = v1.y + ua * (v2.y - v1.y);
+		collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
+		collisionLogger << "\n\nentered true\n";
+		collisionLogger.close();
+		return true;
 	}
 
-	return v;
+	return false;
 }
 
 void asteroid::tessellateAsteriod()
@@ -382,14 +424,14 @@ void asteroid::tessellateAsteriod()
 			// Check if the newly created diagonal intersects with any formed line segment.
 			for(int n=0; n<temp.size()-1; n++)
 			{
-				point v = intersect(temp.at(i), temp.at(k), temp.at(n), temp.at(n+1));
-				if(v.x != -100 && v.y != -100)
+				bool v = intersect(temp.at(i), temp.at(k), temp.at(n), temp.at(n+1));
+				if(v)
 					intersection = true;
 			}
 
 			// Check if the newly created diagonal intersects with the last line segment.
-			point v = intersect(temp.at(i), temp.at(k), temp.back(), temp.front());
-			if(v.x != -100 && v.y != -100)
+			bool v = intersect(temp.at(i), temp.at(k), temp.back(), temp.front());
+			if(v)
 				intersection = true;
 
 			// If no intersection has occurred and no CW winding occurs in the special circumstance, run the following code.

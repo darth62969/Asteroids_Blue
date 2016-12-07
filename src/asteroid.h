@@ -19,11 +19,12 @@
 #define __ASTEROID_H_INCLUDED__
 
 #include "structs.h"
+#include <vector>
 
 class asteroid
 {
 	public:
-        	explicit asteroid();
+        explicit asteroid();
 		explicit asteroid(triangle a, point location, point offset, int num);
 		point getCenter();
 		std::vector<asteroid> breakupAsteroid();
@@ -35,11 +36,11 @@ class asteroid
 
 	private:
 		point center;
-	    	float rotation;
+	    float rotation;
 		point translation;
-	    	std::vector<point> astPnts;
-	    	std::vector<triangle> astTris;
-	    	bool clipped;
+	    std::vector<point> astPnts;
+	    std::vector<triangle> astTris;
+	    bool clipped;
 		int numsides;
 		void createAsteroid(triangle a, point center, point offset, int num);
 	   	void tessellateAsteriod();
