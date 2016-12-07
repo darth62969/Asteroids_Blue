@@ -359,7 +359,7 @@ void gameLoop()
 	shipLogger.close();
 #endif
 
-	detectCollision(asteroidBelt, bullets, enterprise);
+	detectCollision();
 
 	// Iterate through and Increment each bullet's location
 	for(int i=0; i <bullets.size();i++)
@@ -669,6 +669,9 @@ int main(int argc, char** argv)
 	generalLogger.open(GENERAL_LOG_PATH, ofstream::out|ofstream::trunc);
 	generalLogger << "General Logging Started " << endl;
 	generalLogger.close();
+	collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::trunc);
+	collisionLogger << "Collision Logging Started " << endl;
+	collisionLogger.close();
 #endif
 	initiateWindow(argc, argv); /* Set up Window */
 	initiateGL();

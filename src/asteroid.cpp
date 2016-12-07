@@ -43,8 +43,13 @@ asteroid::asteroid()
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 	asteroidLogger << "Number of sides to generate : " << numsides << endl;
 #endif
-	center.x = rand() % (WORLD_COORDINATE_MAX_X + 1) + WORLD_COORDINATE_MIN_X;
-	center.y = rand() % (WORLD_COORDINATE_MAX_Y + 1) + WORLD_COORDINATE_MIN_Y;
+	center.x = 0;
+	center.y = 0;
+	while(!insideOctogon(center))
+	{
+		center.x = rand() % (WORLD_COORDINATE_MAX_X + 1) + WORLD_COORDINATE_MIN_X;
+		center.y = rand() % (WORLD_COORDINATE_MAX_Y + 1) + WORLD_COORDINATE_MIN_Y;
+	}
 	rotation = rand() % 360;
 	rotation *= M_PI / 180.0;
 #ifdef LOGGING
@@ -309,6 +314,22 @@ point intersect(point v1, point v2, point v3, point v4)
 
 	float ua = ua_num / den;
 	float ub = ub_num / den;
+
+#ifdef LOGGING
+	collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
+	collisionLogger << "\nv1 = (" << v1.x << "," << v1.y << ") : "; 
+	collisionLogger << "v2 = (" << v2.x << "," << v2.y << ") : ";
+	collisionLogger << "v3 = (" << v3.x << "," << v3.y << ") : ";
+	collisionLogger << "v1 = (" << v4.x << "," << v4.y << ")";
+	collisionLogger << "\nua_num = " << ua_num;
+	collisionLogger << "; ndem = " << den;
+	collisionLogger << "; nub_num = " << ub_num;
+	collisionLogger << "; ua = " << ua;
+	collisionLogger << "; ub = " << ub;
+	collisionLogger <<"\nua > 0.0 = " << (ua > 0.0) << " | " << "ua < 1.0 " << (ua < 1.0);
+	collisionLogger <<"\nub > 0.0 = " << (ub > 0.0) << " | " << "ub < 1.0 " << (ub < 1.0);
+	collisionLogger.close();
+#endif
 
 	point v;
 	v.x = -100;
