@@ -53,6 +53,7 @@ float deltaRot = 1.0; 		// For use in the accelleration of ship rotation
 
 double FPS = 0.0;	// FPS calcuatitions 
 double avgFPS;
+double origin = (WORLD_COORDINATE_MAX_X / 2);
 
 bool rightKeyPressed = false;	// These are for the ship rotation functions
 bool rightReached10 = false;	// right rotation reached 10
@@ -203,6 +204,7 @@ void debugDisplay()
 
  // Q: Why is this a method? - Ted
  // A: Because it is the Main Game Display Fucntion - Jonathan
+ // R: Hmm, I see - Ted
 void gameView()
 {
 	//output game to window

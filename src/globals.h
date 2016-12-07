@@ -27,7 +27,7 @@ extern ship enterprise;
 // other stuff
 extern vector<point> octogon;// defines octogon in ccw order
 extern vector<point> clipPts;// contains points needed for clipping
-
+extern double origin;//Center of the octagon 
 // i don't like the asteroidBelt being global. i will get an explanagion later.
 extern vector<asteroid> asteroidBelt;
 extern vector<asteroid> allGood;
