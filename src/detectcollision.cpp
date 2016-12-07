@@ -81,7 +81,6 @@ void detectCollision(vector <asteroid> a, vector <bullet> b, ship c)
 	//       Do a separate list of new asteroids that have to be added.
 	//       add them at the end? 
 	
-
 	//creates a temporary array of vectors to stop new vectors
 	vector <asteroid> n;
 
