@@ -355,6 +355,8 @@ void gameLoop()
 	shipLogger.close();
 #endif
 
+//	detectCollision(asteroidBelt, bullets, enterprise);
+
 	// Iterate through and Increment each bullet's location
 	for(int i=0; i <bullets.size();i++)
 	{
@@ -374,7 +376,8 @@ void gameLoop()
 		asteroidBelt.at(i).incrementLocation();
 	}
 
-//	detectCollision(asteroidBelt, bullets, enterprise);
+	
+
 	glutPostRedisplay();
 }
 

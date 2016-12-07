@@ -40,5 +40,9 @@ void clip();
 int insideOctogon(point p);
 point intersect (point v1, point v2, point v3, point v4);
 void detectCollision(vector <asteroid> a, vector <bullet> b, ship c); 
+bool asteroidProximity (asteroid ast1, asteroid ast2);
+bool bulletProximity (asteroid ast1, bullet b1);
+bool shipProximity (asteroid ast1, vector <point> b2);
+bool intersect1 (point v1, point v2, point v3, point v4);
 
 #endif
