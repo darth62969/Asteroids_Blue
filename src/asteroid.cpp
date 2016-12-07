@@ -133,7 +133,7 @@ void asteroid::incrementLocation()
 	*/
 	if(!insideOctogon(center)){
 		point position {center.x-origin,center.y-origin,0,1};
-		center.x -= 2*position.x;
+		center.x -= 2*position.x; 
 		center.y -= 2*position.y; 
 	}
 }
