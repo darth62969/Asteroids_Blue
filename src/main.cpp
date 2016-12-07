@@ -76,6 +76,8 @@ void drawOctogon(void);
 
 void drawString(GLuint x, GLuint y, const char* string);
 
+
+
 void setFont(void *font)
 {
 	currentfont = font;
@@ -355,7 +357,7 @@ void gameLoop()
 	shipLogger.close();
 #endif
 
-//	detectCollision(asteroidBelt, bullets, enterprise);
+	detectCollision(asteroidBelt, bullets, enterprise);
 
 	// Iterate through and Increment each bullet's location
 	for(int i=0; i <bullets.size();i++)

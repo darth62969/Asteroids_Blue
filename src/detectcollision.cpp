@@ -15,6 +15,7 @@
  * Mercer Univercity  
  */
 #include "prototypes.h"
+#include "headers.h"
 
 //checks proximity of asteroids
 bool asteroidProximity (asteroid ast1, asteroid ast2)
