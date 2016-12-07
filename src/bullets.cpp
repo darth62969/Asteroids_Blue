@@ -49,4 +49,3 @@ void fireBullet(bullet shot){
 	
 	//drawBullet(shot);
 }
-

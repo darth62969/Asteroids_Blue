@@ -90,7 +90,7 @@ void buildTranslate(double mat[][4], double x, double y, double z)
 void rotatePoint(point& p,double theta)
 {
 	ptom(p, A);
-	double origin = (WORLD_COORDINATE_MAX_X / 2);
+	//double origin = (WORLD_COORDINATE_MAX_X / 2);
 
 	buildTranslate(TRANS,origin*-1,origin*-1,0);
 	mVmult(TRANS,4,4,A,4,1,B,4,1);	
@@ -133,3 +133,4 @@ void translatePoint(point& p,double x, double y, double z)
 
 	mtop(p, B);
 }
+
