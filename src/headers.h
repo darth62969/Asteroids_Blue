@@ -45,6 +45,7 @@ const int WORLD_COORDINATE_MAX_Y = 600;
 //Asteroid Contants
 const int ASTEROID_MAX_X = 20;
 const int ASTEROID_MAX_Y = 20;
+const float ASTEROID_MIN_DIST = 4.5; 
 const int ASTEROID_MAX_SIZE = 12;
 const int ASTEROID_MIN_SIZE = 4;
 

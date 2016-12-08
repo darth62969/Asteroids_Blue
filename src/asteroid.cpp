@@ -45,10 +45,37 @@ asteroid::asteroid()
 #endif
 	center.x = 0;
 	center.y = 0;
+	
+	vector<point> cmd;
+	cmd.push_back(enterprise.body.a);
+	cmd.push_back(enterprise.body.b);
+	cmd.push_back(enterprise.body.c);
+
+	for (int i = 0; i < 3; i++)
+	{
+		scalePoint(cmd[i], 7);
+		rotatePoint(cmd[i], enterprise.rotation);
+		cmd[i].x += WORLD_COORDINATE_MAX_X/2;
+		cmd[i].y += WORLD_COORDINATE_MAX_Y/2;
+	}
+
+	int x = (cmd[0].x + cmd[1].x + cmd[2].x)/3;
+	int y = (cmd[0].y + cmd[1].y + cmd[2].y)/3;
+
 	while(!insideOctogon(center))
 	{
-		center.x = rand() % (WORLD_COORDINATE_MAX_X + 1) + WORLD_COORDINATE_MIN_X;
-		center.y = rand() % (WORLD_COORDINATE_MAX_Y + 1) + WORLD_COORDINATE_MIN_Y;
+		do
+		{
+			center.x = rand() % (WORLD_COORDINATE_MAX_X + 1) + WORLD_COORDINATE_MIN_X;
+		}
+		while(abs(center.x - x) <= ASTEROID_MAX_X*2);
+
+		do
+		{
+			center.y = rand() % (WORLD_COORDINATE_MAX_Y + 1) + WORLD_COORDINATE_MIN_Y;
+		}
+		while(abs(center.y - y) <= ASTEROID_MAX_Y*2);
+
 		bool nv = false;
 		for (int i = 0; i < asteroidBelt.size(); i++)
 		{
@@ -71,8 +98,32 @@ asteroid::asteroid()
 		point b;
 		b.x = rand() % (ASTEROID_MAX_X+1);
 		b.y = rand() % (ASTEROID_MAX_Y+1);
-		astPnts.push_back(b);
 		i++;
+		if( j == 0)
+		{
+			astPnts.push_back(b);
+		}
+		else if (j > 0)
+		{
+			bool durpdist = true; 
+			for (int k = j-1; k >= 0; k--)
+			{
+				if(sqrt((b.x-astPnts[k].x)*(b.x-astPnts[k].x) + (b.y-astPnts[k].y)*(b.y-astPnts[k].y)) <= ASTEROID_MIN_DIST)
+				{
+					durpdist = false; 
+					break;
+				}
+			}
+			if(durpdist)
+			{
+				astPnts.push_back(b);
+			}
+			else
+			{
+				j--;
+			}
+		}
+		
 	}
 
 	sortPoints();
@@ -124,27 +175,7 @@ void asteroid::incrementLocation()
 		return;
 	center.x += cos(rotation)/2*(60/FPS);
 	center.y += sin(rotation)/2*(60/FPS);
-	/*	
-	switch((int) center.x)
-	{
-		case WORLD_COORDINATE_MAX_X:
-			center.x = WORLD_COORDINATE_MIN_X+1;
-			break;
-		case WORLD_COORDINATE_MIN_X:
-			center.x = WORLD_COORDINATE_MAX_X-1;
-			break;
-	}
-
-	switch((int) center.y)
-	{
-		case WORLD_COORDINATE_MAX_Y:
-			center.y = WORLD_COORDINATE_MIN_Y+1;
-			break;
-		case WORLD_COORDINATE_MIN_Y:
-			center.y = WORLD_COORDINATE_MAX_Y-1;
-			break;
-	}
-	*/
+	
 	if(!insideOctogon(center)){
 		point position {center.x-origin,center.y-origin,0,1};
 		center.x -= 2*position.x; 
@@ -187,9 +218,9 @@ void asteroid::createAsteroid(triangle a, point location, point offset, int num)
 #endif
 }
 
-void asteroid::setPoints(std::vector<point> v){
+void asteroid::setPoints(std::vector<point> v)
+{
 	astPnts = v;
-
 }
 
 vector<asteroid> asteroid::breakupAsteroid()
@@ -305,8 +336,10 @@ vector<asteroid> asteroid::breakupAsteroid()
 			}
 		}
 		
-		
-		asteroid a(tmpt, center, tmpp, i, rotation);
+		//ROTATION MUST BE A RANDOM FLOAT
+		//srand (static_cast <unsigned> (time(0))*((asteroidBelt.size()+67)/10));
+		float rotate = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		asteroid a(tmpt, center, tmpp, i, rotate);
 		//a.createAsteroid(tmpt, center, tmpp, i);
 		breakup.push_back(a);
 	}
@@ -512,4 +545,19 @@ vector<point> asteroid::getPoints()
 vector<triangle> asteroid::getTess()
 {
 	return astTris;
+}
+
+vector<point> asteroid::getRealPoints(){
+
+	vector<point> v;
+
+	for(int i = 0; i < astPnts.size(); i++){
+
+		point p = {astPnts[i].x + center.x,astPnts[i].y + center.y, 0, 1};
+		/*asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+		asteroidLogger << "real points are: " << p.x << " " << p.y << "\n";
+		asteroidLogger.close();	*/
+		v.push_back(p);
+	}
+	return v;
 }

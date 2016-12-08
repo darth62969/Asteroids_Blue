@@ -12,7 +12,7 @@
 # Modified for use in: "Asteroids: RETURN OF METEOR" 
 # Modified by: Blue Squad
 # For the class: Introduction to Computer Graphics (CSC315)
-# At: Mercer Univercity
+# At: Mercer University
 #
 # Blue Squad is:
 # Jonathan Oakes
@@ -22,8 +22,6 @@
 # Emily Herron
 #
 
-
-
 CC = g++ 
 CFLAGS = 
 COPTFLAGS = -O3 
@@ -31,8 +29,9 @@ LIBFLAGS = -lglut -lGLU -lGL
 HEADERS = src/headers.h src/structs.h src/globals.h src/prototypes.h
 OBJS = main.o asteroid.o ship.o bullets.o transformer.o clipper.o detectcollision.o
 
-logging ?= n
 debug ?= n
+logging ?= n
+
 ifeq ($(debug), y)
 	CFLAGS += -g -DDEBUG -pg
 endif
