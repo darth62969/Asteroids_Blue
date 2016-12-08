@@ -69,7 +69,7 @@ bool bulletProximity(asteroid ast1, bullet b1)
 		return false; 
 }
 
-/*
+
 //checks proximity of ship and asteroid
 bool shipProximity(asteroid ast1, vector<point> b2)
 {
@@ -97,7 +97,7 @@ bool shipProximity(asteroid ast1, vector<point> b2)
 	else
 		return false; 
 }
-*/
+
 
 void detectCollision(int index) 
 {
@@ -120,10 +120,7 @@ void detectCollision(int index)
 	//gets points of asteroid 1
 	vector<point> a1;
 	a1 = asteroidBelt[index].getPoints();
-/*
-	asteroid ast;
-	ast = asteroidBelt[index];
-*/
+
 	//collision of a ship vs asteroids
 	//Idea:  Narrow down the asteroids in this one 
 	//	 by searching through the asteroids and 
@@ -143,7 +140,7 @@ void detectCollision(int index)
 		cmd[i].x += WORLD_COORDINATE_MAX_X/2;
 		cmd[i].y += WORLD_COORDINATE_MAX_Y/2;
 	}
-/*
+
 	// If the ship is in proximity of the asteroid, check every line segment to see if a collision actually occurs.
 	if (shipProximity(asteroidBelt[index], cmd))
 	{
@@ -156,17 +153,17 @@ void detectCollision(int index)
 				{
 					#ifdef LOGGING
 					collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
-					collisionLogger << "checking line segment " << ast.getCenter().x + a1[j].x << " " << ast.getCenter().y + a1[j].y << " to " << ast.getCenter().x + a1[0].x << " " << ast.getCenter().y + a1[0].y;
+					collisionLogger << "checking line segment " << asteroidBelt[index].getCenter().x + a1[j].x << " " << asteroidBelt[index].getCenter().y + a1[j].y << " to " << asteroidBelt[index].getCenter().x + a1[0].x << " " << asteroidBelt[index].getCenter().y + a1[0].y;
 					collisionLogger << " against " << cmd[k].x << " " << cmd[k].y << " to " << cmd[0].x << " " << cmd[0].y << endl;
 					collisionLogger.close();
 					#endif
 
 					point tempj;
-					tempj.x = a1[j].x + ast.getCenter().x;
-					tempj.y = a1[j].y + ast.getCenter().y;
+					tempj.x = a1[j].x + asteroidBelt[index].getCenter().x;
+					tempj.y = a1[j].y + asteroidBelt[index].getCenter().y;
 					point temp0;
-					temp0.x = a1[0].x + ast.getCenter().x;
-					temp0.y = a1[0].y + ast.getCenter().y;
+					temp0.x = a1[0].x + asteroidBelt[index].getCenter().x;
+					temp0.y = a1[0].y + asteroidBelt[index].getCenter().y;
 					if (intersect(tempj, temp0, cmd[k], cmd[0]))
 					{
 						#ifdef LOGGING
@@ -183,17 +180,17 @@ void detectCollision(int index)
 				{
 					#ifdef LOGGING
 					collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
-					collisionLogger << "checking line segment " << ast.getCenter().x + a1[j].x << " " << ast.getCenter().y + a1[j].y << " to " << ast.getCenter().x + a1[0].x << " " << ast.getCenter().y + a1[0].y;
+					collisionLogger << "checking line segment " << asteroidBelt[index].getCenter().x + a1[j].x << " " << asteroidBelt[index].getCenter().y + a1[j].y << " to " << asteroidBelt[index].getCenter().x + a1[0].x << " " << asteroidBelt[index].getCenter().y + a1[0].y;
 					collisionLogger << " against " << cmd[k].x << " " << cmd[k].y << " to " << cmd[k+1].x << " " << cmd[k+1].y << endl;
 					collisionLogger.close();
 					#endif
 
 					point tempj;
-					tempj.x = a1[j].x + ast.getCenter().x;
-					tempj.y = a1[j].y + ast.getCenter().y;
+					tempj.x = a1[j].x + asteroidBelt[index].getCenter().x;
+					tempj.y = a1[j].y + asteroidBelt[index].getCenter().y;
 					point temp0;
-					temp0.x = a1[0].x + ast.getCenter().x;
-					temp0.y = a1[0].y + ast.getCenter().y;
+					temp0.x = a1[0].x + asteroidBelt[index].getCenter().x;
+					temp0.y = a1[0].y + asteroidBelt[index].getCenter().y;
 					if (intersect(tempj, temp0, cmd[k], cmd[k+1]))
 					{	
 						#ifdef LOGGING
@@ -211,17 +208,17 @@ void detectCollision(int index)
 				{
 					#ifdef LOGGING
 					collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
-					collisionLogger << "checking line segment " << ast.getCenter().x + a1[j].x << " " << ast.getCenter().y + a1[j].y << " to " << ast.getCenter().x + a1[j+1].x << " " << ast.getCenter().y + a1[j+1].y;
+					collisionLogger << "checking line segment " << asteroidBelt[index].getCenter().x + a1[j].x << " " << asteroidBelt[index].getCenter().y + a1[j].y << " to " << asteroidBelt[index].getCenter().x + a1[j+1].x << " " << asteroidBelt[index].getCenter().y + a1[j+1].y;
 					collisionLogger << " against " << cmd[k].x << " " << cmd[k].y << " to " << cmd[0].x << " " << cmd[0].y << endl;
 					collisionLogger.close();
 					#endif
 
 					point tempj;
-					tempj.x = a1[j].x + ast.getCenter().x;
-					tempj.y = a1[j].y + ast.getCenter().y;
+					tempj.x = a1[j].x + asteroidBelt[index].getCenter().x;
+					tempj.y = a1[j].y + asteroidBelt[index].getCenter().y;
 					point tempj1;
-					tempj1.x = a1[j+1].x + ast.getCenter().x;
-					tempj1.y = a1[j+1].y + ast.getCenter().y;
+					tempj1.x = a1[j+1].x + asteroidBelt[index].getCenter().x;
+					tempj1.y = a1[j+1].y + asteroidBelt[index].getCenter().y;
 					if (intersect(tempj, tempj1, cmd[k], cmd[0]))
 					{
 						#ifdef LOGGING
@@ -238,17 +235,17 @@ void detectCollision(int index)
 				{
 					#ifdef LOGGING
 					collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
-					collisionLogger << "checking line segment " << ast.getCenter().x + a1[j].x << " " << ast.getCenter().y + a1[j].y << " to " << ast.getCenter().x + a1[j+1].x << " " << ast.getCenter().y + a1[j+1].y;
+					collisionLogger << "checking line segment " << asteroidBelt[index].getCenter().x + a1[j].x << " " << asteroidBelt[index].getCenter().y + a1[j].y << " to " << asteroidBelt[index].getCenter().x + a1[j+1].x << " " << asteroidBelt[index].getCenter().y + a1[j+1].y;
 					collisionLogger << " against " << cmd[k].x << " " << cmd[k].y << " to " << cmd[k+1].x << " " << cmd[k+1].y << endl;
 					collisionLogger.close();
 					#endif
 
 					point tempj;
-					tempj.x = a1[j].x + ast.getCenter().x;
-					tempj.y = a1[j].y + ast.getCenter().y;
+					tempj.x = a1[j].x + asteroidBelt[index].getCenter().x;
+					tempj.y = a1[j].y + asteroidBelt[index].getCenter().y;
 					point tempj1;
-					tempj1.x = a1[j+1].x + ast.getCenter().x;
-					tempj1.y = a1[j+1].y + ast.getCenter().y;
+					tempj1.x = a1[j+1].x + asteroidBelt[index].getCenter().x;
+					tempj1.y = a1[j+1].y + asteroidBelt[index].getCenter().y;
 					if (intersect(tempj, tempj1, cmd[k], cmd[k+1]))
 					{
 						#ifdef LOGGING
@@ -264,7 +261,7 @@ void detectCollision(int index)
 			}
 		}
 	}
-*/
+
 	//collision of asteroid and bullet
 	bool collision = false; 
 	for (int j = 0; j < bullets.size(); j++)
