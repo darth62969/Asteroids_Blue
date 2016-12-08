@@ -431,7 +431,7 @@ void detectCollision(int index)
 		
 									// Deletes the two asteroids.
 									asteroidBelt.erase(asteroidBelt.begin()+index);
-									asteroidBelt.erase(asteroidBelt.begin()+j);
+									asteroidBelt.erase(asteroidBelt.begin()+(j-1));
 
 									// Stores new asteroids in new vector.
 									for(int m = 0; m < triIndex.size(); m++)
@@ -473,7 +473,7 @@ void detectCollision(int index)
 		
 									// Deletes the two asteroids.
 									asteroidBelt.erase(asteroidBelt.begin()+index);
-									asteroidBelt.erase(asteroidBelt.begin()+j);
+									asteroidBelt.erase(asteroidBelt.begin()+(j-1));
 
 									// Stores new asteroids in new vector.
 									for(int m = 0; m < triIndex.size(); m++)
@@ -515,7 +515,7 @@ void detectCollision(int index)
 		
 									// Deletes the two asteroids.
 									asteroidBelt.erase(asteroidBelt.begin()+index);
-									asteroidBelt.erase(asteroidBelt.begin()+j);
+									asteroidBelt.erase(asteroidBelt.begin()+(j-1));
 
 									// Stores new asteroids in new vector.
 									for(int m = 0; m < triIndex.size(); m++)
@@ -557,7 +557,7 @@ void detectCollision(int index)
 		
 									// Deletes the two asteroids.
 									asteroidBelt.erase(asteroidBelt.begin()+index);
-									asteroidBelt.erase(asteroidBelt.begin()+j);
+									asteroidBelt.erase(asteroidBelt.begin()+(j-1));
 
 									// Stores new asteroids in new vector.
 									for(int m = 0; m < triIndex.size(); m++)
