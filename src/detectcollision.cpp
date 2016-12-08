@@ -311,7 +311,7 @@ void detectCollision(int index)
 							bullets.erase(bullets.begin()+j); 
 							
 							//add score
-
+							bulletsHit++;
 							
 							collision = true; 
 							//breaks out of checking specific bullet loop
@@ -327,7 +327,7 @@ void detectCollision(int index)
 	    					tempk1.x = a1[k+1].x + asteroidBelt[index].getCenter().x;
     						tempk1.y = a1[k+1].y + asteroidBelt[index].getCenter().y;
             
-						if (intersect(tempk2, tempk1,  tmpbul.location, bullets[j].location))
+						if (intersect(tempk2, tempk1, tmpbul.location, bullets[j].location))
 						{
 							//separate asteroid
 							vector <asteroid> tmp;
@@ -343,7 +343,7 @@ void detectCollision(int index)
 							bullets.erase(bullets.begin()+j);
 							
 							//add score
-
+							bulletsHit++;
 
 							collision = true; 
 							//breaks out of checking specific bullet loop

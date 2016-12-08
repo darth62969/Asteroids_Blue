@@ -50,5 +50,7 @@ extern double FPS;
 
 extern bool paused;
 
+extern int bulletsHit;
+
 #endif
 
