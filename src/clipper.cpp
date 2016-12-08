@@ -197,10 +197,46 @@ void clip(vector<point>& v){
         clipBounds[0] = octogon[7]; clipBounds[1] = octogon[0];
         SutherlandHodgmanPolygonClip(out,in,*outSize,outSize,clipBounds);
 
-
-
         arrayToVector(v, in, *outSize);
 
+}
+
+void clipMeDaddy(){
+	glColor3f(0.0,0.0,0.0);
+	int p = 1;
+	int q = 0;
+
+	for(int i = 0; i < 8; i++){
+		
+		glBegin(GL_POLYGON);
+			glVertex2f(octogon[p].x, octogon[p].y);		
+			glVertex2f(octogon[q].x, octogon[q].y);	
+			glVertex2f(clipPts[q].x, clipPts[q].y);	
+			glVertex2f(clipPts[p].x, clipPts[p].y);		
+		glEnd();
+		p++;
+		q++;
+		if (p == 8) p = 0;
+		if (q == 8) q = 0;
+	}
+	glColor3f (0.1, 0.5, 0.0); 
+
+
+	/*allGood.clear();
+	for (int i = 0; i < asteroidBelt.size(); i++){
+		int total = 0;
+		vector<point> a = asteroidBelt[i].getRealPoints();
+		for(int j = 0; j < a.size(); j++) 
+			total += insideOctogon(a[i]);
+
+		if (total == 0);
+		else if (total == a.size()) allGood.push_back(asteroid[i]);
+		else {
+			clip(asteroid[i]);
+			allGood.push_back(a);
+		}
+				
+	}*/
 }
 
 
