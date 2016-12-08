@@ -92,14 +92,41 @@ asteroid::asteroid()
 	asteroidLogger << "Bottom Left corner of asteroid at : " << center.x << " " << center.y << endl;
 #endif
 	int i = rand();
+	cout << "NUMBER OF SIDES: " << numsides << endl;
 	for (int j = 0; j < numsides; j++)
 	{
 		srand (static_cast <unsigned> (time(0))*(i*(j+67)/10));
 		point b;
 		b.x = rand() % (ASTEROID_MAX_X+1);
 		b.y = rand() % (ASTEROID_MAX_Y+1);
-		astPnts.push_back(b);
 		i++;
+		if( j == 0)
+		{
+			astPnts.push_back(b);
+			cout << j << endl;
+		}
+		else if (j > 0)
+		{
+			bool durpdist = true; 
+			for (int k = j-1; k >= 0; k--)
+			{
+				if(sqrt((b.x-astPnts[k].x)*(b.x-astPnts[k].x) + (b.y-astPnts[k].y)*(b.y-astPnts[k].y)) <= ASTEROID_MIN_DIST)
+				{
+					durpdist = false; 
+					break;
+				}
+			}
+			if(durpdist)
+			{
+				astPnts.push_back(b);
+				cout << j << endl;
+			}
+			else
+			{
+				j--;
+			}
+		}
+		
 	}
 
 	sortPoints();
