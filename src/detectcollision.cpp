@@ -22,22 +22,24 @@
 //checks proximity of asteroids
 bool asteroidProximity(asteroid ast1, asteroid ast2)
 {
-/*#ifdef LOGGING
+	#ifdef LOGGING
 	collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
 	collisionLogger << "\nChecking asteroid proximity \n";
-	collisionLogger << abs(ast2.getCenter().x - ast1.getCenter().x);
-	collisionLogger << " <= 20 : " << (abs(ast2.getCenter().x - ast1.getCenter().x) <= 20) << endl;
-	collisionLogger << abs(ast2.getCenter().y - ast1.getCenter().y);
-	collisionLogger << " <= 20 : " << (abs(ast2.getCenter().y - ast1.getCenter().y) <= 20) << endl;
+	collisionLogger << "\nBottom left of ast1\n";
+	collisionLogger << ast1.getCenter().x << " " << ast1.getCenter().y;
+	collisionLogger << "\nBottom left of ast2\n";
+	collisionLogger << ast2.getCenter().x << " " << ast2.getCenter().y;
 	collisionLogger.close();
-#endif*/
-	if (abs(ast2.getCenter().x - ast1.getCenter().x) <= 20 && abs(ast2.getCenter().y - ast1.getCenter().y) <= 20)
+	#endif
+
+	if (abs(ast2.getCenter().x - ast1.getCenter().x) <= ASTEROID_MAX_X && abs(ast2.getCenter().y - ast1.getCenter().y) <= ASTEROID_MAX_Y)
 	{
-/*#ifdef LOGGING
+		#ifdef LOGGING
 		collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
-		collisionLogger << "Detected Asteroid in proximity of another Asteroid\n";
+		collisionLogger << "Detected asteroid in proximity of another asteroid\n";
 		collisionLogger.close();
-#endif*/
+		#endif
+
 		return true;
 	}
 	else
@@ -69,7 +71,6 @@ bool bulletProximity(asteroid ast1, bullet b1)
 		return false; 
 }
 
-
 //checks proximity of ship and asteroid
 bool shipProximity(asteroid ast1, vector<point> b2)
 {
@@ -77,9 +78,10 @@ bool shipProximity(asteroid ast1, vector<point> b2)
 
 	#ifdef LOGGING
 	collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
-	collisionLogger << "\n Checking ship proximity \n";
-	collisionLogger << "\n Points of ship \n";
+	collisionLogger << "\nChecking ship proximity\n";
+	collisionLogger << "\nPoints of ship\n";
 	collisionLogger << b2[0].x << " " << b2[0].y << " " << b2[1].x << " " << b2[1].y << " " << b2[2].x << " " << b2[2].y <<"\n";
+	collisionLogger << "\nBottom left of asteroid\n";
 	collisionLogger << ast1.getCenter().x << " " << ast1.getCenter().y << endl;
 	collisionLogger.close();
 	#endif
@@ -98,7 +100,6 @@ bool shipProximity(asteroid ast1, vector<point> b2)
 		return false; 
 }
 
-
 void detectCollision(int index) 
 {
 	//Idea:  Narrow down searches by dividing into quadrants? 
@@ -111,11 +112,7 @@ void detectCollision(int index)
 	//       add them at the end? 
 	
 	//creates a temporary array of vectors to stop new vectors
-	vector <asteroid> n;
-
-	//checks collision between asteroids vs asteroids
-//	for (int i = 0; i < asteroidBelt.size(); i++)//asteroid 1
-//	{
+	vector<asteroid> n;
 
 	//gets points of asteroid 1
 	vector<point> a1;
@@ -164,6 +161,7 @@ void detectCollision(int index)
 					point temp0;
 					temp0.x = a1[0].x + asteroidBelt[index].getCenter().x;
 					temp0.y = a1[0].y + asteroidBelt[index].getCenter().y;
+
 					if (intersect(tempj, temp0, cmd[k], cmd[0]))
 					{
 						#ifdef LOGGING
@@ -191,6 +189,7 @@ void detectCollision(int index)
 					point temp0;
 					temp0.x = a1[0].x + asteroidBelt[index].getCenter().x;
 					temp0.y = a1[0].y + asteroidBelt[index].getCenter().y;
+
 					if (intersect(tempj, temp0, cmd[k], cmd[k+1]))
 					{	
 						#ifdef LOGGING
@@ -219,6 +218,7 @@ void detectCollision(int index)
 					point tempj1;
 					tempj1.x = a1[j+1].x + asteroidBelt[index].getCenter().x;
 					tempj1.y = a1[j+1].y + asteroidBelt[index].getCenter().y;
+
 					if (intersect(tempj, tempj1, cmd[k], cmd[0]))
 					{
 						#ifdef LOGGING
@@ -246,6 +246,7 @@ void detectCollision(int index)
 					point tempj1;
 					tempj1.x = a1[j+1].x + asteroidBelt[index].getCenter().x;
 					tempj1.y = a1[j+1].y + asteroidBelt[index].getCenter().y;
+
 					if (intersect(tempj, tempj1, cmd[k], cmd[k+1]))
 					{
 						#ifdef LOGGING
@@ -353,151 +354,217 @@ void detectCollision(int index)
 		}
 	}
 
-	//asteroid asteroid collision 
-	//if collision has already occured ignore specific asteroid for now
-#ifdef LOGGING/*				
-				collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
-				collisionLogger << "Checking Asteroid Collisions\n";
-				collisionLogger.close();*/
-#endif
-
-	if(collision == 1)
-	{
-/*#ifdef LOGGING				
-				collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
-				collisionLogger << "already collided\n";
-				collisionLogger.close();
-#endif*/
-	}
-	else
+	//asteroid asteroid collision
+	if(!collision)
 	{
 		if (index == asteroidBelt.size()-1)
 		{
+			return;
 		}
 		else
 		{
 			for (int j = index+1; j < asteroidBelt.size(); j++) //asteroid2
 			{
-				if(collision == 1)
+				if(collision)
 				{
-/*#ifdef LOGGING				
-					collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
-					collisionLogger << "already collided\n";
-					collisionLogger.close();
-#endif*/
+					//#ifdef LOGGING				
+					//collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
+					//collisionLogger << "already collided\n";
+					//collisionLogger.close();
+					//#endif
+
 				 	break;
 				}
-				//gets points of asteroid 2
+
+				// Get points of asteroid 2.
 				vector <point> a2;
 				a2 = asteroidBelt[j].getPoints();
 			
-				//checks for proximity 
+				// Check for proximity. 
 				if (asteroidProximity (asteroidBelt[index], asteroidBelt[j]))
 				{
-					for (int k = 0; k < a1.size()-1; k++) //checks points of asteroid 1
+					for (int k = 0; k < a1.size(); k++) //checks points of asteroid 1
 					{
-						if(collision==1)
+						if (collision)
 						{ 
 							break;
 						}
-						for (int l = 0; l < a2.size()-1; l++) //checks points of asteroid 2
+						for (int l = 0; l < a2.size(); l++) //checks points of asteroid 2
 						{
-							if(collision==1) 
+							if (collision) 
 							{
 								break;
 							}
-							vector<asteroid> tmp3; 
-							vector<asteroid> tmp2;
-							/*
-							for (int k2 = k1+1; k2 < a1.size(); k1++) //checks points of asteroid 1
-							{
-								for (int l2 = l1+1; l2 < a2.size(); l2++) //checks points of asteroid 2
-								{
-									if (intersect(a1[k1], a1[0],  a2[l], a2[0]))
-									{
-
-									}*/
-
+							vector<asteroid> triIndex; 
+							vector<asteroid> triJ;
 							
 							//checks final line of both asteorids
-							if (k==a1.size()-1 && l ==a2.size()-1)
+							if (k == a1.size()-1 && l == a2.size()-1)
 							{
-								if (intersect(a1[k], a1[0],  a2[l], a2[0]))
+								#ifdef LOGGING
+								collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
+								collisionLogger << "checking line segment " << asteroidBelt[index].getCenter().x + a1[k].x << " " << asteroidBelt[index].getCenter().y + a1[k].y << " to " << asteroidBelt[index].getCenter().x + a1[0].x << " " << asteroidBelt[index].getCenter().y + a1[0].y;
+								collisionLogger << " against " << asteroidBelt[j].getCenter().x + a2[l].x << " " << asteroidBelt[j].getCenter().y + a2[l].y << " to " << asteroidBelt[j].getCenter().x + a2[0].x << " " << asteroidBelt[j].getCenter().y + a2[0].y;
+								collisionLogger.close();
+								#endif
+
+								point tempa1k;
+								tempa1k.x = a1[k].x + asteroidBelt[index].getCenter().x;
+								tempa1k.y = a1[k].y + asteroidBelt[index].getCenter().y;
+								point tempa10;
+								tempa10.x = a1[0].x + asteroidBelt[index].getCenter().x;
+								tempa10.y = a1[0].y + asteroidBelt[index].getCenter().y;
+								point tempa2l;
+								tempa2l.x = a2[l].x + asteroidBelt[j].getCenter().x;
+								tempa2l.y = a2[l].y + asteroidBelt[j].getCenter().y;
+								point tempa20;
+								tempa20.x = a2[0].x + asteroidBelt[j].getCenter().x;
+								tempa20.y = a2[0].y + asteroidBelt[j].getCenter().y;
+
+								if (intersect(tempa1k, tempa10, tempa2l, tempa20))
 								{	
-									//if intersections
-									//breaks asteroids and stores in new vector		
-									tmp3 = asteroidBelt[index].breakupAsteroid(); 
-									tmp2 = asteroidBelt[index+1].breakupAsteroid();
-									tmp3.insert(tmp3.end(),tmp2.begin(),tmp2.end());
-									n.insert(n.end(),tmp3.begin(),tmp3.end());	
+									// Breaks asteroids.		
+									triIndex = asteroidBelt[index].breakupAsteroid(); 
+									triJ = asteroidBelt[j].breakupAsteroid();
 		
-									//deletes the two asteroids
+									// Deletes the two asteroids.
 									asteroidBelt.erase(asteroidBelt.begin()+index);
 									asteroidBelt.erase(asteroidBelt.begin()+j);
 
-									collision = true;
-									break; 
-								}	
-		
-							}	
+									// Stores new asteroids in new vector.
+									for(int m = 0; m < triIndex.size(); m++)
+										n.push_back(triIndex[m]);
+									for(int m = 0; m < triIndex.size(); m++)
+										n.push_back(triIndex[m]);
 
+									collision = true;
+									break;
+								}	
+							}
 							else if(k == a1.size()-1)
 							{
-								if (intersect(a1[k], a1[0],  a2[l], a2[l+1]))
-								{	
-									//if intersections
-									//breaks asteroids and stores in new vector		
-									tmp3 = asteroidBelt[index].breakupAsteroid(); 
-									tmp2 = asteroidBelt[index+1].breakupAsteroid();
-									tmp3.insert(tmp3.end(),tmp2.begin(),tmp2.end());
-									n.insert(n.end(),tmp3.begin(),tmp3.end());	
-		
-									//deletes the two asteroids
+								#ifdef LOGGING
+								collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
+								collisionLogger << "checking line segment " << asteroidBelt[index].getCenter().x + a1[k].x << " " << asteroidBelt[index].getCenter().y + a1[k].y << " to " << asteroidBelt[index].getCenter().x + a1[0].x << " " << asteroidBelt[index].getCenter().y + a1[0].y;
+								collisionLogger << " against " << asteroidBelt[j].getCenter().x + a2[l].x << " " << asteroidBelt[j].getCenter().y + a2[l].y << " to " << asteroidBelt[j].getCenter().x + a2[l+1].x << " " << asteroidBelt[j].getCenter().y + a2[l+1].y;
+								collisionLogger.close();
+								#endif
 
+								point tempa1k;
+								tempa1k.x = a1[k].x + asteroidBelt[index].getCenter().x;
+								tempa1k.y = a1[k].y + asteroidBelt[index].getCenter().y;
+								point tempa10;
+								tempa10.x = a1[0].x + asteroidBelt[index].getCenter().x;
+								tempa10.y = a1[0].y + asteroidBelt[index].getCenter().y;
+								point tempa2l;
+								tempa2l.x = a2[l].x + asteroidBelt[j].getCenter().x;
+								tempa2l.y = a2[l].y + asteroidBelt[j].getCenter().y;
+								point tempa2l1;
+								tempa2l1.x = a2[l+1].x + asteroidBelt[j].getCenter().x;
+								tempa2l1.y = a2[l+1].y + asteroidBelt[j].getCenter().y;
+
+								if (intersect(tempa1k, tempa10, tempa2l, tempa2l1))
+								{	
+									// Breaks asteroids.		
+									triIndex = asteroidBelt[index].breakupAsteroid(); 
+									triJ = asteroidBelt[j].breakupAsteroid();
+		
+									// Deletes the two asteroids.
 									asteroidBelt.erase(asteroidBelt.begin()+index);
 									asteroidBelt.erase(asteroidBelt.begin()+j);
 
+									// Stores new asteroids in new vector.
+									for(int m = 0; m < triIndex.size(); m++)
+										n.push_back(triIndex[m]);
+									for(int m = 0; m < triIndex.size(); m++)
+										n.push_back(triIndex[m]);
+
 									collision = true;
-									break; 
+									break;
 								}	
 							}
 							else if (l == a2.size()-1)
 							{
-								if (intersect(a1[k], a1[k+1],  a2[l], a2[l+1]))
+								#ifdef LOGGING
+								collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
+								collisionLogger << "checking line segment " << asteroidBelt[index].getCenter().x + a1[k].x << " " << asteroidBelt[index].getCenter().y + a1[k].y << " to " << asteroidBelt[index].getCenter().x + a1[k+1].x << " " << asteroidBelt[index].getCenter().y + a1[k+1].y;
+								collisionLogger << " against " << asteroidBelt[j].getCenter().x + a2[l].x << " " << asteroidBelt[j].getCenter().y + a2[l].y << " to " << asteroidBelt[j].getCenter().x + a2[0].x << " " << asteroidBelt[j].getCenter().y + a2[0].y;
+								collisionLogger.close();
+								#endif
+
+								point tempa1k;
+								tempa1k.x = a1[k].x + asteroidBelt[index].getCenter().x;
+								tempa1k.y = a1[k].y + asteroidBelt[index].getCenter().y;
+								point tempa1k1;
+								tempa1k1.x = a1[k+1].x + asteroidBelt[index].getCenter().x;
+								tempa1k1.y = a1[k+1].y + asteroidBelt[index].getCenter().y;
+								point tempa2l;
+								tempa2l.x = a2[l].x + asteroidBelt[j].getCenter().x;
+								tempa2l.y = a2[l].y + asteroidBelt[j].getCenter().y;
+								point tempa20;
+								tempa20.x = a2[0].x + asteroidBelt[j].getCenter().x;
+								tempa20.y = a2[0].y + asteroidBelt[j].getCenter().y;
+
+								if (intersect(tempa1k, tempa1k1, tempa2l, tempa20))
 								{	
-									//if intersections
-									//breaks asteroids and stores in new vector		 
-									tmp3 = asteroidBelt[index].breakupAsteroid(); 
-									tmp2 = asteroidBelt[index+1].breakupAsteroid();
-									tmp3.insert(tmp3.end(),tmp2.begin(),tmp2.end());
-									n.insert(n.end(),tmp3.begin(),tmp3.end());	
+									// Breaks asteroids.		
+									triIndex = asteroidBelt[index].breakupAsteroid(); 
+									triJ = asteroidBelt[j].breakupAsteroid();
 		
-									//deletes the two asteroids
-									
+									// Deletes the two asteroids.
 									asteroidBelt.erase(asteroidBelt.begin()+index);
 									asteroidBelt.erase(asteroidBelt.begin()+j);
 
+									// Stores new asteroids in new vector.
+									for(int m = 0; m < triIndex.size(); m++)
+										n.push_back(triIndex[m]);
+									for(int m = 0; m < triIndex.size(); m++)
+										n.push_back(triIndex[m]);
+
 									collision = true;
-									break; 
+									break;
 								}	
 							}
 							else
 							{
-								if (intersect(a1[k], a1[k+1],  a2[l], a2[l+1]))
-								{	
-									//if intersections
-									//breaks asteroids and stores in new vector		
-									tmp3 = asteroidBelt[index].breakupAsteroid(); tmp2 = asteroidBelt[index+1].breakupAsteroid();
-									tmp3.insert(tmp3.end(),tmp2.begin(),tmp2.end());
-									n.insert(n.end(),tmp3.begin(),tmp3.end());	
-		
-									//deletes the two asteroids
+								#ifdef LOGGING
+								collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
+								collisionLogger << "checking line segment " << asteroidBelt[index].getCenter().x + a1[k].x << " " << asteroidBelt[index].getCenter().y + a1[k].y << " to " << asteroidBelt[index].getCenter().x + a1[k+1].x << " " << asteroidBelt[index].getCenter().y + a1[k+1].y;
+								collisionLogger << " against " << asteroidBelt[j].getCenter().x + a2[l].x << " " << asteroidBelt[j].getCenter().y + a2[l].y << " to " << asteroidBelt[j].getCenter().x + a2[j+1].x << " " << asteroidBelt[j].getCenter().y + a2[j+1].y;
+								collisionLogger.close();
+								#endif
 
+								point tempa1k;
+								tempa1k.x = a1[k].x + asteroidBelt[index].getCenter().x;
+								tempa1k.y = a1[k].y + asteroidBelt[index].getCenter().y;
+								point tempa1k1;
+								tempa1k1.x = a1[k+1].x + asteroidBelt[index].getCenter().x;
+								tempa1k1.y = a1[k+1].y + asteroidBelt[index].getCenter().y;
+								point tempa2l;
+								tempa2l.x = a2[l].x + asteroidBelt[j].getCenter().x;
+								tempa2l.y = a2[l].y + asteroidBelt[j].getCenter().y;
+								point tempa2l1;
+								tempa2l1.x = a2[l+1].x + asteroidBelt[j].getCenter().x;
+								tempa2l1.y = a2[l+1].y + asteroidBelt[j].getCenter().y;
+
+								if (intersect(tempa1k, tempa1k1, tempa2l, tempa2l1))
+								{	
+									// Breaks asteroids.		
+									triIndex = asteroidBelt[index].breakupAsteroid(); 
+									triJ = asteroidBelt[j].breakupAsteroid();
+		
+									// Deletes the two asteroids.
 									asteroidBelt.erase(asteroidBelt.begin()+index);
 									asteroidBelt.erase(asteroidBelt.begin()+j);
 
+									// Stores new asteroids in new vector.
+									for(int m = 0; m < triIndex.size(); m++)
+										n.push_back(triIndex[m]);
+									for(int m = 0; m < triIndex.size(); m++)
+										n.push_back(triIndex[m]);
+
 									collision = true;
-									break; 
+									break;
 								}
 							}
 						}
@@ -505,12 +572,9 @@ void detectCollision(int index)
 				}
 			}	
 		}
-			//if (collision == 1) index--;
-		//}
-
 	}
 	if(n.size() != 0)
 	{
-		asteroidBelt.insert(asteroidBelt.end(),n.begin(),n.end());
+		asteroidBelt.insert(asteroidBelt.end(), n.begin(), n.end());
 	}	
 }		
