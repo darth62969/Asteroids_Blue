@@ -178,28 +178,7 @@ void asteroid::incrementLocation()
 		return;
 	center.x += cos(rotation)/2*(60/FPS);
 	center.y += sin(rotation)/2*(60/FPS);
-
-	/*	
-	switch((int) center.x)
-	{
-		case WORLD_COORDINATE_MAX_X:
-			center.x = WORLD_COORDINATE_MIN_X+1;
-			break;
-		case WORLD_COORDINATE_MIN_X:
-			center.x = WORLD_COORDINATE_MAX_X-1;
-			break;
-	}
-
-	switch((int) center.y)
-	{
-		case WORLD_COORDINATE_MAX_Y:
-			center.y = WORLD_COORDINATE_MIN_Y+1;
-			break;
-		case WORLD_COORDINATE_MIN_Y:
-			center.y = WORLD_COORDINATE_MAX_Y-1;
-			break;
-	}
-	*/
+	
 	if(!insideOctogon(center)){
 		point position {center.x-origin,center.y-origin,0,1};
 		center.x -= 2*position.x; 
@@ -567,4 +546,19 @@ vector<point> asteroid::getPoints()
 vector<triangle> asteroid::getTess()
 {
 	return astTris;
+}
+
+vector<point> asteroid::getRealPoints(){
+
+	vector<point> v;
+
+	for(int i = 0; i < astPnts.size(); i++){
+
+		point p = {astPnts[i].x + center.x,astPnts[i].y + center.y, 0, 1};
+		/*asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+		asteroidLogger << "real points are: " << p.x << " " << p.y << "\n";
+		asteroidLogger.close();	*/
+		v.push_back(p);
+	}
+	return v;
 }

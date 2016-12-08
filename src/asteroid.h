@@ -29,6 +29,7 @@ class asteroid
 		point getCenter();
 		std::vector<asteroid> breakupAsteroid();
 		std::vector<point> getPoints();
+		std::vector<point> getRealPoints();
 		std::vector<triangle> getTess();
 		float getRotation();
 		void incrementLocation();

@@ -46,5 +46,6 @@ bool asteroidProximity (asteroid ast1, asteroid ast2);
 bool bulletProximity (asteroid ast1, bullet b1);
 bool shipProximity (asteroid ast1, std::vector <point> b2);
 bool intersect1 (point v1, point v2, point v3, point v4);
+void clipMeDaddy();
 
 #endif

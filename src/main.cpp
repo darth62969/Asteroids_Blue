@@ -48,6 +48,7 @@ char* GENERAL_LOG_PATH = "logs/general_log.txt";
 //Runtime Variables
 vector<asteroid> asteroidBelt; 	// Holds all asteroids
 vector<bullet> bullets; 	// Holds all bullets
+vector<asteroid> allGood;
 
 float deltaRot = 1.0; 		// For use in the accelleration of ship rotation 
 
@@ -206,9 +207,11 @@ void gameView()
 								// We use this to make game speed independent of framerate.
     	glColor3f (0.1, 0.5, 0.0); 	// Set draw color to green
 	glPointSize(4.0);			// Set the Point size to 4
+	glClear(GL_COLOR_BUFFER_BIT);
+
 	drawOctogon();				// Draw the Octogon on Screen 
 	//Draw the asteroids
-
+	clipMeDaddy();
 	//printGameOver();
 	if (asteroidBelt.size()==0)
 		printYouWin();
@@ -224,13 +227,13 @@ void gameView()
 		case 0:
     			for (int i = 0; i < (asteroidBelt.size()); i++)
     			{
-				vector<point> a = asteroidBelt.at(i).getPoints();
-				point b = asteroidBelt.at(i).getCenter();
+				vector<point> a = asteroidBelt.at(i).getRealPoints();
+				//point b = asteroidBelt.at(i).getCenter();
 				for (int j = 0; j < (a.size()); j++)
         			{
 					glBegin (GL_LINES);
-						glVertex2d(a.at(j).x + b.x, a.at(j).y + b.y);
-						glVertex2d( a.at((j+1)%a.size()).x + b.x, a.at((j+1)%a.size()).y +b.y);
+						glVertex2d(a[j].x, a[j].y);
+						glVertex2d( a.at((j+1)%a.size()).x , a.at((j+1)%a.size()).y);
 					glEnd ();         
         			}
 			}
@@ -282,7 +285,9 @@ void gameView()
 	glColor3f(1.0, 1.0, 0.0);
 	for(int i = 0; i < bullets.size(); i++)
 		drawBullet(bullets[i]);
-
+	
+	clipMeDaddy();
+	drawOctogon();
 	displayScore();
 
 #ifdef DEBUG
@@ -465,7 +470,7 @@ void initiateOctogon(void)
 
 	// Set the first point, rotate it then push it to the vector of points.
 	point p = {WORLD_COORDINATE_MIN_X ,WORLD_COORDINATE_MAX_Y / 2,0,1};
-	point c = {WORLD_COORDINATE_MAX_X / 4, WORLD_COORDINATE_MAX_Y / 2, 0,1};	
+	point c = {-WORLD_COORDINATE_MAX_X , WORLD_COORDINATE_MAX_Y / 2, 0,1};	
 
 
 	rotatePoint(p,45.0/2.0);
@@ -488,15 +493,13 @@ void initiateOctogon(void)
 
 void drawOctogon(void)
 {
-	glClear(GL_COLOR_BUFFER_BIT);
-
+	
 	glColor3f(0.1,0.5,0.0);
 	
-	glBegin(GL_LINES);
+	glBegin(GL_LINE_LOOP);
 		for(int i = 0; i < octogon.size(); i ++)
 		{
 			glVertex2f(octogon[i].x, octogon[i].y);
-			glVertex2f(octogon[(i+1)%octogon.size()].x, octogon[(i+1)%octogon.size()].y);
 		}
 	glEnd();
 }
