@@ -43,6 +43,34 @@ void Intersect(point first, point second, point *clipBoundary,
 
  }
 
+int insideOctogon(point p){
+	double slope, line;
+
+	int in = 1;
+	if (p.x < octogon[0].x) in *= 0;
+	if (p.x > octogon[5].x) in *= 0;
+	if (p.y > octogon[2].y) in *= 0;
+	if (p.y < octogon[7].y) in *= 0;
+
+	slope = (octogon[7].y - octogon[0].y) / (octogon[7].x - octogon[0].x);
+	line = slope*(p.x - octogon[0].x)+ octogon[0].y;
+	if (p.y < line) in *= 0;
+	
+	slope = (octogon[6].y - octogon[5].y) / (octogon[6].x - octogon[5].x);
+	line = slope*(p.x - octogon[6].x)+ octogon[6].y;
+	if (p.y < line) in *= 0;
+	
+	slope = (octogon[4].y - octogon[3].y) / (octogon[4].x - octogon[3].x);
+	line = slope*(p.x - octogon[3].x)+ octogon[3].y;
+	if (p.y > line) in *= 0;
+
+	slope = (octogon[2].y - octogon[1].y) / (octogon[2].x - octogon[1].x);
+	line = slope*(p.x - octogon[2].x)+ octogon[2].y;
+	if (p.y > line) in *= 0;
+
+	return in;
+}
+
 bool Inside(point p, point *clipBoundary)
 {
 	
