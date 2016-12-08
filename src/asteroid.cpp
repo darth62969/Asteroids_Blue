@@ -45,10 +45,37 @@ asteroid::asteroid()
 #endif
 	center.x = 0;
 	center.y = 0;
+	
+	vector<point> cmd;
+	cmd.push_back(enterprise.body.a);
+	cmd.push_back(enterprise.body.b);
+	cmd.push_back(enterprise.body.c);
+
+	for (int i = 0; i < 3; i++)
+	{
+		scalePoint(cmd[i], 7);
+		rotatePoint(cmd[i], enterprise.rotation);
+		cmd[i].x += WORLD_COORDINATE_MAX_X/2;
+		cmd[i].y += WORLD_COORDINATE_MAX_Y/2;
+	}
+
+	int x = (cmd[0].x + cmd[1].x + cmd[2].x)/3;
+	int y = (cmd[0].y + cmd[1].y + cmd[2].y)/3;
+
 	while(!insideOctogon(center))
 	{
-		center.x = rand() % (WORLD_COORDINATE_MAX_X + 1) + WORLD_COORDINATE_MIN_X;
-		center.y = rand() % (WORLD_COORDINATE_MAX_Y + 1) + WORLD_COORDINATE_MIN_Y;
+		do
+		{
+			center.x = rand() % (WORLD_COORDINATE_MAX_X + 1) + WORLD_COORDINATE_MIN_X;
+		}
+		while(abs(center.x - x) <= ASTEROID_MAX_X);
+
+		do
+		{
+			center.y = rand() % (WORLD_COORDINATE_MAX_Y + 1) + WORLD_COORDINATE_MIN_Y;
+		}
+		while(abs(center.y - y) <= ASTEROID_MAX_Y);
+
 		bool nv = false;
 		for (int i = 0; i < asteroidBelt.size(); i++)
 		{

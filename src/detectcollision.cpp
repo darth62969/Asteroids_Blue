@@ -74,7 +74,8 @@ bool bulletProximity(asteroid ast1, bullet b1)
 //checks proximity of ship and asteroid
 bool shipProximity(asteroid ast1, vector<point> b2)
 {
-	int x = (b2[0].x + b2[1].x + b2[2].x)/3;  int y = (b2[0].y + b2[1].y + b2[2].y)/3;
+	int x = (b2[0].x + b2[1].x + b2[2].x)/3;
+	int y = (b2[0].y + b2[1].y + b2[2].y)/3;
 
 	#ifdef LOGGING
 	collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
