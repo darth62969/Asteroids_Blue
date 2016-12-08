@@ -29,9 +29,9 @@ CFLAGS =
 COPTFLAGS = -O3 
 LIBFLAGS = -lglut -lGLU -lGL
 HEADERS = src/headers.h src/structs.h src/globals.h src/prototypes.h
-OBJS = main.o asteroid.o ship.o bullets.o transformer.o clipper.o
+OBJS = main.o asteroid.o ship.o bullets.o transformer.o clipper.o detectcollision.o
 
-logging ?= y
+logging ?= n
 debug ?= n
 ifeq ($(debug), y)
 	CFLAGS += -g -DDEBUG -pg
@@ -63,6 +63,9 @@ transformer.o: src/transformer.cpp $(HEADERS)
 
 clipper.o: src/clipper.cpp $(HEADERS)
 	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/clipper.cpp
+
+detectcollision.o : src/detectcollision.cpp
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/detectcollision.cpp
 
 # Default Targets for Cleaning up the Environment
 

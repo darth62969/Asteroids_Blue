@@ -29,9 +29,10 @@ extern vector<point> octogon;// defines octogon in ccw order
 extern vector<point> clipPts;// contains points needed for clipping
 extern double origin;//Center of the octagon 
 // i don't like the asteroidBelt being global. i will get an explanagion later.
+extern vector<bullet> bullets;
 extern vector<asteroid> asteroidBelt;
 extern vector<asteroid> allGood;
-
+extern bool gameOver;
 
 // Log Writers
 extern ofstream asteroidLogger;
@@ -50,3 +51,4 @@ extern double FPS;
 extern bool paused;
 
 #endif
+

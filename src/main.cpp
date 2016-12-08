@@ -61,14 +61,15 @@ bool leftKeyPressed = false;	// Also for ship rotation, tells us if the ship's
 bool leftReached10 = false;		// left rotation reached 10
 bool spacePressed = false;		// This is for firing bullets.
 bool paused = true;				// For pause screen 
+bool gameOver = false;
 
 int timeKeyPressed = 0;		// Iterator for Debug reasons
 int filled = 0;			// 0 if lines should be drawn, 1 if filled (asteroids)   
-int tess = 0;
 int frames = 0;
 int timeC = 0;
 int timeP = 0;
 int bulletsFired = 0;
+int bulletsHit = 0;
 
 void *currentfont;
 
@@ -76,6 +77,8 @@ void initiateOctogon();
 void drawOctogon(void);
 
 void drawString(GLuint x, GLuint y, const char* string);
+
+
 
 void setFont(void *font)
 {
@@ -86,27 +89,13 @@ void displayScore(void)
 {
 
 	double hitRatio;
-
-	int astHits = NUMBER_OF_ASTEROIDS - asteroidBelt.size();
 	
-	if (astHits != 0)
-		hitRatio = bulletsFired/(NUMBER_OF_ASTEROIDS - asteroidBelt.size() * 100);
+	if (bulletsHit != 0)
+		hitRatio = (double)bulletsHit/(double)bulletsFired*100.0;
 	else 
 		hitRatio = 0;
 
 	setFont(GLUT_BITMAP_HELVETICA_12);
-
-	//string astsOnScr = "Asteroids on Screen: "; // + asteroidBelt.size();
-
-	//string astsHit = "Asteroids hit: "; // + (NUMBER_OF_ASTEROIDS - asteroidBelt.size());
-
-	//string hrStr = "Hit Ratio : " + hitRatio;
-
-	//ss << "Hit Ratio: " << hitRatio;
-
-	//string hrStr = ss.str();
-
-	//drawString(180, 180, bulletsFiredStr.c_str());
 
 	char bulletsFiredStr[50];
 	char astsOnScr1[50];
@@ -117,7 +106,7 @@ void displayScore(void)
 	sprintf(bulletsFiredStr, "Bullets Fired: %3d", bulletsFired);
 	sprintf(astsOnScr1, "%s", "Asteroids on "); 
 	sprintf(astsOnScr2, "Screen: %3d", (int)asteroidBelt.size()); 
-	sprintf(astsHit, "Asteroids Hit: %4d", astHits);
+	sprintf(astsHit, "Asteroids Hit: %4d", bulletsHit);
 	sprintf(hrStr, "Hit Ratio:  %5.2f %%", hitRatio);
 
 	glColor3f(0.2, 0.5, 0.0);
@@ -130,16 +119,36 @@ void displayScore(void)
 	drawString(480, 65, hrStr);
 }
 
+void printGameOver(void){
+               
 
-void drawString(GLuint x, GLuint y, const char* string){
+		char gameOver[25];
+                setFont(GLUT_BITMAP_TIMES_ROMAN_24);
+               
+               sprintf(gameOver, "%s", "GAME OVER");
+   
+		//sprintf();
 
+                drawString(225, 320, gameOver);
+}
+
+void printYouWin(void){
+	char youWin[25];
+	//setFont(GLUT_BITMAP_9_BY_15);
+	setFont(GLUT_BITMAP_TIMES_ROMAN_24);
+	sprintf(youWin, "%s", "YOU WIN!!!");
+	drawString(235, 320, youWin);
+}
+
+
+void drawString(GLuint x, GLuint y, const char* string)
+{
 	const char *c;
 
 	glRasterPos2i(x, y);
 	//glColor3f(1.0, 0.0, 0.0);
-	for(c=string; *c!='\0'; c++){
-		glutBitmapCharacter(currentfont, *c);
-	}	
+	for(c=string; *c!='\0'; c++)
+		glutBitmapCharacter(currentfont, *c);	
 }
 
 void calculateFPS()
@@ -169,10 +178,10 @@ void debugDisplay()
 	drawString(20, WORLD_COORDINATE_MAX_Y-20, FPSStr);
 	drawString(20, WORLD_COORDINATE_MAX_Y-35, avgFPSStr);
 
-#ifdef LOGGING
+#ifdef LOGGING/*
 	generalLogger.open( GENERAL_LOG_PATH, ofstream::out|ofstream::app);
 	generalLogger << FPSStr << endl;
-	generalLogger << avgFPSStr << endl;
+	generalLogger << avgFPSStr << endl;*/
 #endif 
 	// Count Asteroid Triangles
 
@@ -188,11 +197,10 @@ void debugDisplay()
 //Display Triangle Count
 	sprintf(triCountStr, "Triangles On Screen : %3d", triCount);
 	drawString(20, WORLD_COORDINATE_MAX_Y-50, triCountStr);
-#ifdef LOGGING
+#ifdef LOGGING/*
 	generalLogger << triCountStr << endl;
-	generalLogger.close();
+	generalLogger.close();*/
 #endif
-	
 }
 
 /*
@@ -212,6 +220,16 @@ void gameView()
 	glPointSize(4.0);			// Set the Point size to 4
 	drawOctogon();				// Draw the Octogon on Screen 
 	//Draw the asteroids
+
+	//printGameOver();
+	if (asteroidBelt.size()==0)
+		printYouWin();
+	if (gameOver)
+	{
+		printGameOver();
+		paused = true;
+	}
+		
 	switch(filled)
 	{
 		// If not filled
@@ -289,9 +307,10 @@ void gameView()
 
 void gameLoop()
 {
+	if (!paused){
 	// Open the Ship Log file to record debug information.
-#ifdef LOGGING
-	shipLogger.open(SHIP_LOG_PATH, ofstream::out|ofstream::app);
+#ifdef LOGGING/*
+	shipLogger.open(SHIP_LOG_PATH, ofstream::out|ofstream::app);*/
 #endif
 	// If the right arrow key has been pressed rotate the ship
 	// Starting at 1 degree then moving to 10 degrees at a time.
@@ -316,10 +335,10 @@ void gameLoop()
 		timeKeyPressed++;
 
 		// Log Changes
-#ifdef LOGGING
+#ifdef LOGGING/*
 		shipLogger << endl << "Ship Rotation : " << enterprise.rotation << endl; 
 		shipLogger << "Delta Rot : " << deltaRot << endl;
-		shipLogger << "Time Right Arrow Pressed = " << timeKeyPressed;
+		shipLogger << "Time Right Arrow Pressed = " << timeKeyPressed;*/
 #endif
 	}
 
@@ -345,26 +364,42 @@ void gameLoop()
 		timeKeyPressed++;
 
 		// Log Changes
-#ifdef LOGGING
+#ifdef LOGGING/*
 		shipLogger << endl << "Ship Rotation : " << enterprise.rotation << endl; 
 		shipLogger << "Delta Rot : " << deltaRot << endl;
-		shipLogger << "Time Right Arrow Pressed = " << timeKeyPressed << endl;
+		shipLogger << "Time Right Arrow Pressed = " << timeKeyPressed << endl;*/
 #endif
 	}
 	
 	//Close the ship logger to save changes.
-#ifdef LOGGING
-	shipLogger.close();
+#ifdef LOGGING/*
+	shipLogger.close();*/
 #endif
+#ifdef LOGGING
+		collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
+		collisionLogger << "\nRunning Collision Detection checks\n";
+		collisionLogger << asteroidBelt.size() << endl;
+		collisionLogger.close();
+#endif
+	for (int i = 0; i < asteroidBelt.size(); i++)
+	{
+
+		detectCollision(i);
+	}
 
 	// Iterate through and Increment each bullet's location
-	for(int i=0; i <bullets.size();i++)
+	for(int i=0; i < bullets.size();i++)
 	{
 		// We use sine and cosine because we need to tesslate them 
 		// along the direction they need to be going or the direction
-		// they were shot. We are moving them by 2 each time. 
-		bullets.at(i).location.x += 2.0 * cos(bullets.at(i).theta); 
-		bullets.at(i).location.y += 2.0 * sin(bullets.at(i).theta);
+		// they were shot. We are moving them by 2 each time.
+
+		bullets.at(i).location.x += 2.0 * cos(bullets.at(i).theta)*(60/FPS); 
+		bullets.at(i).location.y += 2.0 * sin(bullets.at(i).theta)*(60/FPS);
+		if(!insideOctogon(bullets[i].location) && bullets.size() > 1 && i <bullets.size())
+		{
+			bullets.erase(bullets.begin() + i);
+		}
 	}
 
 	// Iterate through and Increment each asteroid's location
@@ -376,7 +411,8 @@ void gameLoop()
 		asteroidBelt.at(i).incrementLocation();
 	}
 
-//	detectCollision(asteroidBelt, bullets, enterprise);
+	
+	}
 	glutPostRedisplay();
 }
 
@@ -435,7 +471,6 @@ void initiateWindow(int argc, char** argv)
 {
 	//build window
    	glutInit(&argc,argv);
-	//glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB); /* default, not needed */
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(WINDOW_MAX_X, WINDOW_MAX_Y); /* set pixel window */
 	glutInitWindowPosition(WINDOW_POSITION_X, WINDOW_POSITION_Y);
@@ -519,17 +554,30 @@ void debugMe(int x, int y)
 void keyboard(unsigned char key, int x, int y)
 {	
 	// start game
-	if(key == 's' || key == 'S')
+	if((key == 's' || key == 'S') && !gameOver)
 		paused = false;
 
 	// pause movement
-	if(key == 'p' || key == 'P')
+	if((key == 'p' || key == 'P') && !gameOver)
 	{
 		if (paused)
 			paused = false;
 		else
 			paused = true;
 	}
+	// pause movement
+	if(key == 'r' || key == 'R')
+	{
+		asteroidBelt.clear();
+		bullets.clear();
+		initiateAsteroids();
+		bulletsFired=0;
+		paused=true;
+		gameOver = false;
+		enterprise.rotation=0;
+		bulletsHit = 0;
+	}
+
 
 	// Exits the game.
 	if(key == 'q' || key == 'Q')
@@ -542,7 +590,6 @@ void keyboard(unsigned char key, int x, int y)
 			filled = 2;
 		else
 			filled = 0;
-		//glutIdleFunc(gameLoop);
 	}
 
 	// Fills the asteroids.
@@ -552,8 +599,6 @@ void keyboard(unsigned char key, int x, int y)
 			filled = 1;
 		else
 			filled = 0;
-		//tess = 0;
-		//glutIdleFunc(gameLoop);
 	}
 
 	// Fires a bullet.
@@ -565,20 +610,10 @@ void keyboard(unsigned char key, int x, int y)
 			spacePressed = true;
 			bullet shot = createBullet();
 			bullets.push_back(shot);
-			//fireBullet(shot);
-			//glutIdleFunc(gameLoop);
+			bulletsFired++;
 		}
-		
+	}
 
-/*	
-		bullet shot = createBullet();
-		bullets.push_back(shot);
-		fireBullet(shot);
-		bulletsFired++;
-		glutIdleFunc(gameLoop);
-*/	}
-
-	// WILL BE REMOVED LATER (will not be removed later... hidden freature/cheat :P we can just ifdef it...)
 #ifdef DEBUG	
 	if(key == 'b')
 	{
@@ -588,6 +623,8 @@ void keyboard(unsigned char key, int x, int y)
 			asteroidBelt.push_back(temp.at(i));
 		}
 		asteroidBelt.erase(asteroidBelt.begin());
+		// REMOVE LATER
+		bulletsHit++;
 	}
 #endif
 }
@@ -664,6 +701,9 @@ int main(int argc, char** argv)
 	generalLogger.open(GENERAL_LOG_PATH, ofstream::out|ofstream::trunc);
 	generalLogger << "General Logging Started " << endl;
 	generalLogger.close();
+	collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::trunc);
+	collisionLogger << "Collision Logging Started " << endl;
+	collisionLogger.close();
 #endif
 	initiateWindow(argc, argv); /* Set up Window */
 	initiateGL();
@@ -686,3 +726,4 @@ int main(int argc, char** argv)
 /*
 
 */
+
