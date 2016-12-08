@@ -1,0 +1,165 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+A	src/transformer.cpp	/^double A[4][1];$/;"	v
+ASTEROID_LOG_PATH	src/main.cpp	/^char* ASTEROID_LOG_PATH = "logs\/asteroid_log.txt";$/;"	v
+ASTEROID_MAX_SIZE	src/headers.h	/^const int ASTEROID_MAX_SIZE = 12;$/;"	v
+ASTEROID_MAX_X	src/headers.h	/^const int ASTEROID_MAX_X = 20;$/;"	v
+ASTEROID_MAX_Y	src/headers.h	/^const int ASTEROID_MAX_Y = 20;$/;"	v
+ASTEROID_MIN_SIZE	src/headers.h	/^const int ASTEROID_MIN_SIZE = 4;$/;"	v
+B	src/transformer.cpp	/^double B[4][1];$/;"	v
+BULLET_LOG_PATH	src/main.cpp	/^char* BULLET_LOG_PATH = "logs\/bullet_log.txt";$/;"	v
+COLLISION_LOG_PATH	src/main.cpp	/^char* COLLISION_LOG_PATH = "logs\/collision_log.txt";$/;"	v
+FPS	src/main.cpp	/^double FPS = 0.0;	\/\/ FPS calcuatitions $/;"	v
+GENERAL_LOG_PATH	src/main.cpp	/^char* GENERAL_LOG_PATH = "logs\/general_log.txt";$/;"	v
+GLOBALS	src/globals.h	19;"	d
+HEADERS	src/headers.h	19;"	d
+Inside	src/clipper.cpp	/^bool Inside(point testPoint, point *clipBoundary)$/;"	f
+Intersect	src/clipper.cpp	/^void Intersect(point first, point second, point *clipBoundary,$/;"	f
+NUMBER_OF_ASTEROIDS	src/headers.h	/^const int NUMBER_OF_ASTEROIDS = 25;$/;"	v
+Output	src/clipper.cpp	/^void Output(point newPoint, int *outLength, point *outPointArray)$/;"	f
+PROTOTYPES	src/prototypes.h	19;"	d
+SHIP_LOG_PATH	src/main.cpp	/^char* SHIP_LOG_PATH = "logs\/ship_log.txt";$/;"	v
+SPACEBAR	src/main.cpp	23;"	d	file:
+STRUCTS	src/structs.h	2;"	d
+SutherlandHodgmanPolygonClip	src/clipper.cpp	/^void SutherlandHodgmanPolygonClip(point *inPointArray,$/;"	f
+TRANS	src/transformer.cpp	/^double TRANS[4][4];$/;"	v
+TRANSFORMATION_LOG_PATH	src/main.cpp	/^char* TRANSFORMATION_LOG_PATH = "logs\/transformation_log.txt";$/;"	v
+WINDOW_MAX_X	src/headers.h	/^const int WINDOW_MAX_X = 600;$/;"	v
+WINDOW_MAX_Y	src/headers.h	/^const int WINDOW_MAX_Y = 600;$/;"	v
+WINDOW_POSITION_X	src/headers.h	/^const int WINDOW_POSITION_X = 100;$/;"	v
+WINDOW_POSITION_Y	src/headers.h	/^const int WINDOW_POSITION_Y = 100;$/;"	v
+WORLD_COORDINATE_MAX_X	src/headers.h	/^const int WORLD_COORDINATE_MAX_X = 600;$/;"	v
+WORLD_COORDINATE_MAX_Y	src/headers.h	/^const int WORLD_COORDINATE_MAX_Y = 600;$/;"	v
+WORLD_COORDINATE_MIN_X	src/headers.h	/^const int WORLD_COORDINATE_MIN_X = 0;$/;"	v
+WORLD_COORDINATE_MIN_Y	src/headers.h	/^const int WORLD_COORDINATE_MIN_Y = 0;$/;"	v
+__ASTEROID_H_INCLUDED__	src/asteroid.h	19;"	d
+a	src/structs.h	/^    point a, b, c;$/;"	m	struct:triangle
+aLocation	src/structs.h	/^    point aLocation;$/;"	m	struct:ship
+allGood	src/clipper.cpp	/^vector<asteroid> allGood;$/;"	v
+angle	src/structs.h	/^    float x, y, z, w, angle ;$/;"	m	struct:point
+arrayToVector	src/clipper.cpp	/^void arrayToVector(vector<point>& v,point *a, int size){$/;"	f
+astPnts	src/asteroid.cpp	/^vector<point> astPnts;$/;"	v
+astPnts	src/asteroid.h	/^	    std::vector<point> astPnts;$/;"	m	class:asteroid
+astPosPnts	src/asteroid.cpp	/^vector<point> astPosPnts;$/;"	v
+astTris	src/asteroid.cpp	/^vector<triangle> astTris;$/;"	v
+astTris	src/asteroid.h	/^	    std::vector<triangle> astTris;$/;"	m	class:asteroid
+asteroid	src/asteroid.cpp	/^asteroid::asteroid()$/;"	f	class:asteroid
+asteroid	src/asteroid.cpp	/^asteroid::asteroid(triangle a, point location, point offset, int num, point translate)$/;"	f	class:asteroid
+asteroid	src/asteroid.h	/^class asteroid$/;"	c
+asteroidBelt	src/main.cpp	/^vector<asteroid> asteroidBelt; 	\/\/ Holds all asteroids$/;"	v
+asteroidLogger	src/main.cpp	/^ofstream asteroidLogger;		\/\/ Asteroid loggger, records information about the asteroids into the asteroid log file.$/;"	v
+asteroidProximity	src/detectcollision.cpp	/^bool asteroidProximity(asteroid ast1, asteroid ast2)$/;"	f
+avgFPS	src/main.cpp	/^double avgFPS;$/;"	v
+b	src/structs.h	/^    point a, b, c;$/;"	m	struct:triangle
+body	src/structs.h	/^    triangle body;$/;"	m	struct:ship
+breakupAsteroid	src/asteroid.cpp	/^vector<asteroid> asteroid::breakupAsteroid()$/;"	f	class:asteroid
+buildRotateZ	src/transformer.cpp	/^void buildRotateZ(double mat[][4], double theta)$/;"	f
+buildScale	src/transformer.cpp	/^void buildScale(double mat[][4], double x, double y, double z)$/;"	f
+buildTranslate	src/transformer.cpp	/^void buildTranslate(double mat[][4], double x, double y, double z)$/;"	f
+bullet	src/structs.h	/^struct bullet$/;"	s
+bulletLogger	src/main.cpp	/^ofstream bulletLogger;			\/\/ Bullet Logger, records information about bullets into the bullet log.$/;"	v
+bulletProximity	src/detectcollision.cpp	/^bool bulletProximity(asteroid ast1, bullet b1)$/;"	f
+bullets	src/main.cpp	/^vector<bullet> bullets; 	\/\/ Holds all bullets$/;"	v
+bulletsFired	src/main.cpp	/^int bulletsFired = 0;$/;"	v
+bulletsHit	src/main.cpp	/^int bulletsHit = 0;$/;"	v
+c	src/structs.h	/^    point a, b, c;$/;"	m	struct:triangle
+calculateFPS	src/main.cpp	/^void calculateFPS()$/;"	f
+center	src/asteroid.cpp	/^point center;$/;"	v
+center	src/asteroid.h	/^		point center;$/;"	m	class:asteroid
+clear	src/asteroid.cpp	/^void asteroid::clear()$/;"	f	class:asteroid
+clip	src/clipper.cpp	/^void clip(){$/;"	f
+clipOctogon	src/clipper.cpp	/^void clipOctogon(vector<point>& v){$/;"	f
+clipPts	src/main.cpp	/^vector<point> clipPts;$/;"	v
+clipTrapazoid	src/clipper.cpp	/^void clipTrapazoid(vector<point>& v, vector<point> t){$/;"	f
+clipped	src/asteroid.cpp	/^bool clipped;$/;"	v
+clipped	src/asteroid.h	/^	    bool clipped;$/;"	m	class:asteroid
+collisionLogger	src/main.cpp	/^ofstream collisionLogger;		\/\/ Collision logger, records information about colitions into the collision log.$/;"	v
+createAsteroid	src/asteroid.cpp	/^void asteroid::createAsteroid(triangle a, point location, point offset, int num)$/;"	f	class:asteroid
+createBullet	src/bullets.cpp	/^bullet createBullet()$/;"	f
+createShip	src/ship.cpp	/^ship createShip(void)$/;"	f
+currentfont	src/main.cpp	/^void *currentfont;$/;"	v
+debugDisplay	src/main.cpp	/^void debugDisplay()$/;"	f
+debugMe	src/main.cpp	/^void debugMe(int x, int y)$/;"	f
+deltaRot	src/main.cpp	/^float deltaRot = 1.0; 		\/\/ For use in the accelleration of ship rotation $/;"	v
+detectCollision	src/detectcollision.cpp	/^void detectCollision(int index) $/;"	f
+displayScore	src/main.cpp	/^void displayScore(void)$/;"	f
+drawBullet	src/bullets.cpp	/^void drawBullet(bullet shot)$/;"	f
+drawOctogon	src/main.cpp	/^void drawOctogon(void)$/;"	f
+drawShip	src/ship.cpp	/^void drawShip(ship a)$/;"	f
+drawString	src/main.cpp	/^void drawString(GLuint x, GLuint y, const char* string)$/;"	f
+edge	src/clipper.cpp	/^typedef point edge[2];$/;"	t	file:
+enterprise	src/main.cpp	/^ship enterprise = createShip();$/;"	v
+filled	src/main.cpp	/^int filled = 0;			\/\/ 0 if lines should be drawn, 1 if filled (asteroids)   $/;"	v
+fireBullet	src/bullets.cpp	/^void fireBullet(bullet shot){$/;"	f
+frames	src/main.cpp	/^int frames = 0;$/;"	v
+gameLoop	src/main.cpp	/^void gameLoop()$/;"	f
+gameOver	src/main.cpp	/^bool gameOver = false;$/;"	v
+gameView	src/main.cpp	/^void gameView()$/;"	f
+generalLogger	src/main.cpp	/^ofstream generalLogger;$/;"	v
+getCenter	src/asteroid.cpp	/^point asteroid::getCenter()$/;"	f	class:asteroid
+getPoints	src/asteroid.cpp	/^vector<point> asteroid::getPoints()$/;"	f	class:asteroid
+getTess	src/asteroid.cpp	/^vector<triangle> asteroid::getTess()$/;"	f	class:asteroid
+incrementLocation	src/asteroid.cpp	/^void asteroid::incrementLocation()$/;"	f	class:asteroid
+initiateAsteroids	src/main.cpp	/^void initiateAsteroids()$/;"	f
+initiateGL	src/main.cpp	/^void initiateGL(void)$/;"	f
+initiateGameDisplay	src/main.cpp	/^void initiateGameDisplay()$/;"	f
+initiateOctogon	src/main.cpp	/^void initiateOctogon(void)$/;"	f
+initiateWindow	src/main.cpp	/^void initiateWindow(int argc, char** argv)$/;"	f
+insideOctogon	src/clipper.cpp	/^int insideOctogon(point p)$/;"	f
+intersect	src/asteroid.cpp	/^bool intersect(point v1, point v2, point v3, point v4)$/;"	f
+keyReleased	src/main.cpp	/^void keyReleased(unsigned char key, int x, int y)$/;"	f
+keyboard	src/main.cpp	/^void keyboard(unsigned char key, int x, int y)$/;"	f
+leftKeyPressed	src/main.cpp	/^bool leftKeyPressed = false;	\/\/ Also for ship rotation, tells us if the ship's$/;"	v
+leftReached10	src/main.cpp	/^bool leftReached10 = false;		\/\/ left rotation reached 10$/;"	v
+location	src/structs.h	/^    point location;$/;"	m	struct:bullet
+mVmult	src/transformer.cpp	/^void mVmult(double a[][4], int dim1a, int dim2a,$/;"	f
+main	src/main.cpp	/^int main(int argc, char** argv)$/;"	f
+mouse	src/main.cpp	/^void mouse(int button, int state, int x, int y)$/;"	f
+mtop	src/transformer.cpp	/^void mtop(point& p, double m[][1])$/;"	f
+noOctogon	src/main.cpp	/^vector<point> octogon; bool noOctogon = 1;$/;"	v
+numsides	src/asteroid.cpp	/^int numsides = 0;$/;"	v
+numsides	src/asteroid.h	/^		int numsides;$/;"	m	class:asteroid
+octogon	src/main.cpp	/^vector<point> octogon; bool noOctogon = 1;$/;"	v
+origin	src/main.cpp	/^double origin = (WORLD_COORDINATE_MAX_X \/ 2);$/;"	v
+paused	src/main.cpp	/^bool paused = true;				\/\/ For pause screen $/;"	v
+point	src/structs.h	/^struct point$/;"	s
+pointArray	src/clipper.cpp	/^typedef point pointArray[200];        \/* MAX is a declared constant *\/$/;"	t	file:
+printGameOver	src/main.cpp	/^void printGameOver(void)$/;"	f
+printYouWin	src/main.cpp	/^void printYouWin(void)$/;"	f
+ptom	src/transformer.cpp	/^void ptom(point& p, double m[][1])$/;"	f
+rightKeyPressed	src/main.cpp	/^bool rightKeyPressed = false;	\/\/ These are for the ship rotation functions$/;"	v
+rightReached10	src/main.cpp	/^bool rightReached10 = false;	\/\/ right rotation reached 10$/;"	v
+rotatePoint	src/transformer.cpp	/^void rotatePoint(point& p,double theta)$/;"	f
+rotatePointB	src/transformer.cpp	/^void rotatePointB(point& p, double theta)$/;"	f
+rotation	src/asteroid.h	/^	    float rotation;$/;"	m	class:asteroid
+rotation	src/structs.h	/^    float rotation;$/;"	m	struct:ship
+scalePoint	src/transformer.cpp	/^void scalePoint(point& p,double scale)$/;"	f
+setFont	src/main.cpp	/^void setFont(void *font)$/;"	f
+setPoints	src/asteroid.cpp	/^void asteroid::setPoints(std::vector<point> v)$/;"	f	class:asteroid
+ship	src/structs.h	/^struct ship$/;"	s
+shipLogger	src/main.cpp	/^ofstream shipLogger;			\/\/ Ship logger, records information about the ship into the ship log.$/;"	v
+shipProximity	src/detectcollision.cpp	/^bool shipProximity(asteroid ast1, vector<point> b2)$/;"	f
+sortPoints	src/asteroid.cpp	/^void asteroid::sortPoints()$/;"	f	class:asteroid
+spacePressed	src/main.cpp	/^bool spacePressed = false;		\/\/ This is for firing bullets.$/;"	v
+specialKeyReleased	src/main.cpp	/^void specialKeyReleased(int key, int x, int y)$/;"	f
+specialKeys	src/main.cpp	/^void specialKeys(int key, int x, int y)$/;"	f
+tessellateAsteriod	src/asteroid.cpp	/^void asteroid::tessellateAsteriod()$/;"	f	class:asteroid
+theta	src/structs.h	/^    float theta;$/;"	m	struct:bullet
+timeC	src/main.cpp	/^int timeC = 0;$/;"	v
+timeKeyPressed	src/main.cpp	/^int timeKeyPressed = 0;		\/\/ Iterator for Debug reasons$/;"	v
+timeP	src/main.cpp	/^int timeP = 0;$/;"	v
+transformationLogger	src/main.cpp	/^ofstream transformationLogger;		\/\/ Transfomration logger, records information about transforms into tranformmation log.$/;"	v
+translatePoint	src/transformer.cpp	/^void translatePoint(point& p,double x, double y, double z)$/;"	f
+translation	src/asteroid.cpp	/^point translation;$/;"	v
+translation	src/asteroid.h	/^		point translation;$/;"	m	class:asteroid
+translation	src/structs.h	/^    point translation;$/;"	m	struct:bullet
+triangle	src/structs.h	/^struct triangle$/;"	s
+vectorToArray	src/clipper.cpp	/^void vectorToArray(vector<point>& v,point *a){$/;"	f
+w	src/structs.h	/^    float x, y, z, w, angle ;$/;"	m	struct:point
+x	src/structs.h	/^    float x, y, z, w, angle ;$/;"	m	struct:point
+y	src/structs.h	/^    float x, y, z, w, angle ;$/;"	m	struct:point
+z	src/structs.h	/^    float x, y, z, w, angle ;$/;"	m	struct:point
