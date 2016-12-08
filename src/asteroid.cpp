@@ -513,3 +513,13 @@ vector<triangle> asteroid::getTess()
 {
 	return astTris;
 }
+
+vector<point> asteroid::getRealPoints(){
+	vector<point> v;
+
+	for(int i = 0; i < astPnts.size(); i++){
+		point p = {astPnts[i].x + center.x,astPnts[i].y + center.y, 0, 1};
+		v.push_back(p);
+	}
+	return v;
+}

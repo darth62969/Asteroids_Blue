@@ -236,13 +236,13 @@ void gameView()
 		case 0:
     			for (int i = 0; i < (asteroidBelt.size()); i++)
     			{
-				vector<point> a = asteroidBelt.at(i).getPoints();
-				point b = asteroidBelt.at(i).getCenter();
+				vector<point> a = asteroidBelt.at(i).getRealPoints();
+				//point b = asteroidBelt.at(i).getCenter();
 				for (int j = 0; j < (a.size()); j++)
         			{
 					glBegin (GL_LINES);
-						glVertex2d(a.at(j).x + b.x, a.at(j).y + b.y);
-						glVertex2d( a.at((j+1)%a.size()).x + b.x, a.at((j+1)%a.size()).y +b.y);
+						glVertex2d(a[j].x, a[j].y);
+						glVertex2d( a.at((j+1)%a.size()).x , a.at((j+1)%a.size()).y);
 					glEnd ();         
         			}
 			}
