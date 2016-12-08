@@ -58,7 +58,7 @@ bool bulletProximity(asteroid ast1, bullet b1)
 	collisionLogger << " <= 20 : " << (abs(b1.location.y - ast1.getCenter().y) <= 20) << endl;
 	collisionLogger.close();*/ 
 #endif
-	if (abs(b1.location.x - ast1.getCenter().x) <= 20 && abs(b1.location.y - ast1.getCenter().y) <= 20)
+	if (abs(b1.location.x - ast1.getCenter().x) <= ASTEROID_MAX_X && abs(b1.location.y - ast1.getCenter().y) <= ASTEROID_MAX_Y)
 	{
 #ifdef LOGGING
 		collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
@@ -86,7 +86,7 @@ bool shipProximity(asteroid ast1, vector<point> b2)
 	collisionLogger.close();
 	#endif
 
-	if (abs(x - ast1.getCenter().x) <= 20 && abs(y - ast1.getCenter().y) <= 20)
+	if (abs(x - ast1.getCenter().x) <= ASTEROID_MAX_X && abs(y - ast1.getCenter().y) <= ASTEROID_MAX_Y)
 	{
 		#ifdef LOGGING
 		collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
@@ -276,37 +276,39 @@ void detectCollision(int index)
 		{
 			if (bulletProximity (asteroidBelt[index], bullets[j]))
 			{
-#ifdef LOGGING	/*				
-				collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
-				collisionLogger << "Detected bullet in proximity of asteroid\n";
+				bullet tmpbul; 
+				tmpbul.location.x = bullets.at(j).location.x - 2.0 * cos(bullets.at(j).theta)*(60/FPS);
+				tmpbul.location.y = bullets.at(j).location.y - 2.0 * sin(bullets.at(j).theta)*(60/FPS);
+ #ifdef LOGGING	/*				
+ 				collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
+ 				collisionLogger << "Detected bullet in proximity of asteroid\n";
 				collisionLogger.close();*/
 #endif
 				for (int k = 0; k < a1.size(); k++)
-				{
-					if (k == a1.size()-1)
-					{
-						if(intersect(a1[k], a1[0], bullets[j].location, bullets[j].location))
+ 				{
+ 					if (k == a1.size()-1)
+ 					{
+						point tempk;
+ 				    		tempk.x = a1[k].x + asteroidBelt[index].getCenter().x;
+	     					tempk.y = a1[k].y + asteroidBelt[index].getCenter().y;
+	    					point tempk0;
+	    					tempk0.x = a1[0].x + asteroidBelt[index].getCenter().x;
+  						tempk0.y = a1[0].y + asteroidBelt[index].getCenter().y;
+
+						if(intersect(tempk, tempk0, tmpbul.location, bullets[j].location))
 						{
 							//separate asteroid
 							vector <asteroid> tmp;
 							tmp = asteroidBelt[index].breakupAsteroid();
 
 							//deletes asteroid
-							for (int l = index; l < asteroidBelt.size()-1; l++)
-							{
-								asteroidBelt[l] = asteroidBelt[l+1];
-							}
-							asteroidBelt.pop_back();
+							asteroidBelt.erase(asteroidBelt.begin()+index);
 
 							//prepares to add asteroids
 							n.insert(n.end(), tmp.begin(), tmp.end());
 
-							//delete bullet
-							for (int l = j; l < bullets.size()-1; l++)
-							{
-								bullets[j] = bullets[j+1];
-							}
-							bullets.pop_back();
+							//delete bullet							
+							bullets.erase(bullets.begin()+j); 
 							
 							//add score
 
@@ -318,28 +320,27 @@ void detectCollision(int index)
 					}
 					else 
 					{
-						if (intersect(a1[k], a1[k+1],  bullets[j].location, bullets[j].location))
+						point tempk2;
+ 				   		tempk2.x = a1[k].x + asteroidBelt[index].getCenter().x;
+	     					tempk2.y = a1[k].y + asteroidBelt[index].getCenter().y;
+	    					point tempk1;
+	    					tempk1.x = a1[k+1].x + asteroidBelt[index].getCenter().x;
+    						tempk1.y = a1[k+1].y + asteroidBelt[index].getCenter().y;
+            
+						if (intersect(tempk2, tempk1,  tmpbul.location, bullets[j].location))
 						{
 							//separate asteroid
 							vector <asteroid> tmp;
 							tmp = asteroidBelt[index].breakupAsteroid();
 
-							//deletes asteroid
-							for (int l = index; l < asteroidBelt.size()-1; l++)
-							{
-								asteroidBelt[l] = asteroidBelt[l+1];
-							}
-							asteroidBelt.pop_back();
+							//deletes asteroid			
+							asteroidBelt.erase(asteroidBelt.begin()+index);
 
 							//prepares to add asteroids
 							n.insert(n.end(), tmp.begin(), tmp.end());
 
 							//delete bullet
-							for (int l = j; l < bullets.size()-1; l++)
-							{
-								bullets[j] = bullets[j+1];
-							}
-							bullets.pop_back();
+							bullets.erase(bullets.begin()+j);
 							
 							//add score
 
