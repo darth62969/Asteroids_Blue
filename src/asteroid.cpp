@@ -68,13 +68,13 @@ asteroid::asteroid()
 		{
 			center.x = rand() % (WORLD_COORDINATE_MAX_X + 1) + WORLD_COORDINATE_MIN_X;
 		}
-		while(abs(center.x - x) <= ASTEROID_MAX_X);
+		while(abs(center.x - x) <= ASTEROID_MAX_X*2);
 
 		do
 		{
 			center.y = rand() % (WORLD_COORDINATE_MAX_Y + 1) + WORLD_COORDINATE_MIN_Y;
 		}
-		while(abs(center.y - y) <= ASTEROID_MAX_Y);
+		while(abs(center.y - y) <= ASTEROID_MAX_Y*2);
 
 		bool nv = false;
 		for (int i = 0; i < asteroidBelt.size(); i++)
@@ -92,7 +92,6 @@ asteroid::asteroid()
 	asteroidLogger << "Bottom Left corner of asteroid at : " << center.x << " " << center.y << endl;
 #endif
 	int i = rand();
-	cout << "NUMBER OF SIDES: " << numsides << endl;
 	for (int j = 0; j < numsides; j++)
 	{
 		srand (static_cast <unsigned> (time(0))*(i*(j+67)/10));
@@ -103,7 +102,6 @@ asteroid::asteroid()
 		if( j == 0)
 		{
 			astPnts.push_back(b);
-			cout << j << endl;
 		}
 		else if (j > 0)
 		{
@@ -119,7 +117,6 @@ asteroid::asteroid()
 			if(durpdist)
 			{
 				astPnts.push_back(b);
-				cout << j << endl;
 			}
 			else
 			{
@@ -339,8 +336,10 @@ vector<asteroid> asteroid::breakupAsteroid()
 			}
 		}
 		
-		
-		asteroid a(tmpt, center, tmpp, i, rotation);
+		//ROTATION MUST BE A RANDOM FLOAT
+		//srand (static_cast <unsigned> (time(0))*((asteroidBelt.size()+67)/10));
+		float rotate = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		asteroid a(tmpt, center, tmpp, i, rotate);
 		//a.createAsteroid(tmpt, center, tmpp, i);
 		breakup.push_back(a);
 	}
