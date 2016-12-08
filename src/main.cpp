@@ -78,8 +78,6 @@ void drawOctogon(void);
 
 void drawString(GLuint x, GLuint y, const char* string);
 
-
-
 void setFont(void *font)
 {
 	currentfont = font;
@@ -87,7 +85,6 @@ void setFont(void *font)
 
 void displayScore(void)
 {
-
 	double hitRatio;
 	
 	if (bulletsHit != 0)
@@ -119,20 +116,20 @@ void displayScore(void)
 	drawString(480, 65, hrStr);
 }
 
-void printGameOver(void){
+void printGameOver(void)
+{
+	char gameOver[25];
+        setFont(GLUT_BITMAP_TIMES_ROMAN_24);
                
-
-		char gameOver[25];
-                setFont(GLUT_BITMAP_TIMES_ROMAN_24);
-               
-               sprintf(gameOver, "%s", "GAME OVER");
+        sprintf(gameOver, "%s", "GAME OVER");
    
-		//sprintf();
+	//sprintf();
 
-                drawString(225, 320, gameOver);
+        drawString(225, 320, gameOver);
 }
 
-void printYouWin(void){
+void printYouWin(void)
+{
 	char youWin[25];
 	//setFont(GLUT_BITMAP_9_BY_15);
 	setFont(GLUT_BITMAP_TIMES_ROMAN_24);
@@ -153,12 +150,6 @@ void drawString(GLuint x, GLuint y, const char* string)
 
 void calculateFPS()
 {
-	/*if (paused)
-	{
-		FPS=60;
-		return;
-	}*/
-		
 	frames++;
 	timeC = glutGet(GLUT_ELAPSED_TIME);
 	FPS = 1000.0/(double)(timeC - timeP);
@@ -178,13 +169,13 @@ void debugDisplay()
 	drawString(20, WORLD_COORDINATE_MAX_Y-20, FPSStr);
 	drawString(20, WORLD_COORDINATE_MAX_Y-35, avgFPSStr);
 
-#ifdef LOGGING/*
-	generalLogger.open( GENERAL_LOG_PATH, ofstream::out|ofstream::app);
+#ifdef LOGGING
+/*	generalLogger.open( GENERAL_LOG_PATH, ofstream::out|ofstream::app);
 	generalLogger << FPSStr << endl;
 	generalLogger << avgFPSStr << endl;*/
 #endif 
-	// Count Asteroid Triangles
 
+	// Count Asteroid Triangles
 	int triCount = 0;
 
 	char triCountStr[50];
@@ -197,8 +188,9 @@ void debugDisplay()
 //Display Triangle Count
 	sprintf(triCountStr, "Triangles On Screen : %3d", triCount);
 	drawString(20, WORLD_COORDINATE_MAX_Y-50, triCountStr);
-#ifdef LOGGING/*
-	generalLogger << triCountStr << endl;
+
+#ifdef LOGGING
+/*	generalLogger << triCountStr << endl;
 	generalLogger.close();*/
 #endif
 }
@@ -207,16 +199,12 @@ void debugDisplay()
  * Main Display Fucntion
  * Displays everything from the Asteroids to the Bullets to the Scoreboard 
  */
-
- // Q: Why is this a method? - Ted
- // A: Because it is the Main Game Display Fucntion - Jonathan
- // R: Hmm, I see - Ted
 void gameView()
 {
 	//output game to window
 	calculateFPS();				// Calculate the interval between this frame and the last.
 								// We use this to make game speed independent of framerate.
-    glColor3f (0.1, 0.5, 0.0); 	// Set draw color to green
+    	glColor3f (0.1, 0.5, 0.0); 	// Set draw color to green
 	glPointSize(4.0);			// Set the Point size to 4
 	drawOctogon();				// Draw the Octogon on Screen 
 	//Draw the asteroids
@@ -307,112 +295,85 @@ void gameView()
 
 void gameLoop()
 {
-	if (!paused){
-	// Open the Ship Log file to record debug information.
-#ifdef LOGGING/*
-	shipLogger.open(SHIP_LOG_PATH, ofstream::out|ofstream::app);*/
-#endif
-	// If the right arrow key has been pressed rotate the ship
-	// Starting at 1 degree then moving to 10 degrees at a time.
-	if (rightKeyPressed && !paused) 
+	if (!paused)
 	{
-		if (deltaRot < 10.0 && !rightReached10)
+		// If the right arrow key has been pressed rotate the ship
+		// Starting at 1 degree then moving to 10 degrees at a time.
+		if (rightKeyPressed && !paused) 
 		{
-			deltaRot *= 1.1;		// Multiply deltaRot by 1.1.
+			if (deltaRot < 10.0 && !rightReached10)
+			{
+				deltaRot *= 1.1;		// Multiply deltaRot by 1.1.
 
-			if (deltaRot >= 10) 		// If deltaRot reached or 
-			{				// went above 10 reset it 
-				rightReached10 = true;	// to 10.
-				deltaRot = 10;
-			}			
+				if (deltaRot >= 10) 		// If deltaRot reached or 
+				{				// went above 10 reset it 
+					rightReached10 = true;	// to 10.
+					deltaRot = 10;
+				}			
+			}
+		
+
+			// Decrement ship rotation by deltaRot (counterclockwise)
+			enterprise.rotation = ((int)(enterprise.rotation-(deltaRot*(60/FPS)))%360);
+		
+			// Increment Timekey pressed
+			timeKeyPressed++;
 		}
-		
 
-		// Decrement ship rotation by deltaRot (counterclockwise)
-		enterprise.rotation = ((int)(enterprise.rotation-(deltaRot*(60/FPS)))%360);
-		
-		// Increment Timekey pressed
-		timeKeyPressed++;
-
-		// Log Changes
-#ifdef LOGGING/*
-		shipLogger << endl << "Ship Rotation : " << enterprise.rotation << endl; 
-		shipLogger << "Delta Rot : " << deltaRot << endl;
-		shipLogger << "Time Right Arrow Pressed = " << timeKeyPressed;*/
-#endif
-	}
-
-	// If the left arrow key has been pressed rotate the ship
-	// Starting at 1 degree then moving to 10 degrees at a time.
-	if (leftKeyPressed && !paused)
-	{
-		if (deltaRot < 10.0 && !leftReached10)
+		// If the left arrow key has been pressed rotate the ship
+		// Starting at 1 degree then moving to 10 degrees at a time.
+		if (leftKeyPressed && !paused)
 		{
-			deltaRot *= 1.1;		// Multiply deltaRot by 1.1.
+			if (deltaRot < 10.0 && !leftReached10)
+			{
+				deltaRot *= 1.1;		// Multiply deltaRot by 1.1.
 			
-			if (deltaRot >= 10)		// If deltaRot reached o
-			{				// went above 10 reset it
-				leftReached10 = true;	// to 10.
-				deltaRot = 10;
-			}		
-		}
+				if (deltaRot >= 10)		// If deltaRot reached o
+				{				// went above 10 reset it
+					leftReached10 = true;	// to 10.
+					deltaRot = 10;
+				}		
+			}
 		
-		// Decrement ship rotation by deltaRot (counterclockwise)
-		enterprise.rotation = ((int)(enterprise.rotation+(deltaRot*(60/FPS)))%360);
+			// Decrement ship rotation by deltaRot (counterclockwise)
+			enterprise.rotation = ((int)(enterprise.rotation+(deltaRot*(60/FPS)))%360);
 
-		// Increment Timekey pressed
-		timeKeyPressed++;
+			// Increment Timekey pressed
+			timeKeyPressed++;
+		}
 
-		// Log Changes
-#ifdef LOGGING/*
-		shipLogger << endl << "Ship Rotation : " << enterprise.rotation << endl; 
-		shipLogger << "Delta Rot : " << deltaRot << endl;
-		shipLogger << "Time Right Arrow Pressed = " << timeKeyPressed << endl;*/
-#endif
-	}
-	
-	//Close the ship logger to save changes.
-#ifdef LOGGING/*
-	shipLogger.close();*/
-#endif
-#ifdef LOGGING
+	#ifdef LOGGING
 		collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
 		collisionLogger << "\nRunning Collision Detection checks\n";
 		collisionLogger << asteroidBelt.size() << endl;
 		collisionLogger.close();
-#endif
-	for (int i = 0; i < asteroidBelt.size(); i++)
-	{
+	#endif
 
-		detectCollision(i);
-	}
+		for (int i = 0; i < asteroidBelt.size(); i++)
+			detectCollision(i);
 
-	// Iterate through and Increment each bullet's location
-	for(int i=0; i < bullets.size();i++)
-	{
-		// We use sine and cosine because we need to tesslate them 
-		// along the direction they need to be going or the direction
-		// they were shot. We are moving them by 2 each time.
-
-		bullets.at(i).location.x += 2.0 * cos(bullets.at(i).theta)*(60/FPS); 
-		bullets.at(i).location.y += 2.0 * sin(bullets.at(i).theta)*(60/FPS);
-		if(!insideOctogon(bullets[i].location) && bullets.size() > 1 && i <bullets.size())
+		// Iterate through and Increment each bullet's location
+		for (int i=0; i < bullets.size(); i++)
 		{
-			bullets.erase(bullets.begin() + i);
+			// We use sine and cosine because we need to tesslate them 
+			// along the direction they need to be going or the direction
+			// they were shot. We are moving them by 2 each time.
+			bullets.at(i).location.x += 2.0 * cos(bullets.at(i).theta)*(60/FPS); 
+			bullets.at(i).location.y += 2.0 * sin(bullets.at(i).theta)*(60/FPS);
+			if(!insideOctogon(bullets[i].location) && bullets.size() > 1 && i <bullets.size())
+				bullets.erase(bullets.begin() + i);
 		}
+
+		// Iterate through and Increment each asteroid's location
+		for (int i=0; i < asteroidBelt.size(); i++)
+		{
+			// We use use a function here be cause asteroids are objects
+			// and their center, or the location of their left bottom corner
+			// is protected. see this function in asteroids.cpp for more information 
+			asteroidBelt.at(i).incrementLocation();
+		}	
 	}
 
-	// Iterate through and Increment each asteroid's location
-	for(int i=0; i <asteroidBelt.size();i++)
-	{
-		// We use use a function here be cause asteroids are objects
-		// and their center, or the location of their left bottom corner
-		// is protected. see this function in asteroids.cpp for more information 
-		asteroidBelt.at(i).incrementLocation();
-	}
-
-	
-	}
 	glutPostRedisplay();
 }
 
@@ -542,10 +503,8 @@ void drawOctogon(void)
 
 void debugMe(int x, int y)
 {
-	point p = {x,y,0,1};
-	int result = insideOctogon(p);
-	if (result) printf("        ");
-
+	point p = {x, y, 0, 1};
+	std::cout << insideOctogon(p);
 }
 
 /*
@@ -677,8 +636,10 @@ void specialKeyReleased(int key, int x, int y)
 			leftReached10 = false;
 			break;
 	}	
-}		
-void mouse(int button, int state, int x, int y){
+}
+		
+void mouse(int button, int state, int x, int y)
+{
         if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
 		{
                        
@@ -720,10 +681,3 @@ int main(int argc, char** argv)
 	glutIdleFunc(gameLoop);
 	glutMainLoop();
 }
-
-
-// temporary cold storage.
-/*
-
-*/
-

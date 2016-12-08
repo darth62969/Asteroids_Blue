@@ -124,6 +124,7 @@ void asteroid::incrementLocation()
 		return;
 	center.x += cos(rotation)/2*(60/FPS);
 	center.y += sin(rotation)/2*(60/FPS);
+
 	/*	
 	switch((int) center.x)
 	{
@@ -187,9 +188,9 @@ void asteroid::createAsteroid(triangle a, point location, point offset, int num)
 #endif
 }
 
-void asteroid::setPoints(std::vector<point> v){
+void asteroid::setPoints(std::vector<point> v)
+{
 	astPnts = v;
-
 }
 
 vector<asteroid> asteroid::breakupAsteroid()

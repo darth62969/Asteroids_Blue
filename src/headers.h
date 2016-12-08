@@ -49,7 +49,7 @@ const int ASTEROID_MAX_SIZE = 12;
 const int ASTEROID_MIN_SIZE = 4;
 
 //World Constants
-const int NUMBER_OF_ASTEROIDS = 50;
+const int NUMBER_OF_ASTEROIDS = 6;
 
 #endif
 

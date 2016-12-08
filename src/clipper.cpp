@@ -44,7 +44,8 @@ bool Inside(point testPoint, point *clipBoundary)
         return 0;
 }
 
-int insideOctogon(point p){
+int insideOctogon(point p)
+{
 	double slope, line;
 
 	int in = 1;
