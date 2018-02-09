@@ -45,6 +45,7 @@ endif
 Asteroids : $(OBJS) $(HEADERS)
 	$(CC) -o bin/Asteroids $(OBJS) $(CFLAGS) $(LIBFLAGS)
 
+#I wish we could have figured out how to make it so that these files went into /bin and not the main folder.
 main.o : src/main.cpp $(HEADERS)
 	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/main.cpp
 
