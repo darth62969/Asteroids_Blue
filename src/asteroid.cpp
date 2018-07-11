@@ -67,14 +67,9 @@ asteroid::asteroid()
 		do
 		{
 			center.x = rand() % (WORLD_COORDINATE_MAX_X + 1) + WORLD_COORDINATE_MIN_X;
-		}
-		while(abs(center.x - x) <= ASTEROID_MAX_X*2);
-
-		do
-		{
 			center.y = rand() % (WORLD_COORDINATE_MAX_Y + 1) + WORLD_COORDINATE_MIN_Y;
 		}
-		while(abs(center.y - y) <= ASTEROID_MAX_Y*2);
+		while(abs(center.y - y) <= ASTEROID_MAX_Y/2 && abs(center.x - x) <= ASTEROID_MAX_X/2);
 
 		bool nv = false;
 		for (int i = 0; i < asteroidBelt.size(); i++)

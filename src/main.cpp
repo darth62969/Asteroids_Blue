@@ -19,6 +19,8 @@
 #include "structs.h"
 #include "globals.h"
 #include "prototypes.h"
+//#include <thread>
+#include <unistd.h>
 
 #define SPACEBAR 32
 
@@ -69,6 +71,8 @@ int filled = 0;			// 0 if lines should be drawn, 1 if filled (asteroids)
 int frames = 0;
 int timeC = 0;
 int timeP = 0;
+int timeC2 = 0;
+int timeP2 = 0;
 int bulletsFired = 0;
 int bulletsHit = 0;
 
@@ -83,6 +87,7 @@ void setFont(void *font)
 {
 	currentfont = font;
 }
+
 
 void displayScore(void)
 {
@@ -302,6 +307,7 @@ void gameLoop()
 {
 	if (!paused)
 	{
+		timeC2 = glutGet(GLUT_ELAPSED_TIME);
 		// If the right arrow key has been pressed rotate the ship
 		// Starting at 1 degree then moving to 10 degrees at a time.
 		if (rightKeyPressed && !paused) 
@@ -377,6 +383,8 @@ void gameLoop()
 			// is protected. see this function in asteroids.cpp for more information 
 			asteroidBelt.at(i).incrementLocation();
 		}	
+		timeP2 = glutGet(GLUT_ELAPSED_TIME);
+		//usleep((int)(1000.0/(double)timeC2-timeP2));
 	}
 
 	glutPostRedisplay();
@@ -471,7 +479,7 @@ void initiateOctogon(void)
 	// Set the first point, rotate it then push it to the vector of points.
 	point p = {WORLD_COORDINATE_MIN_X ,WORLD_COORDINATE_MAX_Y / 2,0,1};
 	point c = {-WORLD_COORDINATE_MAX_X , WORLD_COORDINATE_MAX_Y / 2, 0,1};	
-
+	collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::trunc);
 
 	rotatePoint(p,45.0/2.0);
 	rotatePoint(c,45.0/2.0);
@@ -483,11 +491,9 @@ void initiateOctogon(void)
 	{
 		rotatePoint(p,-45);
 		rotatePoint(c,-45);
-
 		octogon.push_back(p);
 		clipPts.push_back(c);
-	}	
-
+	}
 	noOctogon = 0;
 }
 

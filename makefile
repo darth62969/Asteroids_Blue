@@ -22,10 +22,10 @@
 # Emily Herron
 #
 
-CC = g++ 
-CFLAGS = 
+CC = g++
+CFLAGS = -v
 COPTFLAGS = -O3 
-LIBFLAGS = -lglut -lGLU -lGL
+LIBFLAGS = -lglut -lGLU -lGL -lm
 HEADERS = src/headers.h src/structs.h src/globals.h src/prototypes.h
 OBJS = main.o asteroid.o ship.o bullets.o transformer.o clipper.o detectcollision.o
 
