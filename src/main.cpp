@@ -19,7 +19,8 @@
 #include "structs.h"
 #include "globals.h"
 #include "prototypes.h"
-//#include <thread>
+#include <thread>
+#include <chrono>
 #include <unistd.h>
 
 #define SPACEBAR 32
@@ -384,7 +385,12 @@ void gameLoop()
 			asteroidBelt.at(i).incrementLocation();
 		}	
 		timeP2 = glutGet(GLUT_ELAPSED_TIME);
-		//usleep((int)(1000.0/(double)timeC2-timeP2));
+		cout << timeP2-timeC2 << endl;
+
+		if(timeP2-timeC2>0)
+		{
+			this_thread::sleep_for(chrono::milliseconds(18-(timeP2-timeC2)));
+		}
 	}
 
 	glutPostRedisplay();
@@ -486,7 +492,7 @@ void initiateOctogon(void)
 
 	octogon.push_back(p);
 	clipPts.push_back(c);
-	
+
 	for (int i = 0; i < 7; i++)
 	{
 		rotatePoint(p,-45);

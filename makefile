@@ -23,9 +23,9 @@
 #
 
 CC = g++
-CFLAGS = -v
+CFLAGS = -v -std=c++11
 COPTFLAGS = -O3 
-LIBFLAGS = -lglut -lGLU -lGL -lm
+LIBFLAGS = -lglut -lGLU -lGL -lm 
 HEADERS = src/headers.h src/structs.h src/globals.h src/prototypes.h
 OBJS = main.o asteroid.o ship.o bullets.o transformer.o clipper.o detectcollision.o
 
