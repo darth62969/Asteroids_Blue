@@ -48,11 +48,12 @@ int insideOctogon(point p)
 	double slope, line;
 
 	int in = 1;
-	if (p.x < octogon[0].x) in *= 0;
-	if (p.x > octogon[5].x) in *= 0;
-	if (p.y > octogon[2].y) in *= 0;
-	if (p.y < octogon[7].y) in *= 0;
+	if (p.x < octogon[0].x) in *= 0;// x less then 22
+	if (p.x > octogon[5].x) in *= 0;// x greater then 577
+	if (p.y > octogon[2].y) in *= 0;// y greater then 577
+	if (p.y < octogon[7].y) in *= 0;// y less then 22
 
+	//calculating slope bottom left
 	slope = (octogon[7].y - octogon[0].y) / (octogon[7].x - octogon[0].x);
 	line = slope*(p.x - octogon[0].x)+ octogon[0].y;
 	if (p.y < line) in *= 0;
