@@ -1,8 +1,8 @@
 # Asteroids_Blue
-Project From Computer Graphics in Uni @Mercer Univercity
+Project From Computer Graphics (CSC315) @Mercer Univercity
 
 ## About:
- A rebuild of the game Asteroids. Completed in 2016, all current updates are individual "improvements" for the sake of improvements. (also code shit).
+ A rebuild of the game Asteroids. Completed in 2016, all current updates are individual "improvements" for the sake of improvements. (also code stuff).
 
 ### Credits:
  * Jonathan Oakes - Me, I did the asteroid class, odds and ends, and broke it plenty of times.
