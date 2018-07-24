@@ -67,31 +67,36 @@ bool spacePressed = false;		// This is for firing bullets.
 bool paused = true;				// For pause screen 
 bool gameOver = false;
 
-int timeKeyPressed = 0;		// Iterator for Debug reasons
-int filled = 0;			// 0 if lines should be drawn, 1 if filled (asteroids)   
-int frames = 0;
-int timeC = 0;
-int timeP = 0;
-int timeC2 = 0;
-int timeP2 = 0;
-int bulletsFired = 0;
-int bulletsHit = 0;
+int timeKeyPressed = 0;			// Iterator for Debug reasons
+int filled = 0;					// 0 if lines should be drawn, 1 if filled (asteroids)   
 
-void *currentfont;
+int frames = 0;					// How many frames have been counted.
+int timeC = 0;					// Time the last was frame drawn
+int timeP = 0;					// Time of the current frame draw
+int timeC2 = 0;					// Time since start of game loop
+int timeP2 = 0;					// Time of at the end of the game loop
 
-void initiateOctogon();
-void drawOctogon(void);
+int bulletsFired = 0;			// The number of bullets fired
+int bulletsHit = 0;				// The number of bullets hit
 
+void *currentfont;				// Bit map font pointer.
+
+void initiateOctogon();			// Function to construct the Octagonal game screen.
+void drawOctogon(void);			// Function to draw the octogon.
+
+// Function to set up draw strings on screen at a particular x and y. 
 void drawString(GLuint x, GLuint y, const char* string);
 
+// Function to set the font to a specific font
 void setFont(void *font)
 {
 	currentfont = font;
 }
 
-
+// Function to display the score.
 void displayScore(void)
 {
+	// We calculate the hit ratio (I spot some optmization stuff!!)
 	double hitRatio;
 	
 	if (bulletsHit != 0)
@@ -99,80 +104,111 @@ void displayScore(void)
 	else 
 		hitRatio = 0;
 
+	// set the faunt to Helvetica, size 12
 	setFont(GLUT_BITMAP_HELVETICA_12);
 
-	char bulletsFiredStr[50];
+	// Set up needed charstrings.
+	char bulletsFiredStr[50];	
 	char astsOnScr1[50];
 	char astsOnScr2[50]; 
 	char astsHit[50];
 	char hrStr[50];
 
+	// Place the text into the charstrings.
 	sprintf(bulletsFiredStr, "Bullets Fired: %3d", bulletsFired);
 	sprintf(astsOnScr1, "%s", "Asteroids on "); 
 	sprintf(astsOnScr2, "Screen: %3d", (int)asteroidBelt.size()); 
 	sprintf(astsHit, "Asteroids Hit: %4d", bulletsHit);
 	sprintf(hrStr, "Hit Ratio:  %5.2f %%", hitRatio);
 
+	//Set color to green.
 	glColor3f(0.2, 0.5, 0.0);
 	
+	//Draw the strings, left side
 	drawString(20, 30, bulletsFiredStr);
 	drawString(20, 70, astsOnScr1);
 	drawString(20, 55, astsOnScr2);
 	
+	// draw the strings, right side.
 	drawString(480, 30, astsHit);
 	drawString(480, 65, hrStr);
 }
 
+// Function to print game over on screen.
 void printGameOver(void)
 {
+	//Set font
+	setFont(GLUT_BITMAP_TIMES_ROMAN_24);
+	
+	//Prep Charsting for printing
 	char gameOver[25];
-        setFont(GLUT_BITMAP_TIMES_ROMAN_24);
-               
-        sprintf(gameOver, "%s", "GAME OVER");
-   
-	//sprintf();
+    sprintf(gameOver, "%s", "GAME OVER");
 
-        drawString(225, 320, gameOver);
+	//Draw the string
+    drawString(225, 320, gameOver);
 }
 
+// Function to print "you win" on screen.
 void printYouWin(void)
 {
-	char youWin[25];
-	//setFont(GLUT_BITMAP_9_BY_15);
+	// Set font
 	setFont(GLUT_BITMAP_TIMES_ROMAN_24);
+
+	// Prep You win CharString
+	char youWin[25];
 	sprintf(youWin, "%s", "YOU WIN!!!");
+	
+	// Draw the string.
 	drawString(235, 320, youWin);
 }
 
-
+//Function to draw strings.
 void drawString(GLuint x, GLuint y, const char* string)
 {
+	// create a pointer to the character
 	const char *c;
 
+	//position the drawing pointer
 	glRasterPos2i(x, y);
 	//glColor3f(1.0, 0.0, 0.0);
+
+	// Print each letter using the font pointer and the character pointer.
 	for(c=string; *c!='\0'; c++)
 		glutBitmapCharacter(currentfont, *c);	
 }
 
+
+// Here we calculate the FPS of the game. (Technically the FrameTime)
 void calculateFPS()
 {
+	// Increment frame count
 	frames++;
+
+	// Set current time
 	timeC = glutGet(GLUT_ELAPSED_TIME);
+	
+	// Calculate FrameTime, 1000 because this is in seconds and glut measures time in miliseconds
 	FPS = 1000.0/(double)(timeC - timeP);
-	avgFPS= ((avgFPS*(frames-1))+FPS)/frames;
+	
+	// Average Frame time calculated by 
+	avgFPS = ((avgFPS*(frames-1))+FPS)/frames;
+
+	// Set current time to the time from the previous frame.
 	timeP = timeC;
 }
 
+
+// Fucntion to display debug information like frame time
 void debugDisplay()
 {
-	//display FPS
+	//prep frame time charstrings
 	char FPSStr[50];
 	char avgFPSStr[50];
-	
+
 	sprintf(FPSStr, "FPS : %4.3f", FPS);
 	sprintf(avgFPSStr, "avgFPS : %4.3f", avgFPS);
 
+	// Draw frame time strings.
 	drawString(20, WORLD_COORDINATE_MAX_Y-20, FPSStr);
 	drawString(20, WORLD_COORDINATE_MAX_Y-35, avgFPSStr);
 
@@ -192,7 +228,7 @@ void debugDisplay()
 		triCount += asteroidBelt[i].getTess().size();
 	}
 
-//Display Triangle Count
+	//Display Triangle Count
 	sprintf(triCountStr, "Triangles On Screen : %3d", triCount);
 	drawString(20, WORLD_COORDINATE_MAX_Y-50, triCountStr);
 
@@ -209,39 +245,46 @@ void debugDisplay()
 void gameView()
 {
 	//output game to window
-	calculateFPS();				// Calculate the interval between this frame and the last.
-								// We use this to make game speed independent of framerate.
-    	glColor3f (0.1, 0.5, 0.0); 	// Set draw color to green
-	glPointSize(4.0);			// Set the Point size to 4
-	glClear(GL_COLOR_BUFFER_BIT);
+	calculateFPS();					// Calculate the interval between this frame and the last.
+									// We use this to make game speed independent of framerate. *not anymore
+    glColor3f (0.1, 0.5, 0.0); 		// Set draw color to green
+	glPointSize(4.0);				// Set the Point size to 4
+	glClear(GL_COLOR_BUFFER_BIT);	// Clear the buffer bit for some reason...?
 
-	drawOctogon();				// Draw the Octogon on Screen 
-	//Draw the asteroids
-	clipMeDaddy();
-	//printGameOver();
+	drawOctogon();					// Draw the Octogon on Screen 
+	clipMeDaddy();					//Draw the asteroids, Why is this "clipMeDaddy?"
+
+	// Print you win if asteroid belt is empty.
 	if (asteroidBelt.size()==0)
 		printYouWin();
+	
+	// Print Game over if "gameOver" has been set
 	if (gameOver)
 	{
 		printGameOver();
 		paused = true;
 	}
 		
+	// This is where we decide if we need to draw asteroids one way or the other.	
 	switch(filled)
 	{
 		// If not filled
 		case 0:
-    			for (int i = 0; i < (asteroidBelt.size()); i++)
-    			{
-				vector<point> a = asteroidBelt.at(i).getRealPoints();
-				//point b = asteroidBelt.at(i).getCenter();
-				for (int j = 0; j < (a.size()); j++)
-        			{
+			// For each asteroid...
+    		for (int i = 0; i < (asteroidBelt.size()); i++)
+    		{
+				// Get the Location of the lower left corner of the asteroid
+				point loc = asteroidBelt.at(i).getCenter();
+
+				// get the location of the points on the asteroid grid
+				vector<point> pnt = asteroidBelt.at(i).getPoints();
+				for (int j = 0; j < (pnt.size()); j++)
+        		{
 					glBegin (GL_LINES);
-						glVertex2d(a[j].x, a[j].y);
-						glVertex2d( a.at((j+1)%a.size()).x , a.at((j+1)%a.size()).y);
+						glVertex2d(pnt[j].x+loc.x, pnt[j].y+loc.y);
+						glVertex2d( pnt.at((j+1)%pnt.size()).x + loc.x , pnt.at((j+1)%pnt.size()).y + loc.y);
 					glEnd ();         
-        			}
+        		}
 			}
 			break;
 
@@ -251,8 +294,10 @@ void gameView()
     			{
 				// Get the tesslated Triangles for the Asteroid.
 				vector<triangle> a = asteroidBelt.at(i).getTess();
+
 				// Get the center
 				point b = asteroidBelt.at(i).getCenter();
+
 				// Draw the triangles
 				for (int j = 0; j < (a.size()); j++)
         			{
@@ -267,9 +312,14 @@ void gameView()
 		// If filled == 2
 		case 2: 
 			for (int i = 0; i < (asteroidBelt.size()); i++)
-	    		{
+    		{
+				// Get the pre formated triangles.
 				vector<triangle> a = asteroidBelt.at(i).getTess();
+
+				// get the center point
 				point b = asteroidBelt.at(i).getCenter();
+
+				// draw the triangles, and the tesselations.
 				for (int j = 0; j < (a.size()); j++)
 				{
 					glBegin (GL_LINES);
@@ -292,8 +342,13 @@ void gameView()
 	for(int i = 0; i < bullets.size(); i++)
 		drawBullet(bullets[i]);
 	
-	clipMeDaddy();
+
+	clipMeDaddy(); // Why is this "clip me daddy... i will have to fix this..."
+
+	// draw the octogon
 	drawOctogon();
+	
+	//display the score.
 	displayScore();
 
 #ifdef DEBUG
@@ -315,10 +370,10 @@ void gameLoop()
 		{
 			if (deltaRot < 10.0 && !rightReached10)
 			{
-				deltaRot *= 1.1;		// Multiply deltaRot by 1.1.
+				deltaRot *= 1.1;			// Multiply deltaRot by 1.1.
 
 				if (deltaRot >= 10) 		// If deltaRot reached or 
-				{				// went above 10 reset it 
+				{							// went above 10 reset it 
 					rightReached10 = true;	// to 10.
 					deltaRot = 10;
 				}			
@@ -338,10 +393,10 @@ void gameLoop()
 		{
 			if (deltaRot < 10.0 && !leftReached10)
 			{
-				deltaRot *= 1.1;		// Multiply deltaRot by 1.1.
+				deltaRot *= 1.1;			// Multiply deltaRot by 1.1.
 			
-				if (deltaRot >= 10)		// If deltaRot reached o
-				{				// went above 10 reset it
+				if (deltaRot >= 10)			// If deltaRot reached o
+				{							// went above 10 reset it
 					leftReached10 = true;	// to 10.
 					deltaRot = 10;
 				}		
@@ -360,7 +415,7 @@ void gameLoop()
 		collisionLogger << asteroidBelt.size() << endl;
 		collisionLogger.close();
 	#endif
-
+		// detect colitions with each asteroid in the belt.
 		for (int i = 0; i < asteroidBelt.size(); i++)
 			detectCollision(i);
 
@@ -384,9 +439,10 @@ void gameLoop()
 			// is protected. see this function in asteroids.cpp for more information 
 			asteroidBelt.at(i).incrementLocation();
 		}	
+		// get the time since thing started.
 		timeP2 = glutGet(GLUT_ELAPSED_TIME);
-		cout << timeP2-timeC2 << endl;
-
+		
+		//sleep thread for for a time.
 		if(timeP2-timeC2>0)
 		{
 			this_thread::sleep_for(chrono::milliseconds(18-(timeP2-timeC2)));
@@ -681,18 +737,24 @@ int main(int argc, char** argv)
 	collisionLogger << "Collision Logging Started " << endl;
 	collisionLogger.close();
 #endif
-	initiateWindow(argc, argv); /* Set up Window */
-	initiateGL();
-	initiateOctogon();
-	initiateAsteroids();
-	initiateGameDisplay();
-	glutSetKeyRepeat(GLUT_KEY_REPEAT_ON);
-	glutMouseFunc(mouse);
-	glutKeyboardFunc(keyboard);
-	glutKeyboardUpFunc(keyReleased);
+	initiateWindow(argc, argv); 				/* Set up Window 					*/
+	initiateGL();								/* Initiate GL   					*/
+	initiateOctogon();							/* Initiate The Game View 			*/
+	initiateAsteroids();						/* Generate Asteroids				*/
+	initiateGameDisplay();						/* Does nothing 					*/
+	glutSetKeyRepeat(GLUT_KEY_REPEAT_ON);		/* Set Key Repeat on 				*/
+	glutMouseFunc(mouse);						/* Set a Mouse funtion				*/
+	glutKeyboardFunc(keyboard);					/* Set a keyboard Funcitons			*/
+	glutKeyboardUpFunc(keyReleased);			
 	glutSpecialFunc(specialKeys); 
 	glutSpecialUpFunc(specialKeyReleased);
-	glutDisplayFunc(gameView);
-	glutIdleFunc(gameLoop);
-	glutMainLoop();
+#ifdef MULTIT
+	thread Render (glutDisplayFunc, gameView);
+	thread Idle (glutIdleFunc, gameLoop);
+#endif
+#ifndef MULTIT
+	glutDisplayFunc(gameView);					/* Set loop for The game rendering	*/
+	glutIdleFunc(gameLoop);						/* Set loop for the game processing	*/
+#endif
+	glutMainLoop();								/* Start the main loop				*/
 }

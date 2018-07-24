@@ -24,33 +24,48 @@ point center;
 float rotation;
 point translation;
 vector<point> astPnts;
-vector<point> astPosPnts;
 vector<triangle> astTris;
 bool clipped;
 int numsides = 0;
 
 asteroid::asteroid()
 {
-/*	todo:
- *	generate random number between 0 and 8;
- * 	add 4 to that number
- *	genreate random points between max_x and max_y
- *	tessellate points and save as triangles
- * 	return asteroid
+/*	Algorithem:
+ *	Generate random number between 0 and 8; 
+ * 	Add 4 to that number so that that number is between 4 and 12 sides.
+ *  Set the center to (0,0)
+ *  Get the points for the Enterprise.
+ *  Find a location for the asteroid that is within the octogon and away from the ship.
+ * 
+ *	Generate random points between max_x and max_y
+ *	Tessellate points and save as triangles
+ * 	Return the asteroid
  */
+
+// Generating a Random Number and adding 4, this will be the number of sides the asteroid has. 
  	numsides = rand()% (ASTEROID_MAX_SIZE - ASTEROID_MIN_SIZE + 1) + ASTEROID_MIN_SIZE;
+
+// Logging for debug information, this tells us what the the program is doing. 
+// The number of sides it is going to generate
+
 #ifdef LOGGING	 
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 	asteroidLogger << "Number of sides to generate : " << numsides << endl;
 #endif
+
+//Setting the center (x,y) to (0,0)
 	center.x = 0;
 	center.y = 0;
 	
+// Getting the point of the ship so that we can check the location of the asteriods against it.
+// This prevents insta-"Game Overs". 
 	vector<point> cmd;
 	cmd.push_back(enterprise.body.a);
 	cmd.push_back(enterprise.body.b);
 	cmd.push_back(enterprise.body.c);
 
+// Since we store the ship in ratios, we scale the ship to get the accurate representation of 
+// where it is on the map.
 	for (int i = 0; i < 3; i++)
 	{
 		scalePoint(cmd[i], 7);
@@ -59,11 +74,15 @@ asteroid::asteroid()
 		cmd[i].y += WORLD_COORDINATE_MAX_Y/2;
 	}
 
+// This finds the center of the ship. 
 	int x = (cmd[0].x + cmd[1].x + cmd[2].x)/3;
 	int y = (cmd[0].y + cmd[1].y + cmd[2].y)/3;
 
+
+// While the center is not wihtin the octogon, generate random positions
 	while(!insideOctogon(center))
 	{
+		// Keep generateing points till the asteroid is not withing range of the ship
 		do
 		{
 			center.x = rand() % (WORLD_COORDINATE_MAX_X + 1) + WORLD_COORDINATE_MIN_X;
@@ -71,9 +90,12 @@ asteroid::asteroid()
 		}
 		while(abs(center.y - y) <= ASTEROID_MAX_Y+5 && abs(center.x - x) <= ASTEROID_MAX_X+5);
 
+		// Check the new asteroid for it's vecinity to other asteriods.
 		bool nv = false;
 		for (int i = 0; i < asteroidBelt.size(); i++)
 		{
+			// If it is withing range of an asteroid set center back to (0,0)
+			// This causes it to try again, till it finds a position that works.
 			if (abs(center.x - asteroidBelt[i].getCenter().x) <= 20 && abs(center.y - asteroidBelt[i].getCenter().y) <= 20)
 			{
 				center.x = 0;
@@ -81,38 +103,57 @@ asteroid::asteroid()
 			}
 		}
 	}
+	// Generate a random "rotation" or directional vector, in radians.
 	rotation = rand() % 360;
 	rotation *= M_PI / 180.0;
+
+	// This logging protocal lets us know where the center of the asteroid is. 
 #ifdef LOGGING
 	asteroidLogger << "Bottom Left corner of asteroid at : " << center.x << " " << center.y << endl;
 #endif
+
+// Random number for seed.
 	int i = rand();
+
+// This generates the sides. 	
 	for (int j = 0; j < numsides; j++)
 	{
+		//seed the psudo-random number generator. 
 		srand (static_cast <unsigned> (time(0))*(i*(j+67)/10));
+		
+		//generate a random point. 
 		point b;
 		b.x = rand() % (ASTEROID_MAX_X+1);
 		b.y = rand() % (ASTEROID_MAX_Y+1);
+
+		// Increment i for the next point.
 		i++;
+
+		// If this is the first point add it to the array, could probubly change this to a switch.
 		if( j == 0)
 		{
 			astPnts.push_back(b);
 		}
 		else if (j > 0)
 		{
-			bool durpdist = true; 
+			// Assume this point is good.
+			bool durpdist = true;
+			//check  the point against other points. to ensure that they are not of a minimum distance from each other.
 			for (int k = j-1; k >= 0; k--)
 			{
+				// if within that distance try again.
 				if(sqrt((b.x-astPnts[k].x)*(b.x-astPnts[k].x) + (b.y-astPnts[k].y)*(b.y-astPnts[k].y)) <= ASTEROID_MIN_DIST)
 				{
 					durpdist = false; 
 					break;
 				}
 			}
+			// if all is good, add it to the list.
 			if(durpdist)
 			{
 				astPnts.push_back(b);
 			}
+			// if not decrement j.
 			else
 			{
 				j--;
@@ -211,11 +252,6 @@ void asteroid::createAsteroid(triangle a, point location, point offset, int num)
 	asteroidLogger << "Created Simple Asteroid\n" << endl;
 	asteroidLogger.close();
 #endif
-}
-
-void asteroid::setPoints(std::vector<point> v)
-{
-	astPnts = v;
 }
 
 vector<asteroid> asteroid::breakupAsteroid()

@@ -31,6 +31,7 @@ OBJS = main.o asteroid.o ship.o bullets.o transformer.o clipper.o detectcollisio
 
 debug ?= n
 logging ?= n
+multit ?=n
 
 ifeq ($(debug), y)
 	CFLAGS += -g -DDEBUG -pg
@@ -38,6 +39,9 @@ endif
 
 ifeq ($(logging), y)
 	CFLAGS += -DLOGGING
+endif
+ifeq ($(multit), y)
+	CFLAGS += -DMULTIT
 endif
 
 # Independent Targets - first is executable, second is object
