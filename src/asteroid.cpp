@@ -109,6 +109,7 @@ asteroid::asteroid()
 	// Generate a random "translation.angle" or directional vector, in radians.
 	translation.angle = rand() % 360;
 	translation.angle *= M_PI / 180.0;
+	cout << translation.angle << endl;
 	translation.w = ((rand() % 16)+1)/4.0;
 
 
@@ -244,7 +245,7 @@ void asteroid::incrementLocation()
 		asteroidLogger << "Rotation " << translation.angle << endl;
 		asteroidLogger << "velocity " << translation.w << endl;
 #endif
-	for(int i =0; i<infl.size(); i++)
+	for(int i =0; i< infl.size(); i++)
 	{
 		double bearing = atan2f(center.y-infl[i].getCenter().y, center.x-infl[i].getCenter().x);
 #ifdef LOGGING
@@ -260,43 +261,68 @@ void asteroid::incrementLocation()
 	//	asteroidLogger.write();
 #endif
 
+		cout << "Asteroids at : (" << center.x << " , " << center.y << ") " << " (" << infl[i].getCenter().x << " , " << infl[i].getCenter().y << ") \n";
+		cout << "Initial Angle : " << translation.angle << " Initial Velocity : " << translation.w << endl;
+		
+		if(bearing < 0 )
+			bearing+=M_PI;
+		double Dbearing;
+		cout << "Angle Between : " ;
+		if (bearing <= translation.angle)
+		{
+		 	Dbearing = translation.angle - bearing;
+		}
+		if (bearing > translation.angle)
+		{
+			Dbearing = bearing - translation.angle;
+		}
+		cout << Dbearing;
+		cout << " Velocity : " << translation.w;
+		double magnatude = 1*((2*1)/getVectorLength(infl[i]));
+		cout << " Magnatude : " << magnatude << endl;
+		double Uvelocity = pow(translation.w,2)+pow(magnatude,2);
+		double Ubearing = cos(M_PI-(Dbearing));
+		//cout << "Uvelocity : " << Uvelocity << " Ubearing : " << Ubearing << endl;
+		translation.w = pow(pow(translation.w,2)+pow(magnatude,2) - ((2 * magnatude * translation.w)*Ubearing), .5);
+	 	
+		translation.angle += asinf((magnatude*sin((M_PI-Dbearing)))/translation.w);
+		cout << "Velocity : " << translation.w << " Angle : " << translation.angle << endl;
+		//point a, b;
 
-		//if(bearing < 0 )
-			//bearing+=M_PI;
-		double magnatude = ((100.0-getVectorLength(infl[i]))/50.0);
-		point a, b;
+		//a.x = magnatude*sin(bearing);
+		//a.y = magnatude*cos(bearing);
 
-		a.x = magnatude*cos(bearing);
-		a.y = magnatude*sin(bearing);
-
-		translation.x = translation.w*cos(translation.angle);
-		translation.y = translation.w*sin(translation.angle);
+		//translation.x = translation.w*sin(translation.angle);
+		//translation.y = translation.w*cos(translation.angle);
 #ifdef LOGGING
 		asteroidLogger << "AC vector is ( "<< a.x << " , " << a.y << ")\n";
 		asteroidLogger << "asteroid vector is ( "<<  translation.x << " , " << translation.y << ")\n";
 	//	asteroidLogger.write();
 #endif
-		translation.x+=a.x;
-		translation.y+=a.y;
+		//translation.x=a.x+translation.x;
+		//translation.y=a.y+translation.y;
 
-		translation.angle = atan2f(translation.y, translation.x);
+		//translation.angle = atan2f(translation.y, translation.x);
 		//if(translation.angle < 0)
-		//	translation.angle+=M_PI;
-		translation.w = sqrt(pow(translation.y, 2) + pow(translation.x, 2));
+			//translation.angle+=M_PI;
+		//translation.w = sqrt(pow(translation.y, 2) + pow(translation.x, 2));
+		//if (translation.w>10)
+			//translation.w =10;
 #ifdef LOGGING
 		asteroidLogger << "New angle and velocity \n";
 		asteroidLogger << "Angle: " << translation.angle << endl;
 		asteroidLogger << "Velocity: " << translation.w << endl;
 #endif
 	}
-#ifdef LOGGING
+#ifdef LOGGINGr
 	asteroidLogger << "Final angle and velocity:\n";
 	asteroidLogger << "Angle: " << translation.angle << endl;
 	asteroidLogger << "velocity: " << translation.w << endl << endl;
 	asteroidLogger.close();
 #endif
-	center.x += cos(translation.angle)/translation.w/**(60/FPS)*/;
-	center.y += sin(translation.angle)/translation.w/**(60/FPS)*/;
+	cout << "asteroid at : " << center.x << " , " << center.y << " velolcity : " << translation.w << endl << endl;
+	center.x += cos(translation.angle)*translation.w/**(60/FPS)*/;
+	center.y += sin(translation.angle)*translation.w/**(60/FPS)*/;
 	
 	if(!insideOctogon(center)){
 		point position {center.x-origin,center.y-origin,0,1};
