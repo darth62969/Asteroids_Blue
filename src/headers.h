@@ -20,6 +20,8 @@
 
 #include <cmath>
 #include <GL/glut.h>
+//#include <gl/GL.h>
+//#include <gl/GLU.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
@@ -50,7 +52,7 @@ const int ASTEROID_MAX_SIZE = 12;
 const int ASTEROID_MIN_SIZE = 4;
 
 //World Constants
-const int NUMBER_OF_ASTEROIDS = 50;
+const int NUMBER_OF_ASTEROIDS = 10;
 
 #endif
 

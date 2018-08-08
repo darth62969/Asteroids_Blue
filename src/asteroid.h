@@ -42,6 +42,8 @@ class asteroid
 	    	std::vector<triangle> astTris;
 	    	bool clipped;
 		int numsides;
+		std::vector<asteroid> getInfluencers();
+		float getVectorLength(asteroid b);
 		void createAsteroid(triangle a, point center, point offset, int num);
 	   	void tessellateAsteriod();
 		void sortPoints();

@@ -51,7 +51,6 @@ char* GENERAL_LOG_PATH = "logs/general_log.txt";
 //Runtime Variables
 vector<asteroid> asteroidBelt; 	// Holds all asteroids
 vector<bullet> bullets; 	// Holds all bullets
-vector<asteroid> allGood;
 
 float deltaRot = 1.0; 		// For use in the accelleration of ship rotation 
 
@@ -410,10 +409,10 @@ void gameLoop()
 		}
 
 	#ifdef LOGGING
-		collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
+	/*	collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
 		collisionLogger << "\nRunning Collision Detection checks\n";
 		collisionLogger << asteroidBelt.size() << endl;
-		collisionLogger.close();
+		collisionLogger.close();*/
 	#endif
 		// detect colitions with each asteroid in the belt.
 		for (int i = 0; i < asteroidBelt.size(); i++)

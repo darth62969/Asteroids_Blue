@@ -42,6 +42,9 @@ asteroid::asteroid()
  * 	Return the asteroid
  */
 
+	int r = rand();
+	srand (static_cast <unsigned> (time(0))*r/10);	
+
 // Generating a Random Number and adding 4, this will be the number of sides the asteroid has. 
  	numsides = rand()% (ASTEROID_MAX_SIZE - ASTEROID_MIN_SIZE + 1) + ASTEROID_MIN_SIZE;
 
@@ -49,8 +52,8 @@ asteroid::asteroid()
 // The number of sides it is going to generate
 
 #ifdef LOGGING	 
-	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-	asteroidLogger << "Number of sides to generate : " << numsides << endl;
+	//asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+	//asteroidLogger << "Number of sides to generate : " << numsides << endl;
 #endif
 
 //Setting the center (x,y) to (0,0)
@@ -103,13 +106,15 @@ asteroid::asteroid()
 			}
 		}
 	}
-	// Generate a random "rotation" or directional vector, in radians.
-	rotation = rand() % 360;
-	rotation *= M_PI / 180.0;
+	// Generate a random "translation.angle" or directional vector, in radians.
+	translation.angle = rand() % 360;
+	translation.angle *= M_PI / 180.0;
+	translation.w = ((rand() % 16)+1)/4.0;
+
 
 	// This logging protocal lets us know where the center of the asteroid is. 
 #ifdef LOGGING
-	asteroidLogger << "Bottom Left corner of asteroid at : " << center.x << " " << center.y << endl;
+	//asteroidLogger << "Bottom Left corner of asteroid at : " << center.x << " " << center.y << endl;
 #endif
 
 // Random number for seed.
@@ -164,20 +169,20 @@ asteroid::asteroid()
 
 	sortPoints();
 	tessellateAsteriod();
-	//rotation = drand48();
+	//translation.angle = drand48();
 	float rotation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 #ifdef LOGGING	
-	asteroidLogger << "Rotation was set to : " << rotation << "\n\n";
-	asteroidLogger.close();
+	//asteroidLogger << "translation.angle was set to : " << translation.angle << "\n\n";
+	//asteroidLogger.close();
 #endif
 }
 
 asteroid::asteroid(triangle a, point location, point offset, int num, float Orotation)
 {
 #ifdef LOGGING
-	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-	asteroidLogger << "Creating Simple Asteroid #" << num << endl;
-	asteroidLogger.close();
+	//asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+	//asteroidLogger << "Creating Simple Asteroid #" << num << endl;
+	//asteroidLogger.close();
 #endif
 	astPnts.push_back(a.a);
 	astPnts.push_back(a.b);
@@ -185,18 +190,19 @@ asteroid::asteroid(triangle a, point location, point offset, int num, float Orot
 
 	astTris.push_back(a);
 
-	//int j = rand();
-	//srand (static_cast <unsigned> (time(0))*(num*(j+67)/10));	
+	int j = rand();
+	srand (static_cast <unsigned> (time(0))*(num*(j+67)/10));	
 	Orotation *= 180/M_PI;
-	rotation = Orotation+num*2;
-	rotation *= M_PI / 180.0;
+	translation.angle = Orotation+num*2;
+	translation.angle *= M_PI / 180.0;
+	translation.w = (rand()%16+1)/4.0;
 
 	center.x = location.x + offset.x;
 	center.y = location.y + offset.y;
 #ifdef LOGGING
-	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-	asteroidLogger << "Created Simple Asteroid\n\n";
-	asteroidLogger.close();
+	//asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+	//asteroidLogger << "Created Simple Asteroid\n\n";
+	//asteroidLogger.close();
 #endif
 }
 
@@ -205,12 +211,92 @@ point asteroid::getCenter()
 	return center;
 }
 
+float asteroid::getVectorLength(asteroid b)
+{
+	return sqrt(pow(abs(center.x-b.getCenter().x),2)+pow(abs(center.y-b.getCenter().y),2));
+}
+
+vector<asteroid> asteroid::getInfluencers()
+{
+	vector<asteroid> infl;
+	for (int i=0; i < asteroidBelt.size()-1; i++)
+	{
+		if (0 < getVectorLength(asteroidBelt[i]) && getVectorLength(asteroidBelt[i]) <= 100 )
+		{
+			infl.push_back(asteroidBelt[i]);
+		}
+	}
+	return infl;
+}
 void asteroid::incrementLocation()
 {
 	if(paused)
 		return;
-	center.x += cos(rotation)/2/**(60/FPS)*/;
-	center.y += sin(rotation)/2/**(60/FPS)*/;
+
+#ifdef LOGGING
+	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+#endif
+
+	vector<asteroid> infl = getInfluencers();
+#ifdef LOGGING
+		asteroidLogger << "Found " << infl.size() << " influencers for Asteroid located at: ( " << center.x << " , " << center.y << ")\n";
+		asteroidLogger << "Initial angle and Velocity\n";
+		asteroidLogger << "Rotation " << translation.angle << endl;
+		asteroidLogger << "velocity " << translation.w << endl;
+#endif
+	for(int i =0; i<infl.size(); i++)
+	{
+		double bearing = atan2f(center.y-infl[i].getCenter().y, center.x-infl[i].getCenter().x);
+#ifdef LOGGING
+		asteroidLogger << "asteroid " << i << "located at ( "<< infl[i].getCenter().x << " , " << infl[i].getCenter().y << ")\n";
+		asteroidLogger << "Bearing is: "<< bearing << "radians" << endl;
+	//	asteroidLogger.write();
+#endif
+		//bearing = (center.y-infl[i].getCenter().y)/(center.x-infl[i].getCenter().x);
+		//bearing = atanf(bearing);
+#ifdef LOGGING
+	//	asteroidLogger << "asteroid " << i << "located at ( "<< infl[i].getCenter().x << " , " << infl[i].getCenter().y << ")\n";
+	//	asteroidLogger << "Bearing is: "<< bearing << "radians" << endl;
+	//	asteroidLogger.write();
+#endif
+
+
+		//if(bearing < 0 )
+			//bearing+=M_PI;
+		double magnatude = ((100.0-getVectorLength(infl[i]))/50.0);
+		point a, b;
+
+		a.x = magnatude*cos(bearing);
+		a.y = magnatude*sin(bearing);
+
+		translation.x = translation.w*cos(translation.angle);
+		translation.y = translation.w*sin(translation.angle);
+#ifdef LOGGING
+		asteroidLogger << "AC vector is ( "<< a.x << " , " << a.y << ")\n";
+		asteroidLogger << "asteroid vector is ( "<<  translation.x << " , " << translation.y << ")\n";
+	//	asteroidLogger.write();
+#endif
+		translation.x+=a.x;
+		translation.y+=a.y;
+
+		translation.angle = atan2f(translation.y, translation.x);
+		//if(translation.angle < 0)
+		//	translation.angle+=M_PI;
+		translation.w = sqrt(pow(translation.y, 2) + pow(translation.x, 2));
+#ifdef LOGGING
+		asteroidLogger << "New angle and velocity \n";
+		asteroidLogger << "Angle: " << translation.angle << endl;
+		asteroidLogger << "Velocity: " << translation.w << endl;
+#endif
+	}
+#ifdef LOGGING
+	asteroidLogger << "Final angle and velocity:\n";
+	asteroidLogger << "Angle: " << translation.angle << endl;
+	asteroidLogger << "velocity: " << translation.w << endl << endl;
+	asteroidLogger.close();
+#endif
+	center.x += cos(translation.angle)/translation.w/**(60/FPS)*/;
+	center.y += sin(translation.angle)/translation.w/**(60/FPS)*/;
 	
 	if(!insideOctogon(center)){
 		point position {center.x-origin,center.y-origin,0,1};
@@ -228,9 +314,9 @@ void asteroid::clear()
 void asteroid::createAsteroid(triangle a, point location, point offset, int num)
 {
 #ifdef LOGGING
-	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-	asteroidLogger << "Creating Simple Asteroid #" << num << endl;
-	asteroidLogger.close();
+	//asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+	//asteroidLogger << "Creating Simple Asteroid #" << num << endl;
+	//asteroidLogger.close();
 #endif
 	astPnts.clear();
 	astPnts.push_back(a.a);
@@ -242,15 +328,16 @@ void asteroid::createAsteroid(triangle a, point location, point offset, int num)
 	int j = rand();
 	srand (static_cast <unsigned> (time(0))*(num*(j+67)/10));	
 
-	rotation = rand() % 360;
-	rotation *= M_PI / 180.0;
+	translation.angle = rand() % 360;
+	translation.angle *= M_PI / 180.0;
+	translation.w = ((rand()%16)+1)/4.0;
 
 	center.x = location.x + offset.x;
 	center.y = location.y + offset.y;
 #ifdef LOGGING
-	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-	asteroidLogger << "Created Simple Asteroid\n" << endl;
-	asteroidLogger.close();
+	//asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+	//asteroidLogger << "Created Simple Asteroid\n" << endl;
+	//asteroidLogger.close();
 #endif
 }
 
@@ -263,9 +350,9 @@ vector<asteroid> asteroid::breakupAsteroid()
  * 	repeat through last triangle pointer.
  */
 #ifdef LOGGING
-	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-	asteroidLogger << "Breaking up asteroid into " << astTris.size() << " asteroids.\n";
-	asteroidLogger.close();
+	//asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+	//asteroidLogger << "Breaking up asteroid into " << astTris.size() << " asteroids.\n";
+	//asteroidLogger.close();
 #endif
 
 	vector<asteroid> breakup;
@@ -281,10 +368,10 @@ vector<asteroid> asteroid::breakupAsteroid()
 		{
 			if (tmpt.b.x > tmpt.c.x)
 			{
-#ifdef LOGGING/*
-				asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-				asteroidLogger << tmpt.b.x << ">" << tmpt.c.x << endl; 
-				asteroidLogger.close();*/
+#ifdef LOGGING
+//				asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+//				asteroidLogger << tmpt.b.x << ">" << tmpt.c.x << endl; 
+//				asteroidLogger.close();
 #endif
 				tmpp.x=tmpt.c.x;
 				tmpt.a.x-=tmpp.x;
@@ -293,10 +380,10 @@ vector<asteroid> asteroid::breakupAsteroid()
 			}
 			else
 			{
-#ifdef LOGGING	/*			
-				asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-				asteroidLogger << tmpt.c.x << ">" << tmpt.b.x << endl;
-				asteroidLogger.close();*/
+#ifdef LOGGING				
+//				asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+//				asteroidLogger << tmpt.c.x << ">" << tmpt.b.x << endl;
+//				asteroidLogger.close();
 #endif
 				tmpp.x=tmpt.b.x;
 				tmpt.a.x-=tmpp.x;
@@ -308,10 +395,10 @@ vector<asteroid> asteroid::breakupAsteroid()
 		{
 			if (tmpt.a.x > tmpt.c.x)
 			{
-#ifdef LOGGING/*
-				asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-				asteroidLogger << tmpt.a.x << ">" << tmpt.c.x << endl;
-				asteroidLogger.close();*/ 
+#ifdef LOGGING
+//				asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+//				asteroidLogger << tmpt.a.x << ">" << tmpt.c.x << endl;
+//				asteroidLogger.close();
 #endif
 				tmpp.x=tmpt.c.x;
 				tmpt.a.x-=tmpp.x;
@@ -320,10 +407,10 @@ vector<asteroid> asteroid::breakupAsteroid()
 			}
 			else
 			{
-#ifdef LOGGING/*
-				asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-				asteroidLogger << tmpt.c.x << ">" << tmpt.a.x << endl;
-				asteroidLogger.close();*/ 
+#ifdef LOGGING
+//				asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+//				asteroidLogger << tmpt.c.x << ">" << tmpt.a.x << endl;
+//				asteroidLogger.close();
 #endif
 				tmpp.x=tmpt.a.x;
 				tmpt.a.x-=tmpp.x;
@@ -367,13 +454,18 @@ vector<asteroid> asteroid::breakupAsteroid()
 			}
 		}
 		
-		//ROTATION MUST BE A RANDOM FLOAT
+		//translation.angle MUST BE A RANDOM FLOAT
 		//srand (static_cast <unsigned> (time(0))*((asteroidBelt.size()+67)/10));
 		float rotate = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 		asteroid a(tmpt, center, tmpp, i, rotate);
 		//a.createAsteroid(tmpt, center, tmpp, i);
 		breakup.push_back(a);
 	}
+#ifdef LOGGING
+//	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
+//	asteroidLogger << "Breaking up asteroid into " << astTris.size() << " asteroids.\n";
+//	asteroidLogger.close();
+#endif
 
 	return breakup;
 }
@@ -389,23 +481,23 @@ bool intersect(point v1, point v2, point v3, point v4)
 	float ub = ub_num / den;
 
 #ifdef LOGGING
-/*
+
 if(!paused)
 {
-	collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
-	collisionLogger << "\nv1 = (" << v1.x << "," << v1.y << ") : "; 
-	collisionLogger << "v2 = (" << v2.x << "," << v2.y << ") : ";
-	collisionLogger << "v3 = (" << v3.x << "," << v3.y << ") : ";
-	collisionLogger << "v1 = (" << v4.x << "," << v4.y << ")";
-	collisionLogger << "\nua_num = " << ua_num;
-	collisionLogger << "; ndem = " << den;
-	collisionLogger << "; nub_num = " << ub_num;
-	collisionLogger << "; ua = " << ua;
-	collisionLogger << "; ub = " << ub;
-	collisionLogger <<"\nua > 0.0 = " << (ua > 0.0) << " | " << "ua < 1.0 " << (ua < 1.0);
-	collisionLogger <<"\nub > 0.0 = " << (ub > 0.0) << " | " << "ub < 1.0 " << (ub < 1.0);
-	collisionLogger.close();
-}*/
+	//collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
+	//collisionLogger << "\nv1 = (" << v1.x << "," << v1.y << ") : "; 
+	//collisionLogger << "v2 = (" << v2.x << "," << v2.y << ") : ";
+	//collisionLogger << "v3 = (" << v3.x << "," << v3.y << ") : ";
+	//collisionLogger << "v1 = (" << v4.x << "," << v4.y << ")";
+	//collisionLogger << "\nua_num = " << ua_num;
+	//collisionLogger << "; ndem = " << den;
+	//collisionLogger << "; nub_num = " << ub_num;
+	//collisionLogger << "; ua = " << ua;
+	//collisionLogger << "; ub = " << ub;
+	//collisionLogger <<"\nua > 0.0 = " << (ua > 0.0) << " | " << "ua < 1.0 " << (ua < 1.0);
+	//collisionLogger <<"\nub > 0.0 = " << (ub > 0.0) << " | " << "ub < 1.0 " << (ub < 1.0);
+	//collisionLogger.close();
+}
 #endif
 
 	point v;
@@ -414,9 +506,11 @@ if(!paused)
 
 	if((ua > 0.0) && (ua < 1.0) && (ub > 0.0) && (ub < 1.0))
 	{
-		collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
-		collisionLogger << "\n\nentered true\n";
-		collisionLogger.close();
+		#ifdef LOGGING
+		//collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
+		//collisionLogger << "\n\nentered true\n";
+		//collisionLogger.close();
+		#endif
 		return true;
 	}
 
