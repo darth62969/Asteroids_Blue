@@ -52,7 +52,9 @@ const int ASTEROID_MAX_SIZE = 12;
 const int ASTEROID_MIN_SIZE = 4;
 
 //World Constants
-const int NUMBER_OF_ASTEROIDS = 10;
+const int NUMBER_OF_ASTEROIDS = 50;
+const double GRAVITY_POTENTIAL = 1;
+const double ASTEROID_MASS = .4;
 
 #endif
 

@@ -48,6 +48,8 @@ class asteroid
 	   	void tessellateAsteriod();
 		void sortPoints();
 		void clear();
+	//	const double ASTERIOD_WEIGHT = 0.4;
+	//	const double GRAVITY_POTENTIAL = 1;
 };
 
 #endif
