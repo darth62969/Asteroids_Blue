@@ -172,6 +172,7 @@ void detectCollision(int index)
 						#endif
 
 						//gameover code
+						gamestate = 2;
 						gameOver = true;
 					}
 				}

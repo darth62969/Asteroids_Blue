@@ -33,6 +33,7 @@ extern vector<bullet> bullets;
 extern vector<asteroid> asteroidBelt;
 extern vector<asteroid> allGood;
 extern bool gameOver;
+extern int gamestate;
 
 // Log Writers
 extern ofstream asteroidLogger;

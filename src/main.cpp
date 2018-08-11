@@ -66,6 +66,8 @@ bool spacePressed = false;		// This is for firing bullets.
 bool paused = true;				// For pause screen 
 bool gameOver = false;
 
+
+int gamestate = 0; 				// 0 Paused, 1 Play, 2 Game Over, 3 Win!!
 int timeKeyPressed = 0;			// Iterator for Debug reasons
 int filled = 0;					// 0 if lines should be drawn, 1 if filled (asteroids)   
 
@@ -90,6 +92,38 @@ void drawString(GLuint x, GLuint y, const char* string);
 void setFont(void *font)
 {
 	currentfont = font;
+}
+void DisplayPause()
+{
+	char pausedString[25];
+	char Startgame[50];
+	char PauseGame[50];
+	char FireBullets[50];
+	char MoveEnterprise[50];
+	char ReloadAsteroids[50];
+	char ToggleTeslation[50];
+	char ToggleTriangles[50];
+
+	sprintf(pausedString, "%s", "Paused");
+	sprintf(Startgame, "%s", "S = Start Game");
+	sprintf(PauseGame, "%s", "P = Pause Game");
+	sprintf(FireBullets, "%s", "Space = Fire Misiles");
+	sprintf(MoveEnterprise, "%s", "Arrow Keys = Rotate Enterprise");
+	sprintf(ReloadAsteroids, "%s", "R = Restart Game");
+	sprintf(ToggleTeslation, "%s", "F = Filled Asteroids");
+	sprintf(ToggleTriangles, "%s", "T = WireFrame Asteroids");
+
+	setFont(GLUT_BITMAP_TIMES_ROMAN_24);
+	drawString(260, 320, pausedString);
+
+	setFont(GLUT_BITMAP_HELVETICA_12);
+	drawString(220, 275, Startgame);
+	drawString(220, 255, PauseGame);
+	drawString(220, 235, FireBullets);
+	drawString(220, 215, MoveEnterprise);
+	drawString(220, 195, ReloadAsteroids);
+	drawString(220, 175, ToggleTeslation);
+	drawString(220, 155, ToggleTriangles);
 }
 
 // Function to display the score.
@@ -244,6 +278,7 @@ void debugDisplay()
 void gameView()
 {
 	//output game to window
+
 	calculateFPS();					// Calculate the interval between this frame and the last.
 									// We use this to make game speed independent of framerate. *not anymore
     glColor3f (0.1, 0.5, 0.0); 		// Set draw color to green
@@ -254,15 +289,9 @@ void gameView()
 	clipMeDaddy();					//Draw the asteroids, Why is this "clipMeDaddy?"
 
 	// Print you win if asteroid belt is empty.
-	if (asteroidBelt.size()==0)
-		printYouWin();
-	
+		
 	// Print Game over if "gameOver" has been set
-	if (gameOver)
-	{
-		printGameOver();
-		paused = true;
-	}
+
 		
 	// This is where we decide if we need to draw asteroids one way or the other.	
 	switch(filled)
@@ -332,7 +361,10 @@ void gameView()
 				}
 			}
 	}
-	
+	if (paused)
+	{
+		
+	}
 	// Draw the ship
 	drawShip(enterprise);		
 
@@ -349,6 +381,19 @@ void gameView()
 	
 	//display the score.
 	displayScore();
+	
+	switch (gamestate)
+	{
+		case 0:
+			DisplayPause();
+			break;
+		case 2:
+			printGameOver();
+			break;
+		case 3:
+			printYouWin();
+			break;
+	}
 
 #ifdef DEBUG
 	debugDisplay();
@@ -360,53 +405,57 @@ void gameView()
 
 void gameLoop()
 {
-	if (!paused)
+	switch (gamestate)
 	{
-		timeC2 = glutGet(GLUT_ELAPSED_TIME);
-		// If the right arrow key has been pressed rotate the ship
-		// Starting at 1 degree then moving to 10 degrees at a time.
-		if (rightKeyPressed && !paused) 
-		{
-			if (deltaRot < 10.0 && !rightReached10)
-			{
-				deltaRot *= 1.1;			// Multiply deltaRot by 1.1.
+		case 1:
+			if (asteroidBelt.size()==0)
+				gamestate=3;
 
-				if (deltaRot >= 10) 		// If deltaRot reached or 
-				{							// went above 10 reset it 
-					rightReached10 = true;	// to 10.
-					deltaRot = 10;
-				}			
+			timeC2 = glutGet(GLUT_ELAPSED_TIME);
+			// If the right arrow key has been pressed rotate the ship
+			// Starting at 1 degree then moving to 10 degrees at a time.
+			if (rightKeyPressed && !paused) 
+			{
+				if (deltaRot < 10.0 && !rightReached10)
+				{
+					deltaRot *= 1.1;			// Multiply deltaRot by 1.1.
+
+					if (deltaRot >= 10) 		// If deltaRot reached or 
+					{							// went above 10 reset it 
+						rightReached10 = true;	// to 10.
+						deltaRot = 10;
+					}			
+				}
+		
+
+				// Decrement ship rotation by deltaRot (counterclockwise)
+				enterprise.rotation = ((int)(enterprise.rotation-(deltaRot*(60/FPS)))%360);
+		
+				// Increment Timekey pressed
+				timeKeyPressed++;
 			}
-		
 
-			// Decrement ship rotation by deltaRot (counterclockwise)
-			enterprise.rotation = ((int)(enterprise.rotation-(deltaRot*(60/FPS)))%360);
-		
-			// Increment Timekey pressed
-			timeKeyPressed++;
-		}
-
-		// If the left arrow key has been pressed rotate the ship
-		// Starting at 1 degree then moving to 10 degrees at a time.
-		if (leftKeyPressed && !paused)
-		{
-			if (deltaRot < 10.0 && !leftReached10)
+			// If the left arrow key has been pressed rotate the ship
+			// Starting at 1 degree then moving to 10 degrees at a time.
+			if (leftKeyPressed && !paused)
 			{
-				deltaRot *= 1.1;			// Multiply deltaRot by 1.1.
+				if (deltaRot < 10.0 && !leftReached10)
+				{
+					deltaRot *= 1.1;			// Multiply deltaRot by 1.1.
 			
-				if (deltaRot >= 10)			// If deltaRot reached o
-				{							// went above 10 reset it
-					leftReached10 = true;	// to 10.
-					deltaRot = 10;
-				}		
-			}
+					if (deltaRot >= 10)			// If deltaRot reached o
+					{							// went above 10 reset it
+						leftReached10 = true;	// to 10.
+						deltaRot = 10;
+					}		
+				}
 		
-			// Decrement ship rotation by deltaRot (counterclockwise)
-			enterprise.rotation = ((int)(enterprise.rotation+(deltaRot*(60/FPS)))%360);
+				// Decrement ship rotation by deltaRot (counterclockwise)
+				enterprise.rotation = ((int)(enterprise.rotation+(deltaRot*(60/FPS)))%360);
 
-			// Increment Timekey pressed
-			timeKeyPressed++;
-		}
+				// Increment Timekey pressed
+				timeKeyPressed++;
+			}
 
 	#ifdef LOGGING
 	/*	collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
@@ -415,37 +464,37 @@ void gameLoop()
 		collisionLogger.close();*/
 	#endif
 		// detect colitions with each asteroid in the belt.
-		for (int i = 0; i < asteroidBelt.size(); i++)
-			detectCollision(i);
+			for (int i = 0; i < asteroidBelt.size(); i++)
+				detectCollision(i);
 
 		// Iterate through and Increment each bullet's location
-		for (int i=0; i < bullets.size(); i++)
-		{
+			for (int i=0; i < bullets.size(); i++)
+			{
 			// We use sine and cosine because we need to tesslate them 
 			// along the direction they need to be going or the direction
 			// they were shot. We are moving them by 2 each time.
-			bullets.at(i).location.x += 2.0 * cos(bullets.at(i).theta)*(60/FPS); 
-			bullets.at(i).location.y += 2.0 * sin(bullets.at(i).theta)*(60/FPS);
-			if(!insideOctogon(bullets[i].location) && bullets.size() > 1 && i <bullets.size())
-				bullets.erase(bullets.begin() + i);
-		}
+				bullets.at(i).location.x += 2.0 * cos(bullets.at(i).theta)*(60/FPS); 
+				bullets.at(i).location.y += 2.0 * sin(bullets.at(i).theta)*(60/FPS);
+				if(!insideOctogon(bullets[i].location) && bullets.size() > 1 && i <bullets.size())
+					bullets.erase(bullets.begin() + i);
+			}
 
 		// Iterate through and Increment each asteroid's location
-		for (int i=0; i < asteroidBelt.size(); i++)
-		{
+			for (int i=0; i < asteroidBelt.size(); i++)
+			{
 			// We use use a function here be cause asteroids are objects
 			// and their center, or the location of their left bottom corner
 			// is protected. see this function in asteroids.cpp for more information 
-			asteroidBelt.at(i).incrementLocation();
-		}	
+				asteroidBelt.at(i).incrementLocation();
+			}	
 		// get the time since thing started.
-		timeP2 = glutGet(GLUT_ELAPSED_TIME);
+			timeP2 = glutGet(GLUT_ELAPSED_TIME);
 		
 		//sleep thread for for a time.
-		if(timeP2-timeC2>0)
-		{
-			this_thread::sleep_for(chrono::milliseconds(18-(timeP2-timeC2)));
-		}
+			if(timeP2-timeC2>0)
+			{
+				this_thread::sleep_for(chrono::milliseconds(18-(timeP2-timeC2)));
+			}
 	}
 
 	glutPostRedisplay();
@@ -583,12 +632,22 @@ void debugMe(int x, int y)
 void keyboard(unsigned char key, int x, int y)
 {	
 	// start game
-	if((key == 's' || key == 'S') && !gameOver)
+	if((key == 's' || key == 'S') && gamestate==0)
+		gamestate=1;
 		paused = false;
 
 	// pause movement
 	if((key == 'p' || key == 'P') && !gameOver)
 	{
+		switch(gamestate)
+		{
+			case 1:
+				gamestate=0;
+				break;
+			case 0:
+				gamestate=1;
+				break;
+		}
 		if (paused)
 			paused = false;
 		else
@@ -597,6 +656,7 @@ void keyboard(unsigned char key, int x, int y)
 	// pause movement
 	if(key == 'r' || key == 'R')
 	{
+		gamestate=0;
 		asteroidBelt.clear();
 		bullets.clear();
 		initiateAsteroids();
