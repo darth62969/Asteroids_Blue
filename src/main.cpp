@@ -66,7 +66,7 @@ bool spacePressed = false;		// This is for firing bullets.
 bool paused = true;				// For pause screen 
 bool gameOver = false;
 
-
+int GameMode = 0;				// 0 Normal, 1 Endless
 int gamestate = 0; 				// 0 Paused, 1 Play, 2 Game Over, 3 Win!!
 int timeKeyPressed = 0;			// Iterator for Debug reasons
 int filled = 0;					// 0 if lines should be drawn, 1 if filled (asteroids)   
@@ -102,7 +102,8 @@ void DisplayPause()
 	char MoveEnterprise[50];
 	char ReloadAsteroids[50];
 	char ToggleTeslation[50];
-	char ToggleTriangles[50];
+	char ToggleGameMode[50];
+	
 
 	sprintf(pausedString, "%s", "Paused");
 	sprintf(Startgame, "%s", "S = Start Game");
@@ -111,7 +112,7 @@ void DisplayPause()
 	sprintf(MoveEnterprise, "%s", "Arrow Keys = Rotate Enterprise");
 	sprintf(ReloadAsteroids, "%s", "R = Restart Game");
 	sprintf(ToggleTeslation, "%s", "F = Filled Asteroids");
-	sprintf(ToggleTriangles, "%s", "T = WireFrame Asteroids");
+	sprintf(ToggleGameMode, "%s", "M = Toggle between endless and normal");
 
 	setFont(GLUT_BITMAP_TIMES_ROMAN_24);
 	drawString(260, 320, pausedString);
@@ -123,7 +124,7 @@ void DisplayPause()
 	drawString(220, 215, MoveEnterprise);
 	drawString(220, 195, ReloadAsteroids);
 	drawString(220, 175, ToggleTeslation);
-	drawString(220, 155, ToggleTriangles);
+	drawString(220, 155, ToggleGameMode);
 }
 
 // Function to display the score.
@@ -146,8 +147,21 @@ void displayScore(void)
 	char astsOnScr2[50]; 
 	char astsHit[50];
 	char hrStr[50];
+	char mode[50];
 
 	// Place the text into the charstrings.
+	switch(GameMode)
+	{
+		case 0:
+			sprintf(mode, "Game Mode: %s", "Normal");
+			break;
+		case 1:
+			sprintf(mode, "Game Mode: %s", "Endless");
+			break;
+		default:
+			sprintf(mode, "Game Mode: %s", "Undefined");
+			break;
+	}
 	sprintf(bulletsFiredStr, "Bullets Fired: %3d", bulletsFired);
 	sprintf(astsOnScr1, "%s", "Asteroids on "); 
 	sprintf(astsOnScr2, "Screen: %3d", (int)asteroidBelt.size()); 
@@ -164,6 +178,7 @@ void displayScore(void)
 	
 	// draw the strings, right side.
 	drawString(480, 30, astsHit);
+	drawString(480, 15, mode);
 	drawString(480, 65, hrStr);
 }
 
@@ -456,6 +471,19 @@ void gameLoop()
 				// Increment Timekey pressed
 				timeKeyPressed++;
 			}
+			switch (GameMode)
+			{	
+				case 1:
+					if (asteroidBelt.size() < (NUMBER_OF_ASTEROIDS*9)/10)
+					{
+						for (int i = 0; i < NUMBER_OF_ASTEROIDS/10; i ++)
+						{
+							asteroid a = asteroid();
+							asteroidBelt.push_back(a);
+						}
+					}
+					break;
+			}
 
 	#ifdef LOGGING
 	/*	collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
@@ -632,6 +660,114 @@ void debugMe(int x, int y)
 void keyboard(unsigned char key, int x, int y)
 {	
 	// start game
+	switch (key)
+	{
+		//starts game
+		case 'S':
+		case 's':
+			switch(gamestate)
+			{
+				case 0:
+					gamestate=1;
+					paused=false;
+					break;
+				case 1:
+					break;
+			}
+			break;
+
+		//pauses game
+		case 'P':
+		case 'p':
+			switch(gamestate)
+			{
+				case 0:
+					gamestate=1;
+					paused=false;
+					break;
+				case 1:
+					gamestate=0;
+					paused=true;
+					break;
+			}
+			break;
+		
+		//reloads asteroids and pauses game.
+		case 'r':
+		case 'R':
+			gamestate=0;
+			asteroidBelt.clear();
+			bullets.clear();
+			initiateAsteroids();
+			bulletsFired=0;
+			paused=true;
+			gameOver = false;
+			enterprise.rotation=0;
+			bulletsHit = 0;	
+			break;
+		//quits game
+		case 'q':
+		case 'Q':
+			exit(0);
+			break;
+		//toggles fill state
+		case 'f':
+		case 'F':
+			switch (filled)
+			{
+				case 0:
+					filled = 1;
+					break;
+				case 1:
+					filled = 2;
+					break;
+				case 2: 
+					filled = 0;
+					break;
+			}
+			break;
+
+		//Fires Bullet once;
+		case ' ':
+			switch (gamestate)
+			{
+				case 1:
+					glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
+					if(!spacePressed)
+					{
+						spacePressed = true;
+						bullet shot = createBullet();
+						bullets.push_back(shot);
+						bulletsFired++;
+					}	
+					break;
+			}
+			break;
+
+		case 'm':
+		case 'M':
+			gamestate=0;
+			asteroidBelt.clear();
+			bullets.clear();
+			initiateAsteroids();
+			bulletsFired=0;
+			paused=true;
+			gameOver = false;
+			enterprise.rotation=0;
+			bulletsHit = 0;	
+			switch (GameMode)
+			{
+				case 0:
+					GameMode=1;
+					break;
+				case 1:
+					GameMode=0;
+					break;
+			}
+			break;
+
+
+	}/*
 	if((key == 's' || key == 'S') && gamestate==0)
 		gamestate=1;
 		paused = false;
@@ -701,7 +837,7 @@ void keyboard(unsigned char key, int x, int y)
 			bullets.push_back(shot);
 			bulletsFired++;
 		}
-	}
+	}*/
 
 #ifdef DEBUG	
 	if(key == 'b')
@@ -776,7 +912,7 @@ void mouse(int button, int state, int x, int y)
         }
         if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 		{
-                       debugMe(x,y);
+            debugMe(x,y);
         }
 }
 
