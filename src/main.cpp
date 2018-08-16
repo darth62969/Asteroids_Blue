@@ -321,6 +321,7 @@ void gameView()
 
 				// get the location of the points on the asteroid grid
 				vector<point> pnt = asteroidBelt.at(i).getPoints();
+
 				for (int j = 0; j < (pnt.size()); j++)
         		{
 					glBegin (GL_LINES);
@@ -474,9 +475,9 @@ void gameLoop()
 			switch (GameMode)
 			{	
 				case 1:
-					if (asteroidBelt.size() < (NUMBER_OF_ASTEROIDS*9)/10)
+					if (asteroidBelt.size() < (ENDLESS_ASTEROIDS*9)/10)
 					{
-						for (int i = 0; i < NUMBER_OF_ASTEROIDS/10; i ++)
+						for (int i = 0; i < ENDLESS_ASTEROIDS/10; i++)
 						{
 							asteroid a = asteroid();
 							asteroidBelt.push_back(a);
@@ -552,19 +553,23 @@ void initiateAsteroids()
 	asteroidLogger.close();
 #endif
 	//Generate Asteroids
-	int i = 0;
-	while (i < NUMBER_OF_ASTEROIDS)
-	{	
-		// Open log file, record the asteroid we are on, then close to save changes.
-#ifdef LOGGING
-		asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-		asteroidLogger << "Asteroid #" << i << endl;
-		asteroidLogger.close();
-#endif
-		// Create an asteroid then push it into the asteroidBelt.
-		asteroid a = asteroid();
-		asteroidBelt.push_back(a);
-		i++;
+	switch (GameMode)
+	{
+		case 0:
+			for (int i =0; i < NUMBER_OF_ASTEROIDS; i++)
+			{	
+				// Create an asteroid then push it into the asteroidBelt.
+				asteroid a = asteroid();
+				asteroidBelt.push_back(a);
+			}
+			break;
+		case 1:
+			for (int i = 0; i < ENDLESS_ASTEROIDS; i++)
+			{
+				asteroid a = asteroid();
+				asteroidBelt.push_back(a);
+			}
+			break;
 	}
 
 	// Open log file, record that we have generated asteroidBelt.size() asteroids,

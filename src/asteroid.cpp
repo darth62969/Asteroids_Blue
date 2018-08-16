@@ -231,33 +231,26 @@ vector<asteroid> asteroid::getInfluencers()
 }
 void asteroid::incrementLocation()
 {
+	// If Paused, return. this is to ensure the program does not continue if the game is paused. (depreciated)
 	if(paused)
 		return;
 
-#ifdef LOGGING
-	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-#endif
-
+	//This is a vector for the asteroid's gravity influence effect.
 	vector<asteroid> infl = getInfluencers();
-#ifdef LOGGING
-		asteroidLogger << "Found " << infl.size() << " influencers for Asteroid located at: ( " << center.x << " , " << center.y << ")\n";
-		asteroidLogger << "Initial angle and Velocity\n";
-		asteroidLogger << "Rotation " << translation.angle << endl;
-		asteroidLogger << "velocity " << translation.w << endl;
-#endif
+
+	//This takes the vector returned by getInfluencers and calculates the new direction of the current asteroid.
 	for(int i =0; i< infl.size(); i++)
 	{
-		double bearing = atan2f(center.y-infl[i].getCenter().y, center.x-infl[i].getCenter().x);
-#ifdef LOGGING
-		asteroidLogger << "asteroid " << i << "located at ( "<< infl[i].getCenter().x << " , " << infl[i].getCenter().y << ")\n";
-		asteroidLogger << "Bearing is: "<< bearing << "radians" << endl;
-	//	asteroidLogger.write();
-#endif
+		// This is where we calculate  the bearing of the asteroid to the current influencer.
+		double bearing = atan2f(center.y-infl[i].getCenter().y, center.x-infl[i].getCenter().x);		
 		
+		// This ensures this value is above 0.
 		if(bearing < 0 )
 			bearing+=M_PI;
-		double Dbearing;
 
+		// Here we are checking to see if the setting a value DBearing that is needed for later calculations.
+		// Dbearing is the difference in the angle between the direction the asteroid is going and the influencer.
+		double Dbearing;
 		if (bearing <= translation.angle)
 		{
 		 	Dbearing = translation.angle - bearing;
@@ -267,40 +260,31 @@ void asteroid::incrementLocation()
 			Dbearing = bearing - translation.angle;
 		}
 
+		// We need to calculate the gravity potential for the asteroids. this is the amount of "force" that is going to be aplied in the
+		// direction of the influncer.
 		double magnatude = GRAVITY_POTENTIAL*((2*ASTEROID_MASS)/getVectorLength(infl[i]));
 
+		// Here we are calculating variables that were half phased out... cause debug issues.
 		double Uvelocity = pow(translation.w,2)+pow(magnatude,2);
 		double Ubearing = cos(M_PI-(Dbearing));
 
+		// Here we are calculating the new speed. this takes the previous speed, and add the calculated values of the change in velocity and direction.
+		// Vector math is a pain in the behind. you don't want to know how long it took me to find the trig for these calcuations.
 		translation.w = pow(pow(translation.w,2)+pow(magnatude,2) - ((2 * magnatude * translation.w)*Ubearing), .5);
-	 	
 		translation.angle += asinf((magnatude*sin((M_PI-Dbearing)))/translation.w);
 
-#ifdef LOGGING
-		asteroidLogger << "AC vector is ( "<< a.x << " , " << a.y << ")\n";
-		asteroidLogger << "asteroid vector is ( "<<  translation.x << " , " << translation.y << ")\n";
-	//	asteroidLogger.write();
-#endif
-
+		// Here i'm setting a minimum and maximum speed for gameplay purposes.
 		if (translation.w>3)
 			translation.w = 3;
-		if (translation.w < .1)
+		if (translation.w < .5)
 			translation.w = .5;
-#ifdef LOGGING
-		asteroidLogger << "New angle and velocity \n";
-		asteroidLogger << "Angle: " << translation.angle << endl;
-		asteroidLogger << "Velocity: " << translation.w << endl;
-#endif
 	}
-#ifdef LOGGINGr
-	asteroidLogger << "Final angle and velocity:\n";
-	asteroidLogger << "Angle: " << translation.angle << endl;
-	asteroidLogger << "velocity: " << translation.w << endl << endl;
-	asteroidLogger.close();
-#endif
+
+	// After we calculate the positions of the asteroids, we need to move them. so we move the center by use of trig.
 	center.x += cos(translation.angle)*translation.w/**(60/FPS)*/;
 	center.y += sin(translation.angle)*translation.w/**(60/FPS)*/;
 	
+	//this checks to see if it is still in the octogon them moves it to where it to the other side.
 	if(!insideOctogon(center)){
 		point position {center.x-origin,center.y-origin,0,1};
 		center.x -= 2*position.x; 

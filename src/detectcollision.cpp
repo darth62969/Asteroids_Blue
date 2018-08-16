@@ -87,7 +87,7 @@ bool shipProximity(asteroid ast1, vector<point> b2)
 	collisionLogger.close();*/
 	#endif
 
-	if (abs(x - ast1.getCenter().x) <= ASTEROID_MAX_X && abs(y - ast1.getCenter().y) <= ASTEROID_MAX_Y)
+	if (abs(x - ast1.getCenter().x) <= ASTEROID_MAX_X*5 && abs(y - ast1.getCenter().y) <= ASTEROID_MAX_Y*5)
 	{
 		#ifdef LOGGING/*
 		collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
@@ -201,6 +201,7 @@ void detectCollision(int index)
 						#endif
 
 						//gameover code
+						gamestate = 2;
 						gameOver = true;
 						
 					}	
@@ -230,6 +231,7 @@ void detectCollision(int index)
 						#endif	
 
 						//gameover code
+						gamestate = 2;
 						gameOver = true;
 					}	
 				}
@@ -258,6 +260,7 @@ void detectCollision(int index)
 						#endif	
 
 						//gameover code
+						gamestate = 2;
 						gameOver = true;
 					}
 				}
