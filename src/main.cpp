@@ -28,7 +28,14 @@
 //Global Variables
 
 //The Ship
+#ifndef SHIPTEST
 ship enterprise = createShip();
+#endif
+
+#ifdef SHIPTEST
+ship enterprise = ship(0);
+#endif
+
 vector<point> octogon; bool noOctogon = 1;
 vector<point> clipPts;
 
@@ -80,13 +87,16 @@ int timeP2 = 0;					// Time of at the end of the game loop
 int bulletsFired = 0;			// The number of bullets fired
 int bulletsHit = 0;				// The number of bullets hit
 
+//double EndGameAnimation =2;
+
 void *currentfont;				// Bit map font pointer.
 
 void initiateOctogon();			// Function to construct the Octagonal game screen.
 void drawOctogon(void);			// Function to draw the octogon.
 
 // Function to set up draw strings on screen at a particular x and y. 
-void drawString(GLuint x, GLuint y, const char* string);
+
+void drawString(GLuint x, GLuint y, const char* string); //THIS IS NOT DRAW A FUCKING SHIP!! YOU MORON!!!
 
 // Function to set the font to a specific font
 void setFont(void *font)
@@ -95,6 +105,7 @@ void setFont(void *font)
 }
 void DisplayPause()
 {
+	// set up the charstrings.
 	char pausedString[25];
 	char Startgame[50];
 	char PauseGame[50];
@@ -104,7 +115,7 @@ void DisplayPause()
 	char ToggleTeslation[50];
 	char ToggleGameMode[50];
 	
-
+	// Input the information into the char strings
 	sprintf(pausedString, "%s", "Paused");
 	sprintf(Startgame, "%s", "S = Start Game");
 	sprintf(PauseGame, "%s", "P = Pause Game");
@@ -114,9 +125,11 @@ void DisplayPause()
 	sprintf(ToggleTeslation, "%s", "F = Filled Asteroids");
 	sprintf(ToggleGameMode, "%s", "M = Toggle between endless and normal");
 
+	//set font draw "paused on screen"
 	setFont(GLUT_BITMAP_TIMES_ROMAN_24);
 	drawString(260, 320, pausedString);
 
+	//set font draw help on screen
 	setFont(GLUT_BITMAP_HELVETICA_12);
 	drawString(220, 275, Startgame);
 	drawString(220, 255, PauseGame);
@@ -133,11 +146,15 @@ void displayScore(void)
 	// We calculate the hit ratio (I spot some optmization stuff!!)
 	double hitRatio;
 	
-	if (bulletsHit != 0)
-		hitRatio = (double)bulletsHit/(double)bulletsFired*100.0;
-	else 
-		hitRatio = 0;
-
+	switch (bulletsHit)
+	{
+		default:
+			hitRatio = (double)bulletsHit/(double)bulletsFired*100.0;
+			break;
+		case 0:
+			hitRatio = 0;
+			break;
+	}
 	// set the faunt to Helvetica, size 12
 	setFont(GLUT_BITMAP_HELVETICA_12);
 
@@ -344,13 +361,13 @@ void gameView()
 
 				// Draw the triangles
 				for (int j = 0; j < (a.size()); j++)
-        			{
+        		{
 					glBegin (GL_TRIANGLES);
 						glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
 						glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
 						glVertex2d(a.at(j).c.x + b.x, a.at(j).c.y + b.y);
 					glEnd ();         
-        			}
+        		}
 			}
 			break;
 		// If filled == 2
@@ -382,8 +399,14 @@ void gameView()
 		
 	}
 	// Draw the ship
-	drawShip(enterprise);		
 
+#ifndef SHIPTEST
+	drawShip(enterprise);		
+#endif
+
+#ifdef SHIPTEST
+	enterprise.renderShip();
+#endif
 	// Draw the bullets.
 	glColor3f(1.0, 1.0, 0.0);
 	for(int i = 0; i < bullets.size(); i++)
@@ -430,6 +453,7 @@ void gameLoop()
 			timeC2 = glutGet(GLUT_ELAPSED_TIME);
 			// If the right arrow key has been pressed rotate the ship
 			// Starting at 1 degree then moving to 10 degrees at a time.
+			/*
 			if (rightKeyPressed && !paused) 
 			{
 				if (deltaRot < 10.0 && !rightReached10)
@@ -468,10 +492,10 @@ void gameLoop()
 		
 				// Decrement ship rotation by deltaRot (counterclockwise)
 				enterprise.rotation = ((int)(enterprise.rotation+(deltaRot*(60/FPS)))%360);
-
+			
 				// Increment Timekey pressed
 				timeKeyPressed++;
-			}
+			}*/
 			switch (GameMode)
 			{	
 				case 1:
@@ -502,8 +526,8 @@ void gameLoop()
 			// We use sine and cosine because we need to tesslate them 
 			// along the direction they need to be going or the direction
 			// they were shot. We are moving them by 2 each time.
-				bullets.at(i).location.x += 2.0 * cos(bullets.at(i).theta)*(60/FPS); 
-				bullets.at(i).location.y += 2.0 * sin(bullets.at(i).theta)*(60/FPS);
+				bullets.at(i).location.x += 2.0 * cos(bullets.at(i).theta)/**(60/FPS)*/; 
+				bullets.at(i).location.y += 2.0 * sin(bullets.at(i).theta)/**(60/FPS)*/;
 				if(!insideOctogon(bullets[i].location) && bullets.size() > 1 && i <bullets.size())
 					bullets.erase(bullets.begin() + i);
 			}
@@ -707,7 +731,14 @@ void keyboard(unsigned char key, int x, int y)
 			bulletsFired=0;
 			paused=true;
 			gameOver = false;
-			enterprise.rotation=0;
+#ifndef SHIPTEST
+			enterprise.rotation=0;		
+			resetShip();
+#endif
+#ifdef SHIPTEST
+			enterprise.setRotation(0);
+			enterprise.resetShip();
+#endif
 			bulletsHit = 0;	
 			break;
 		//quits game
@@ -758,7 +789,15 @@ void keyboard(unsigned char key, int x, int y)
 			bulletsFired=0;
 			paused=true;
 			gameOver = false;
-			enterprise.rotation=0;
+
+#ifndef SHIPTEST
+			enterprise.rotation=0;		
+#endif
+
+#ifdef SHIPTEST
+			enterprise.setRotation(0);
+#endif
+
 			bulletsHit = 0;	
 			switch (GameMode)
 			{
@@ -772,77 +811,7 @@ void keyboard(unsigned char key, int x, int y)
 			break;
 
 
-	}/*
-	if((key == 's' || key == 'S') && gamestate==0)
-		gamestate=1;
-		paused = false;
-
-	// pause movement
-	if((key == 'p' || key == 'P') && !gameOver)
-	{
-		switch(gamestate)
-		{
-			case 1:
-				gamestate=0;
-				break;
-			case 0:
-				gamestate=1;
-				break;
-		}
-		if (paused)
-			paused = false;
-		else
-			paused = true;
 	}
-	// pause movement
-	if(key == 'r' || key == 'R')
-	{
-		gamestate=0;
-		asteroidBelt.clear();
-		bullets.clear();
-		initiateAsteroids();
-		bulletsFired=0;
-		paused=true;
-		gameOver = false;
-		enterprise.rotation=0;
-		bulletsHit = 0;
-	}
-
-
-	// Exits the game.
-	if(key == 'q' || key == 'Q')
-		exit(0);
-
-	// Shows tessellation lines for every asteroid
-	if(key == 't' || key == 'T')
-	{
-		if(filled != 2)
-			filled = 2;
-		else
-			filled = 0;
-	}
-
-	// Fills the asteroids.
-	if(key == 'f' || key == 'F')
-	{
-		if(filled != 1)
-			filled = 1;
-		else
-			filled = 0;
-	}
-
-	// Fires a bullet.
-	if(key == ' ' && !paused)
-	{
-		glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
-		if(!spacePressed)
-		{
-			spacePressed = true;
-			bullet shot = createBullet();
-			bullets.push_back(shot);
-			bulletsFired++;
-		}
-	}*/
 
 #ifdef DEBUG	
 	if(key == 'b')
@@ -913,12 +882,27 @@ void mouse(int button, int state, int x, int y)
 {
         if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
 		{
-                       
         }
         if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 		{
-            debugMe(x,y);
+			switch(gamestate)
+			{
+				case 1:
+						spacePressed = true;
+						bullet shot = createBullet();
+						bullets.push_back(shot);
+						bulletsFired++;
+					break;
+			}          
         }
+}
+void passiveMouse(int x, int y)
+{
+	point temp ={x, y, 0, 1};
+#ifndef SHIPTEST
+	double bearing =-1*( atan2f(enterprise.aLocation.y-y, enterprise.aLocation.x-x) * (180 / M_PI))+180;
+	enterprise.rotation=bearing;
+#endif
 }
 
 int main(int argc, char** argv)
@@ -944,6 +928,7 @@ int main(int argc, char** argv)
 	initiateGameDisplay();						/* Does nothing 					*/
 	glutSetKeyRepeat(GLUT_KEY_REPEAT_ON);		/* Set Key Repeat on 				*/
 	glutMouseFunc(mouse);						/* Set a Mouse funtion				*/
+	glutPassiveMotionFunc(passiveMouse);
 	glutKeyboardFunc(keyboard);					/* Set a keyboard Funcitons			*/
 	glutKeyboardUpFunc(keyReleased);			
 	glutSpecialFunc(specialKeys); 

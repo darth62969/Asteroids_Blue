@@ -20,6 +20,7 @@
 #include "globals.h"
 #include "prototypes.h"
 
+
 point center;
 float rotation;
 point translation;
@@ -62,6 +63,7 @@ asteroid::asteroid()
 	
 // Getting the point of the ship so that we can check the location of the asteriods against it.
 // This prevents insta-"Game Overs". 
+#ifndef SHIPTEST
 	vector<point> cmd;
 	cmd.push_back(enterprise.body.a);
 	cmd.push_back(enterprise.body.b);
@@ -80,7 +82,7 @@ asteroid::asteroid()
 // This finds the center of the ship. 
 	int x = (cmd[0].x + cmd[1].x + cmd[2].x)/3;
 	int y = (cmd[0].y + cmd[1].y + cmd[2].y)/3;
-
+#endif
 
 // While the center is not wihtin the octogon, generate random positions
 	while(!insideOctogon(center))
@@ -91,7 +93,7 @@ asteroid::asteroid()
 			center.x = rand() % (WORLD_COORDINATE_MAX_X + 1) + WORLD_COORDINATE_MIN_X;
 			center.y = rand() % (WORLD_COORDINATE_MAX_Y + 1) + WORLD_COORDINATE_MIN_Y;
 		}
-		while(abs(center.y - y) <= ASTEROID_MAX_Y+5 && abs(center.x - x) <= ASTEROID_MAX_X+5);
+		while(getVectorLength(center, point{WORLD_COORDINATE_MAX_X/2, WORLD_COORDINATE_MAX_Y/2, 0, 1})<50);
 
 		// Check the new asteroid for it's vecinity to other asteriods.
 		bool nv = false;
@@ -120,50 +122,46 @@ asteroid::asteroid()
 
 // Random number for seed.
 	int i = rand();
+	srand (static_cast <unsigned> (time(0))*(i*(0+67)/10));
+	point b;
+	b.x = rand() % (ASTEROID_MAX_X+1);
+	b.y = rand() % (ASTEROID_MAX_Y+1);
+	astPnts.push_back(b); 
 
 // This generates the sides. 	
-	for (int j = 0; j < numsides; j++)
+	for (int j = 1; j < numsides; j++)
 	{
 		//seed the psudo-random number generator. 
 		srand (static_cast <unsigned> (time(0))*(i*(j+67)/10));
-		
-		//generate a random point. 
-		point b;
-		b.x = rand() % (ASTEROID_MAX_X+1);
-		b.y = rand() % (ASTEROID_MAX_Y+1);
-
 		// Increment i for the next point.
 		i++;
-
-		// If this is the first point add it to the array, could probubly change this to a switch.
-		if( j == 0)
-		{
-			astPnts.push_back(b);
-		}
-		else if (j > 0)
-		{
-			// Assume this point is good.
-			bool durpdist = true;
+		bool goodpoint = false;
+		while(!goodpoint)
+		{			
+			//generate a random point. 
+			b.x = rand() % (ASTEROID_MAX_X+1);
+			b.y = rand() % (ASTEROID_MAX_Y+1);
+			int goodDistance=0;
 			//check  the point against other points. to ensure that they are not of a minimum distance from each other.
 			for (int k = j-1; k >= 0; k--)
 			{
 				// if within that distance try again.
-				if(sqrt((b.x-astPnts[k].x)*(b.x-astPnts[k].x) + (b.y-astPnts[k].y)*(b.y-astPnts[k].y)) <= ASTEROID_MIN_DIST)
-				{
-					durpdist = false; 
-					break;
+				point a = astPnts[k];
+				if(getVectorLength(b, a) >= ASTEROID_MIN_DIST)
+				{ 
+					goodDistance++;
 				}
 			}
+			if(goodDistance==astPnts.size())
+			{
+				goodpoint=true;
+			}
 			// if all is good, add it to the list.
-			if(durpdist)
+			if(goodpoint)
 			{
 				astPnts.push_back(b);
 			}
-			// if not decrement j.
-			else
-			{
-				j--;
-			}
+
 		}
 		
 	}
@@ -211,6 +209,11 @@ point asteroid::getCenter()
 {
 	return center;
 }
+float asteroid::getVectorLength(point a, point b)
+{
+	return sqrt(pow(abs(a.x-b.x),2)+pow(abs(a.y-b.y),2));
+}
+
 
 float asteroid::getVectorLength(asteroid b)
 {
@@ -457,52 +460,6 @@ vector<asteroid> asteroid::breakupAsteroid()
 	return breakup;
 }
 
-bool intersect(point v1, point v2, point v3, point v4)
-{
-	float ua_num = ((v3.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v3.y - v1.y));
-	float den = ((v2.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v2.y - v1.y));
-
-	float ub_num = ((v2.x - v1.x) * (v3.y - v1.y)) - ((v3.x - v1.x) * (v2.y - v1.y));
-
-	float ua = ua_num / den;
-	float ub = ub_num / den;
-
-#ifdef LOGGING
-
-if(!paused)
-{
-	//collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
-	//collisionLogger << "\nv1 = (" << v1.x << "," << v1.y << ") : "; 
-	//collisionLogger << "v2 = (" << v2.x << "," << v2.y << ") : ";
-	//collisionLogger << "v3 = (" << v3.x << "," << v3.y << ") : ";
-	//collisionLogger << "v1 = (" << v4.x << "," << v4.y << ")";
-	//collisionLogger << "\nua_num = " << ua_num;
-	//collisionLogger << "; ndem = " << den;
-	//collisionLogger << "; nub_num = " << ub_num;
-	//collisionLogger << "; ua = " << ua;
-	//collisionLogger << "; ub = " << ub;
-	//collisionLogger <<"\nua > 0.0 = " << (ua > 0.0) << " | " << "ua < 1.0 " << (ua < 1.0);
-	//collisionLogger <<"\nub > 0.0 = " << (ub > 0.0) << " | " << "ub < 1.0 " << (ub < 1.0);
-	//collisionLogger.close();
-}
-#endif
-
-	point v;
-	v.x = -100;
-	v.y = -100;
-
-	if((ua > 0.0) && (ua < 1.0) && (ub > 0.0) && (ub < 1.0))
-	{
-		#ifdef LOGGING
-		//collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
-		//collisionLogger << "\n\nentered true\n";
-		//collisionLogger.close();
-		#endif
-		return true;
-	}
-
-	return false;
-}
 
 void asteroid::tessellateAsteriod()
 {

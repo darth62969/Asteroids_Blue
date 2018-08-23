@@ -33,6 +33,7 @@ class asteroid
 		std::vector<triangle> getTess();
 		float getRotation();
 		void incrementLocation();
+		//void renderAsteroid(int mode);
 
 	private:
 		point center;
@@ -43,11 +44,13 @@ class asteroid
 	    	bool clipped;
 		int numsides;
 		std::vector<asteroid> getInfluencers();
+		float getVectorLength(point a, point b);
 		float getVectorLength(asteroid b);
 		void createAsteroid(triangle a, point center, point offset, int num);
 	   	void tessellateAsteriod();
 		void sortPoints();
 		void clear();
+		//asteroid clipAsteroid();
 	//	const double ASTERIOD_WEIGHT = 0.4;
 	//	const double GRAVITY_POTENTIAL = 1;
 };

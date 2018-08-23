@@ -22,12 +22,12 @@
 bullet createBullet()
 {
 	bullet shot;
-
+#ifndef SHIPTEST
 	// The bullet will originate at the front of the ship.
 	shot.location = enterprise.aLocation;
 	// Convert the rotation (float) of enterprise to radians.
 	shot.theta = enterprise.rotation * M_PI / 180.0;
-
+#endif
 	return shot;
 }
 

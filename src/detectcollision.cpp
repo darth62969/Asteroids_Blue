@@ -101,6 +101,53 @@ bool shipProximity(asteroid ast1, vector<point> b2)
 		return false; 
 }
 
+bool intersect(point v1, point v2, point v3, point v4)
+{
+	float ua_num = ((v3.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v3.y - v1.y));
+	float den = ((v2.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v2.y - v1.y));
+
+	float ub_num = ((v2.x - v1.x) * (v3.y - v1.y)) - ((v3.x - v1.x) * (v2.y - v1.y));
+
+	float ua = ua_num / den;
+	float ub = ub_num / den;
+
+#ifdef LOGGING
+
+if(!paused)
+{
+	//collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
+	//collisionLogger << "\nv1 = (" << v1.x << "," << v1.y << ") : "; 
+	//collisionLogger << "v2 = (" << v2.x << "," << v2.y << ") : ";
+	//collisionLogger << "v3 = (" << v3.x << "," << v3.y << ") : ";
+	//collisionLogger << "v1 = (" << v4.x << "," << v4.y << ")";
+	//collisionLogger << "\nua_num = " << ua_num;
+	//collisionLogger << "; ndem = " << den;
+	//collisionLogger << "; nub_num = " << ub_num;
+	//collisionLogger << "; ua = " << ua;
+	//collisionLogger << "; ub = " << ub;
+	//collisionLogger <<"\nua > 0.0 = " << (ua > 0.0) << " | " << "ua < 1.0 " << (ua < 1.0);
+	//collisionLogger <<"\nub > 0.0 = " << (ub > 0.0) << " | " << "ub < 1.0 " << (ub < 1.0);
+	//collisionLogger.close();
+}
+#endif
+
+	point v;
+	v.x = -100;
+	v.y = -100;
+
+	if((ua > 0.0) && (ua < 1.0) && (ub > 0.0) && (ub < 1.0))
+	{
+		#ifdef LOGGING
+		//collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
+		//collisionLogger << "\n\nentered true\n";
+		//collisionLogger.close();
+		#endif
+		return true;
+	}
+
+	return false;
+}
+
 void detectCollision(int index) 
 {
 	//Idea:  Narrow down searches by dividing into quadrants? 
@@ -126,6 +173,7 @@ void detectCollision(int index)
 	//	 range? 
 		
 	//gets points of ship
+	#ifndef SHIPTEST
 	vector<point> cmd;
 	cmd.push_back(enterprise.body.a);
 	cmd.push_back(enterprise.body.b);
@@ -267,7 +315,7 @@ void detectCollision(int index)
 			}
 		}
 	}
-
+#endif
 	//collision of asteroid and bullet
 	bool collision = false; 
 	for (int j = 0; j < bullets.size(); j++)

@@ -11,12 +11,14 @@ struct triangle
     point a, b, c;
 };
 
+#ifndef SHIPTEST
 struct ship
 {
     triangle body;
     float rotation;
     point aLocation;
 };
+#endif
 
 struct bullet
 {

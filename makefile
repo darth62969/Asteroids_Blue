@@ -32,6 +32,11 @@ OBJS = main.o asteroid.o ship.o bullets.o transformer.o clipper.o detectcollisio
 debug ?= n
 logging ?= n
 multit ?=n
+shiptest ?=n
+
+ifeq ($(shiptest), y)
+	CFLAGS += -DSHIPTEST
+endif
 
 ifeq ($(debug), y)
 	CFLAGS += -g -DDEBUG -pg
@@ -74,8 +79,8 @@ detectcollision.o : src/detectcollision.cpp
 # Default Targets for Cleaning up the Environment
 
 clean :
-	rm bin/*
 	rm *.o
+	rm bin/*
 
 pristine :
 	rm *.o
