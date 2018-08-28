@@ -903,6 +903,13 @@ void passiveMouse(int x, int y)
 	double bearing =-1*( atan2f(enterprise.aLocation.y-y, enterprise.aLocation.x-x) * (180 / M_PI))+180;
 	enterprise.rotation=bearing;
 #endif
+
+#ifdef SHIPTEST
+	point pnt = enterprise.getAtkPnts()[0];
+	double bearing =atan2f(pnt.y-y, pnt.x-x)* (180 / M_PI);
+	cout << bearing << " " << x << " " << y << endl;
+	enterprise.setRotation(bearing);
+#endif
 }
 
 int main(int argc, char** argv)

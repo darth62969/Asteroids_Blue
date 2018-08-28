@@ -173,12 +173,12 @@ ship::ship(int tp)
 			shppnts.push_back(point{0, 5, 0, 1});
 			shppnts.push_back(point{-1, 2, 0, 1});
 			shppnts.push_back(point{-3, 2, 0, 1});
-			shppnts.push_back(point{-3, -4, 0, 1});
-			shppnts.push_back(point{-1, -4, 0, 1});
+			shppnts.push_back(point{-3, -5, 0, 1});
+			shppnts.push_back(point{-1, -5, 0, 1});
 			shppnts.push_back(point{-1, -1, 0, 1});
 			shppnts.push_back(point{1, -1, 0, 1});
-			shppnts.push_back(point{1, -4, 0, 1});
-			shppnts.push_back(point{3, -4, 0, 1});
+			shppnts.push_back(point{1, -5, 0, 1});
+			shppnts.push_back(point{3, -5, 0, 1});
 			shppnts.push_back(point{3, 2, 0, 1});
 			shppnts.push_back(point{1, 2, 0, 1});
 
@@ -196,9 +196,40 @@ ship::ship(int tp)
 			break;
 	}
 }
-point ship::getLoaction()
+point ship::getLocation()
 {
 	return location;
+}
+std::vector<point> ship::getAtkPnts()
+{
+	vector<point> temp1 = atkpnts;
+	vector<point> temp2 = shppnts;
+	for (int i =0; i < temp1.size(); i++)
+	{
+		scalePoint(temp1[i], 5);
+		rotatePoint(temp1[i], location.angle);
+	}
+	for (int i =0; i < temp2.size(); i++)
+	{
+		scalePoint(temp2[i], 5);
+		rotatePoint(temp2[i], location.angle);
+	}
+	point min = temp2[0];
+	for (int i = 0; i <temp2.size(); i++)
+	{
+		if (min.x > temp2[i].x)
+			min.x=temp2[i].x;
+		if (min.y > temp2[i].y)
+			min.y=temp2[i].y;
+
+	}	
+	for (int i = 0; i<temp1.size(); i++)
+	{
+		temp1[i].x += location.x-min.x;
+		temp1[i].y += location.y-min.y;
+	}
+
+	return temp1;	
 }
 
 void ship::setRotation(double rot)
@@ -213,9 +244,14 @@ void ship::resetShip()
 
 void ship::renderShip()
 {
+
 	vector<triangle> temp = shptris;
+
+	//Copy the points in the ship (a) to b
+
 	for (int i = 0; i < temp.size(); i++)
 	{
+
 		switch (gamestate)
 		{
 			case 2:
@@ -233,7 +269,31 @@ void ship::renderShip()
 		rotatePoint(temp[i].a, location.angle);
 		rotatePoint(temp[i].b, location.angle);
 		rotatePoint(temp[i].c, location.angle);
-	}
+	}	
+	point min = temp[0].a;
+	for (int i = 0; i <temp.size(); i++)
+	{
+		point b[3];
+		b[0]=temp[i].a;
+		b[1]=temp[i].b;
+		b[2]=temp[i].c;
+		for (int j; j<3; j++)
+		{
+			if (min.x > b[j].x)
+				min.x=b[j].x;
+			if (min.y > b[j].y)
+				min.y=b[j].y;
+		}
+	}	
+		
+		for(int i = 0; i<temp.size(); i++)
+		{    
+			glBegin(GL_TRIANGLES);
+			glVertex2d((temp[i].a.x-min.x)+location.x, (temp[i].a.y-min.y)+location.y);
+			glVertex2d((temp[i].b.x-min.x)+location.x, (temp[i].b.y-min.y)+location.y);
+			glVertex2d((temp[i].c.x-min.x)+location.x, (temp[i].c.y-min.y)+location.y);
+			glEnd();
+		}
 
 	switch(gamestate)
 	{
@@ -243,17 +303,17 @@ void ship::renderShip()
 			shipRender.y += WinGameAnimation*cos(location.angle*(180/M_PI)+(M_PI));
 	}
 
-	///Now we want to draw the ship.
-	
+	///Now we want to draw the ship. 
+	/*glBegin(GL_TRIANGLES);
 		for(int i = 0; i<temp.size(); i++)
 		{    
-			glBegin(GL_TRIANGLES);
+			
 			glVertex2d(temp.at(i).a.x + location.x, temp.at(i).a.y + location.y);
 			glVertex2d(temp.at(i).b.x + location.x, temp.at(i).b.y + location.y);
-			glVertex2d(temp.at(i).c.x + location.x, temp[i].c.y + location.y);
-			glEnd();
+			glVertex2d(temp.at(i).c.x + location.x, temp.at(i).c.y + location.y);
+
 		}
-	
+	glEnd();*/
 }
 void ship::tessilateShip()
 {

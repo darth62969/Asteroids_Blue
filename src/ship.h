@@ -14,6 +14,7 @@ class ship
         //getters
         std::vector<point> getPoints();
         std::vector<triangle> getTriangles();
+        std::vector<point> getAtkPnts();
         
         //setters
         point getLocation();
