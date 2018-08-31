@@ -58,6 +58,7 @@ char* GENERAL_LOG_PATH = "logs/general_log.txt";
 //Runtime Variables
 vector<asteroid> asteroidBelt; 	// Holds all asteroids
 vector<bullet> bullets; 	// Holds all bullets
+vector<ship> enemies;
 
 float deltaRot = 1.0; 		// For use in the accelleration of ship rotation 
 
@@ -75,8 +76,10 @@ bool gameOver = false;
 
 int GameMode = 0;				// 0 Normal, 1 Endless
 int gamestate = 0; 				// 0 Paused, 1 Play, 2 Game Over, 3 Win!!
+int gametick = 0;
 int timeKeyPressed = 0;			// Iterator for Debug reasons
 int filled = 0;					// 0 if lines should be drawn, 1 if filled (asteroids)   
+int Level = 1;
 
 int frames = 0;					// How many frames have been counted.
 int timeC = 0;					// Time the last was frame drawn
@@ -165,6 +168,7 @@ void displayScore(void)
 	char astsHit[50];
 	char hrStr[50];
 	char mode[50];
+	char lvlstr[50];
 
 	// Place the text into the charstrings.
 	switch(GameMode)
@@ -174,6 +178,11 @@ void displayScore(void)
 			break;
 		case 1:
 			sprintf(mode, "Game Mode: %s", "Endless");
+			sprintf(lvlstr, "Level : %d", Level);
+			break;
+		case 2: 
+			sprintf(mode, "Game Mode: %s", "Invasion");
+			sprintf(lvlstr, "Level : %d", Level);
 			break;
 		default:
 			sprintf(mode, "Game Mode: %s", "Undefined");
@@ -197,6 +206,8 @@ void displayScore(void)
 	drawString(480, 30, astsHit);
 	drawString(480, 15, mode);
 	drawString(480, 65, hrStr);
+
+	drawString(20, 550, lvlstr);
 }
 
 // Function to print game over on screen.
@@ -406,17 +417,29 @@ void gameView()
 
 #ifdef SHIPTEST
 	enterprise.renderShip();
+	for (int i = 0; i < enemies.size(); i ++)
+	{
+		enemies[i].renderShip();
+	}
 #endif
 	// Draw the bullets.
 	glColor3f(1.0, 1.0, 0.0);
 	for(int i = 0; i < bullets.size(); i++)
 		drawBullet(bullets[i]);
 	
+	switch (GameMode)
+	{
+		case 0:
+		case 1:
+			clipMeDaddy(); // Why is this "clip me daddy... i will have to fix this..."
 
-	clipMeDaddy(); // Why is this "clip me daddy... i will have to fix this..."
+			// draw the octogon
+			drawOctogon();
+			break;
 
-	// draw the octogon
-	drawOctogon();
+		case 2:
+			break;
+	}
 	
 	//display the score.
 	displayScore();
@@ -447,8 +470,17 @@ void gameLoop()
 	switch (gamestate)
 	{
 		case 1:
-			if (asteroidBelt.size()==0)
-				gamestate=3;
+			switch(GameMode)
+			{
+				case 0:
+					if (asteroidBelt.size()==0)
+						gamestate=3;
+					break;
+				case 2:
+					if (enemies.size()==0)
+						gamestate=3;
+					break;
+			}
 
 			timeC2 = glutGet(GLUT_ELAPSED_TIME);
 			// If the right arrow key has been pressed rotate the ship
@@ -496,18 +528,37 @@ void gameLoop()
 				// Increment Timekey pressed
 				timeKeyPressed++;
 			}*/
+			
 			switch (GameMode)
 			{	
 				case 1:
-					if (asteroidBelt.size() < (ENDLESS_ASTEROIDS*9)/10)
+					if (asteroidBelt.size() == 0)
 					{
-						for (int i = 0; i < ENDLESS_ASTEROIDS/10; i++)
+						Level++;
+						for (int i = 0; i < Level; i++)
 						{
 							asteroid a = asteroid();
 							asteroidBelt.push_back(a);
 						}
 					}
 					break;
+				case 2:
+					switch(gametick)
+					{
+						case 0:
+							for (int i =0; i < enemies.size(); i++)
+							{
+								enemies[i].iterateAction();
+							}
+							gametick++;
+							break;
+						case 5:
+							gametick=0;
+							break;
+						default:
+							gametick++;
+							break;
+					}
 			}
 
 	#ifdef LOGGING
@@ -517,9 +568,18 @@ void gameLoop()
 		collisionLogger.close();*/
 	#endif
 		// detect colitions with each asteroid in the belt.
-			for (int i = 0; i < asteroidBelt.size(); i++)
-				detectCollision(i);
-
+		switch(GameMode)
+		{
+			case 0:
+			case 1:
+				for (int i = 0; i < asteroidBelt.size(); i++)
+					detectCollision(i);
+				break;
+			case 2:
+				for (int i = 0; i < enemies.size(); i++)
+					detectCollision(i);
+				break;
+		}
 		// Iterate through and Increment each bullet's location
 			for (int i=0; i < bullets.size(); i++)
 			{
@@ -588,11 +648,8 @@ void initiateAsteroids()
 			}
 			break;
 		case 1:
-			for (int i = 0; i < ENDLESS_ASTEROIDS; i++)
-			{
-				asteroid a = asteroid();
-				asteroidBelt.push_back(a);
-			}
+			asteroid a = asteroid();
+			asteroidBelt.push_back(a);
 			break;
 	}
 
@@ -646,18 +703,17 @@ void initiateOctogon(void)
 	// Set the first point, rotate it then push it to the vector of points.
 	point p = {WORLD_COORDINATE_MIN_X ,WORLD_COORDINATE_MAX_Y / 2,0,1};
 	point c = {-WORLD_COORDINATE_MAX_X , WORLD_COORDINATE_MAX_Y / 2, 0,1};	
-	collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::trunc);
 
-	rotatePoint(p,45.0/2.0);
-	rotatePoint(c,45.0/2.0);
+	rotatePoint(p,(45.0/2.0)*(M_PI/180));
+	rotatePoint(c,(45.0/2.0)*(M_PI/180));
 
 	octogon.push_back(p);
 	clipPts.push_back(c);
 
 	for (int i = 0; i < 7; i++)
 	{
-		rotatePoint(p,-45);
-		rotatePoint(c,-45);
+		rotatePoint(p,-45*(M_PI/180));
+		rotatePoint(c,-45*(M_PI/180));
 		octogon.push_back(p);
 		clipPts.push_back(c);
 	}
@@ -724,6 +780,7 @@ void keyboard(unsigned char key, int x, int y)
 		//reloads asteroids and pauses game.
 		case 'r':
 		case 'R':
+			Level=1;
 			gamestate=0;
 			asteroidBelt.clear();
 			bullets.clear();
@@ -785,7 +842,6 @@ void keyboard(unsigned char key, int x, int y)
 			gamestate=0;
 			asteroidBelt.clear();
 			bullets.clear();
-			initiateAsteroids();
 			bulletsFired=0;
 			paused=true;
 			gameOver = false;
@@ -794,18 +850,39 @@ void keyboard(unsigned char key, int x, int y)
 			enterprise.rotation=0;		
 #endif
 
-#ifdef SHIPTEST
-			enterprise.setRotation(0);
-#endif
+			int x, y;
 
 			bulletsHit = 0;	
 			switch (GameMode)
 			{
 				case 0:
 					GameMode=1;
+					initiateAsteroids();
+#ifdef SHIPTEST
+					enterprise.setRotation(0);
+#endif
 					break;
 				case 1:
+					GameMode=2;
+#ifdef SHIPTEST
+					enterprise.setLocation(WORLD_COORDINATE_MAX_X/2, WORLD_COORDINATE_MAX_Y/5);
+					enterprise.setRotation(M_PI_2);
+					for (int i = 0; i < 9; i++)
+					{
+						enemies.push_back(ship(1));
+						x=WORLD_COORDINATE_MAX_X/10*(i+1);
+						y=WORLD_COORDINATE_MAX_Y/5*4;
+						enemies[i].setLocation(x, y);
+						enemies[i].setRotation(3*M_PI_2);
+					}
+#endif
+					break;
+				case 2:
 					GameMode=0;
+					initiateAsteroids();
+#ifdef SHIPTEST
+					enterprise.setRotation(0);
+#endif
 					break;
 			}
 			break;
@@ -888,10 +965,15 @@ void mouse(int button, int state, int x, int y)
 			switch(gamestate)
 			{
 				case 1:
-						spacePressed = true;
-						bullet shot = createBullet();
-						bullets.push_back(shot);
-						bulletsFired++;
+#ifndef SHIPTEST
+					spacePressed = true;
+					bullet shot = createBullet();
+					bullets.push_back(shot);
+					bulletsFired++;
+#endif
+#ifdef SHIPTEST
+					enterprise.fire();
+#endif
 					break;
 			}          
         }
@@ -899,16 +981,28 @@ void mouse(int button, int state, int x, int y)
 void passiveMouse(int x, int y)
 {
 	point temp ={x, y, 0, 1};
+	point pnt;
+	double bearing;
 #ifndef SHIPTEST
-	double bearing =-1*( atan2f(enterprise.aLocation.y-y, enterprise.aLocation.x-x) * (180 / M_PI))+180;
+	double bearing =-1*( atan2f(enterprise.aLocation.y-y, enterprise.aLocation.x-x)); //* (180 / M_PI))+180;
 	enterprise.rotation=bearing;
 #endif
 
 #ifdef SHIPTEST
-	point pnt = enterprise.getAtkPnts()[0];
-	double bearing =atan2f(pnt.y-y, pnt.x-x)* (180 / M_PI);
-	cout << bearing << " " << x << " " << y << endl;
-	enterprise.setRotation(bearing);
+	switch(GameMode)
+	{
+		case 0:
+		case 1:
+			pnt = enterprise.getAtkPnts()[0];
+			bearing =-1*(atan2f(pnt.y-y, pnt.x-x))+M_PI;
+			enterprise.setRotation(bearing);
+			break;
+
+		case 2:
+			enterprise.setLocation(x, WORLD_COORDINATE_MAX_Y/5);
+			break;
+	}
+
 #endif
 }
 

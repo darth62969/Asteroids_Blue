@@ -18,6 +18,7 @@ class ship
         
         //setters
         point getLocation();
+        int getHealth();
         void setRotation(double rot);
         void setLocation(double x, double y);
 
@@ -26,7 +27,7 @@ class ship
         void iterateAction();           // move / fire weapon
         void PowerUp(int power);        // change weapon type
         void setAction(int act);
-        void damageHealth(int dmg);
+        int damageHealth(int dmg);
         void resetShip();
 
         //render functions
@@ -46,11 +47,11 @@ class ship
         int cycle;
 
         //specific variables for things
-        double EndGameAnimation=7;
+        double EndGameAnimation;
         double WinGameAnimation=0;
         point shipRender;
 
-
+        double seconds;
 
 
 };

@@ -170,130 +170,236 @@ ship::ship(int tp)
 			location = {WORLD_COORDINATE_MAX_X/2, WORLD_COORDINATE_MAX_Y/2, 0, 1, 0};
 			
 			//Generate the Enterprise
-			shppnts.push_back(point{0, 5, 0, 1});
-			shppnts.push_back(point{-1, 2, 0, 1});
-			shppnts.push_back(point{-3, 2, 0, 1});
-			shppnts.push_back(point{-3, -5, 0, 1});
-			shppnts.push_back(point{-1, -5, 0, 1});
-			shppnts.push_back(point{-1, -1, 0, 1});
-			shppnts.push_back(point{1, -1, 0, 1});
-			shppnts.push_back(point{1, -5, 0, 1});
-			shppnts.push_back(point{3, -5, 0, 1});
-			shppnts.push_back(point{3, 2, 0, 1});
-			shppnts.push_back(point{1, 2, 0, 1});
+			shppnts.push_back(point{ 5,  0, 0, 1});
+			shppnts.push_back(point{ 2,  1, 0, 1});
+			shppnts.push_back(point{ 2,  3, 0, 1});
+			shppnts.push_back(point{-5,  3, 0, 1});
+			shppnts.push_back(point{-5,  1, 0, 1});
+			shppnts.push_back(point{ 0,  1, 0, 1});
+			shppnts.push_back(point{ 0, -1, 0, 1});
+			shppnts.push_back(point{-5, -1, 0, 1});
+			shppnts.push_back(point{-5, -3, 0, 1});
+			shppnts.push_back(point{ 2, -3, 0, 1});
+			shppnts.push_back(point{ 2, -1, 0, 1});
 
 			//Generate Trangles
 			cout << "teslating ship" << endl;
 			tessilateShip();
 
 			//set attack points (i.e. where it shoots from)
-			atkpnts.push_back(point{0, 5, 0, 1});
+			atkpnts.push_back(point{ 5,  0, 0, 1});
 
 			actionSet = 0;
 			health = 100;
 			cycle = 0;
+			EndGameAnimation = 5;
+
+			break;
+		case 1:
+			shppnts.push_back(point{ 3,  0, 0, 1});
+			shppnts.push_back(point{ 1,  1, 0, 1});
+			shppnts.push_back(point{ 0,  1, 0, 1});
+			shppnts.push_back(point{-1,  2, 0, 1});
+			shppnts.push_back(point{-1,  3, 0, 1});
+			shppnts.push_back(point{-3,  3, 0, 1});
+			shppnts.push_back(point{-3,  1, 0, 1});
+			shppnts.push_back(point{-2,  1, 0, 1});
+			shppnts.push_back(point{-2, -1, 0, 1});
+			shppnts.push_back(point{-3, -1, 0, 1});
+			shppnts.push_back(point{-3, -3, 0, 1});
+			shppnts.push_back(point{-1, -3, 0, 1});
+			shppnts.push_back(point{-1, -2, 0, 1});
+			shppnts.push_back(point{ 0, -1, 0, 1});
+			shppnts.push_back(point{ 1, -1, 0, 1});
+			
+			tessilateShip();
+
+			atkpnts.push_back(point{ 3,  0, 0, 1});
+
+			actionSet = 1;
+			health = 20;
+			cycle = 25;
 
 			break;
 	}
 }
+std::vector<point> ship::getPoints()
+{
+	vector<point> temp = shppnts;
+	for (int i =0; i < temp.size(); i++)
+	{
+			scalePoint(temp[i], 5);
+
+			point tempp;
+
+			tempp.x= temp[i].x*cos(location.angle)-temp[i].y*sin(location.angle);
+			tempp.y= temp[i].x*sin(location.angle)+temp[i].y*cos(location.angle);
+			
+			temp[i] = tempp;
+			temp[i].x += location.x;
+			temp[i].y += location.y;
+	}
+
+	return temp;	
+}
+std::vector<point> ship::getAtkPnts()
+{
+	vector<point> temp = atkpnts;
+	for (int i =0; i < temp.size(); i++)
+	{
+			scalePoint(temp[i], 5);
+
+			point tempp;
+
+			tempp.x= temp[i].x*cos(location.angle)-temp[i].y*sin(location.angle);
+			tempp.y= temp[i].x*sin(location.angle)+temp[i].y*cos(location.angle);
+			
+			temp[i] = tempp;
+			temp[i].x += location.x;
+			temp[i].y += location.y;
+	}
+
+	return temp;	
+}
+
 point ship::getLocation()
 {
 	return location;
 }
-std::vector<point> ship::getAtkPnts()
+int  ship::getHealth()
 {
-	vector<point> temp1 = atkpnts;
-	vector<point> temp2 = shppnts;
-	for (int i =0; i < temp1.size(); i++)
-	{
-		scalePoint(temp1[i], 5);
-		rotatePoint(temp1[i], location.angle);
-	}
-	for (int i =0; i < temp2.size(); i++)
-	{
-		scalePoint(temp2[i], 5);
-		rotatePoint(temp2[i], location.angle);
-	}
-	point min = temp2[0];
-	for (int i = 0; i <temp2.size(); i++)
-	{
-		if (min.x > temp2[i].x)
-			min.x=temp2[i].x;
-		if (min.y > temp2[i].y)
-			min.y=temp2[i].y;
-
-	}	
-	for (int i = 0; i<temp1.size(); i++)
-	{
-		temp1[i].x += location.x-min.x;
-		temp1[i].y += location.y-min.y;
-	}
-
-	return temp1;	
+	return health;
 }
 
 void ship::setRotation(double rot)
 {
 	location.angle=rot;
 }
+void ship::setLocation(double x, double y)
+{
+	location.x = x;
+	location.y = y;
+}
+
+void ship::fire()
+{
+	vector<point> temp=getAtkPnts();
+	for (int i = 0; i < temp.size(); i++)
+	{
+		//cout << temp[i].x << " " << temp[i].y << endl;
+		bullet shot;
+		shot.location= temp[i];
+		shot.theta = location.angle;
+		bullets.push_back(shot);
+	}
+}
+
+void ship::iterateAction()
+{
+	switch(actionSet)
+	{
+		case 1:
+			cycle++;
+			switch(cycle/50)
+			{
+				case 0:
+					location.x++;
+					break;
+				case 1:
+					location.x--;
+					break;
+			}
+			switch(cycle%50)
+			{
+				case 0:
+					location.y-=10;
+					break;
+
+			}
+			if (cycle >= 100)
+			{
+				cycle = 0;
+			}
+			switch(rand()%70)
+			{
+				case 0: 
+					fire();
+					break;
+			}
+
+	}		
+}
+
+int ship::damageHealth(int dmg)
+{
+	health-=dmg;
+	return health;
+}
 
 void ship::resetShip()
 {
-	location = {WORLD_COORDINATE_MAX_X/2, WORLD_COORDINATE_MAX_Y/2, 0, 1, 0};
+	switch (type)
+	{
+		case 0:
+			location = {WORLD_COORDINATE_MAX_X/2, WORLD_COORDINATE_MAX_Y/2, 0, 1, 0};
+			EndGameAnimation=5;
+			break;
+		case 1:
+			/*
+			 * ToDo: 
+			 *  - Create reset code for type 1 ships.
+			 */
+			break;
+	}
 }
 
 void ship::renderShip()
 {
-
+	// Create a temporary vector with the ship's Triangles
 	vector<triangle> temp = shptris;
 
-	//Copy the points in the ship (a) to b
-
+	//scale the points
 	for (int i = 0; i < temp.size(); i++)
-	{
-
-		switch (gamestate)
-		{
-			case 2:
-				scalePoint(temp[i].a, EndGameAnimation);
-				scalePoint(temp[i].b, EndGameAnimation);
-				scalePoint(temp[i].c, EndGameAnimation);
-				EndGameAnimation*=0.99;
-				break;
-			default:
-				scalePoint(temp[i].a, 5);
-				scalePoint(temp[i].b, 5);
-				scalePoint(temp[i].c, 5);
-		}
-		//scalePoint(b[i], 7);
-		rotatePoint(temp[i].a, location.angle);
-		rotatePoint(temp[i].b, location.angle);
-		rotatePoint(temp[i].c, location.angle);
-	}	
-	point min = temp[0].a;
-	for (int i = 0; i <temp.size(); i++)
 	{
 		point b[3];
 		b[0]=temp[i].a;
 		b[1]=temp[i].b;
 		b[2]=temp[i].c;
-		for (int j; j<3; j++)
-		{
-			if (min.x > b[j].x)
-				min.x=b[j].x;
-			if (min.y > b[j].y)
-				min.y=b[j].y;
+		for(int j=0; j<3; j++)
+		{ 
+			switch(gamestate)
+			{
+				//if end game we want to play the end animation
+				case 2: 
+					scalePoint(b[j], EndGameAnimation);
+					EndGameAnimation*=0.999;
+					break;
+				// all other cases leave the ship alone
+				default:
+					scalePoint(b[j], 5);
+					break;
+			}
+
+			point tempp;
+
+			tempp.x= b[j].x*cos(location.angle)-b[j].y*sin(location.angle);
+			tempp.y= b[j].x*sin(location.angle)+b[j].y*cos(location.angle);
+			b[j] = tempp;
 		}
-	}	
+
+		temp[i].a=b[0];
+		temp[i].b=b[1];
+		temp[i].c=b[2];
+	}
 		
-		for(int i = 0; i<temp.size(); i++)
-		{    
-			glBegin(GL_TRIANGLES);
-			glVertex2d((temp[i].a.x-min.x)+location.x, (temp[i].a.y-min.y)+location.y);
-			glVertex2d((temp[i].b.x-min.x)+location.x, (temp[i].b.y-min.y)+location.y);
-			glVertex2d((temp[i].c.x-min.x)+location.x, (temp[i].c.y-min.y)+location.y);
-			glEnd();
-		}
+	for(int i = 0; i<temp.size(); i++)
+	{    
+		glBegin(GL_TRIANGLES);
+			glVertex2d((temp[i].a.x)+(location.x), (temp[i].a.y)+(location.y));
+			glVertex2d((temp[i].b.x)+(location.x), (temp[i].b.y)+(location.y));
+			glVertex2d((temp[i].c.x)+(location.x), (temp[i].c.y)+(location.y));
+		glEnd();
+	}
 
 	switch(gamestate)
 	{

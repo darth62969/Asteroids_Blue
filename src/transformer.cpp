@@ -59,7 +59,7 @@ void mVmult(double a[][4], int dim1a, int dim2a,
 
 void buildRotateZ(double mat[][4], double theta)
 {
-	theta = theta * M_PI / 180.0;
+	//theta = theta * M_PI / 180.0;
 
 	/* Define Rotation Matrix around Z-Axis */
 	mat[0][0] = cos(theta); mat[0][1] = -sin(theta); mat[0][2] = 0.0; mat[0][3] = 0.0;

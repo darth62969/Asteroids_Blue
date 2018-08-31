@@ -112,7 +112,7 @@ asteroid::asteroid()
 	translation.angle = rand() % 360;
 	translation.angle *= M_PI / 180.0;
 	//cout << translation.angle << endl;
-	translation.w = ((rand() % 16)+1)/4.0;
+	translation.w = ((rand() % 16)+1)/2;
 
 
 	// This logging protocal lets us know where the center of the asteroid is. 
@@ -194,7 +194,7 @@ asteroid::asteroid(triangle a, point location, point offset, int num, float Orot
 	Orotation *= 180/M_PI;
 	translation.angle = Orotation+num*2;
 	translation.angle *= M_PI / 180.0;
-	translation.w = (rand()%16+1)/4.0;
+	translation.w = (rand()%16+1)/2.0;
 
 	center.x = location.x + offset.x;
 	center.y = location.y + offset.y;
@@ -277,10 +277,10 @@ void asteroid::incrementLocation()
 		translation.angle += asinf((magnatude*sin((M_PI-Dbearing)))/translation.w);
 
 		// Here i'm setting a minimum and maximum speed for gameplay purposes.
-		if (translation.w>3)
-			translation.w = 3;
-		if (translation.w < .5)
-			translation.w = .5;
+		if (translation.w >  1.5)
+			translation.w =  1.5;
+		if (translation.w < .2)
+			translation.w = .2;
 	}
 
 	// After we calculate the positions of the asteroids, we need to move them. so we move the center by use of trig.
