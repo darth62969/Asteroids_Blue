@@ -394,11 +394,26 @@ void ship::renderShip()
 		
 	for(int i = 0; i<temp.size(); i++)
 	{    
-		glBegin(GL_TRIANGLES);
-			glVertex2d((temp[i].a.x)+(location.x), (temp[i].a.y)+(location.y));
-			glVertex2d((temp[i].b.x)+(location.x), (temp[i].b.y)+(location.y));
-			glVertex2d((temp[i].c.x)+(location.x), (temp[i].c.y)+(location.y));
-		glEnd();
+		switch (filled)
+		{
+			case 0:
+			case 1:
+				glBegin(GL_TRIANGLES);
+					glVertex2d((temp[i].a.x)+(location.x), (temp[i].a.y)+(location.y));
+					glVertex2d((temp[i].b.x)+(location.x), (temp[i].b.y)+(location.y));
+					glVertex2d((temp[i].c.x)+(location.x), (temp[i].c.y)+(location.y));
+				glEnd();
+				break;
+			case 2:
+				glBegin (GL_LINES);
+					glVertex2d((temp[i].a.x)+(location.x), (temp[i].a.y)+(location.y));
+					glVertex2d((temp[i].b.x)+(location.x), (temp[i].b.y)+(location.y));
+					glVertex2d((temp[i].b.x)+(location.x), (temp[i].b.y)+(location.y));
+					glVertex2d((temp[i].c.x)+(location.x), (temp[i].c.y)+(location.y));
+					glVertex2d((temp[i].c.x)+(location.x), (temp[i].c.y)+(location.y));
+					glVertex2d((temp[i].a.x)+(location.x), (temp[i].a.y)+(location.y));
+				glEnd();
+		}
 	}
 
 	switch(gamestate)
@@ -424,12 +439,231 @@ void ship::renderShip()
 void ship::tessilateShip()
 {
 	vector<point> temp = shppnts;
-	// Begin at vertex 0.
-	int i=0;
+	point A = temp[0];
+	point B = temp[1];
+	point C = temp[2];
+	int Ai = 0;
+	int Bi = 1;
+	int Ci = 2;
+	triangle tri;
+	double z;
 
+	// Begin at vertex 0.
+
+/*	while (temp.size()>3)
+	{
+		point l1;
+		l1.x = A.x - B.x;
+		l1.y = A.y - B.y;
+
+		point l2;
+		l2.x = C.x - B.x;
+		l2.y = C.y - c.x;
+
+		double z = l1.x*l2.y = l2.x*l2.y
+	}
+*/
+	int i = 0;
 	// While there are more than three vertices left in points, run the following code.
 	while(temp.size() > 3)
 	{
+		//cout << intersect (temp[0], temp[1], A, B) << endl;
+
+		bool insect = false;
+		for (int i1  = 0; i1 < temp.size(); i1++)
+		{
+			switch (i1)
+			{
+				case 0:
+					if(intersect(temp[i1], temp[temp.size()-1], A, B))
+						insect=true;
+					break;
+				default:
+					if (intersect(temp[i1], temp[i1-1], A, B))
+					{
+						cout	<< " A->B intersects (" << temp[i1].x << " , " 
+								<< temp[i1].y << " ),( " << temp[i1-1].x << " , "
+								<< temp[i1-1].y << " )" << endl;
+						insect = true;
+					}
+					break;
+			}
+			if(insect)
+			{	
+				break;
+			}
+		}
+		for (int i1  = 0; i1 < temp.size(); i1++)
+		{
+			switch (i1)
+			{
+				case 0:
+					if(intersect(temp[i1], temp[temp.size()-1], B, C))
+						insect = true;
+					break;
+				default:
+					if (intersect(temp[i1], temp[i1-1], B, C))
+					{
+						cout	<< " B->C intersects (" << temp[i1].x << " , " 
+							<< temp[i1].y << " ),( " << temp[i1-1].x << " , "
+							<< temp[i1-1].y << " )" << endl;
+						insect = true;
+					}
+					break;
+			}
+			if(insect)
+				break;
+		}
+		for (int i1  = 0; i1 < temp.size(); i1++)
+		{
+			switch (i1)
+			{
+				case 0:
+					if(intersect(temp[i1], temp[temp.size()-1], C, A))
+						insect = true;
+					break;
+				default:
+					if (intersect(temp[i1], temp[i1-1], C, A))
+					{
+						cout	<< "C->A intersects (" << temp[i1].x << " , " 
+							<< temp[i1].y << " ),( " << temp[i1-1].x << " , "
+							<< temp[i1-1].y << " )" << endl;
+						insect = true;
+					}
+					break;
+			}
+			if(insect)
+				break;
+		}
+		for (int i1  = 0; i1 < shptris.size(); i1++)
+		{
+			point temp1[3] = {shptris[i1].a, shptris[i1].b, shptris[i1].c};
+			for (int j1=0; j1<3; j1++)
+			{
+				switch (j1)
+				{
+					case 0:
+						if(intersect(temp1[j1], temp1[2], A, B))
+							insect = true;
+						if(intersect(temp1[j1], temp1[2], B, C))
+							insect = true;
+						if(intersect(temp1[j1], temp1[2], C, A))
+							insect = true;
+						break;
+					default:
+						if (intersect(temp1[j1], temp1[j1-1], A, B))
+							insect = true;
+						if (intersect(temp1[j1], temp1[j1-1], B, C))
+							insect = true;
+						if (intersect(temp1[j1], temp1[j1-1], C, A))
+							insect = true;
+						break;
+				}
+			}
+			if(insect)
+				break;
+		}
+		if (insect)
+		{
+			Ci++;
+			if(Ci>=temp.size())
+			{
+				Bi++;
+				if(Bi>=temp.size()-1)
+				{
+					temp.erase(temp.begin());
+					Bi=Ai+1;
+					Ci=Bi+1;
+					A=temp[Ai];
+					B=temp[Bi];
+					C=temp[Ci];
+				}
+				else
+				{
+					Ci=Bi+1;
+					B=temp[Bi];
+					C=temp[Ci];
+				}
+			}
+			else
+			{
+				C=temp[Ci];
+			}
+		}
+
+		if(!insect)
+		{
+			point l1;
+			l1.x = A.x - B.x;
+			l1.y = A.y - B.y;
+
+			point l2;
+			l2.x = C.x - B.x;
+			l2.y = C.y - B.y;
+
+			z = l1.x*l2.y - l2.x*l1.y;
+
+			//cout << " Index " << Ai << " A  ( "  << A.x << " , " << A.y << " )" << endl;
+			//cout << " Index " << Bi << " B  ( "  << B.x << " , " << B.y << " )" << endl;
+			//cout << " Index " << Ci << " C  ( "  << C.x << " , " << C.y << " )" << endl;
+			//cout << " z = " << z << endl;
+
+			bool within = false;
+			for (int i =0; i < temp.size(); i ++)
+			{
+				if(PointInTriangle(temp[i], A, B, C) && Ai!=i && Bi!=i && Ci!=i)
+					within = true;
+			}
+
+			if (z<0 && !within)
+			{
+				cout << " Index " << Ai << " A  ( "  << A.x << " , " << A.y << " )" << endl;
+				cout << " Index " << Bi << " B  ( "  << B.x << " , " << B.y << " )" << endl;
+				cout << " Index " << Ci << " C  ( "  << C.x << " , " << C.y << " )" << endl;
+				tri.a = A;
+				tri.b = B;
+				tri.c = C;
+				shptris.push_back(tri);
+
+				Bi=Ci;
+				B=temp[Bi];
+				
+				Ci++;
+				C=temp[Ci];
+
+			}
+			else
+			{
+				Ci++;
+				if(Ci>=temp.size())
+				{
+					Bi++;
+					if(Bi>=temp.size()-1)
+					{
+						temp.erase(temp.begin());
+						Bi=Ai+1;
+						Ci=Bi+1;
+						A=temp[Ai];
+						B=temp[Bi];
+						C=temp[Ci];
+					}
+					else
+					{
+						Ci=Bi+1;
+						B=temp[Bi];
+						C=temp[Ci];
+					}
+				}
+				else
+				{
+					C=temp[Ci];
+				}
+
+			}
+
+		}
+	}
+		/*
 		// Set the middle vertex as the vertex immediately following i. Set the third vertex as the vertex immediately following j.
 		int j=i+1;
 		int k=j+1;
@@ -448,8 +682,8 @@ void ship::tessilateShip()
 		float l2_x = temp.at(k).x - temp.at(j).x;
 		float l2_y = temp.at(k).y - temp.at(j).y;	
 		// z is the z component of the cross product of l1 (i to j) and l2 (k to j).
-		float z = l1_x*l2_y - l2_x*l1_y;
-
+		z = l1_x*l2_y - l2_x*l1_y;
+		cout << " z = " << z << endl;
 		// If CW winding occurs, set the starting vertex to j.
 		if(z > 0.0)
 			i = j;
@@ -458,8 +692,12 @@ void ship::tessilateShip()
 			temp.erase(temp.begin() + j);
 		// If CCW winding occurs, run the following code.
 		else if(z < 0.0)
-		{
-			// In the special circumstance that k is vertex 2, determine if all the remaining vertices would cause concavity. Determine the z component of the cross product of l1 (k to each remaining vertex) and l2 (i to each remaining vertex).
+		{*/
+			/*
+			 * In the special circumstance that k is vertex 2, determine if all the remaining vertices 
+			 * would cause concavity. Determine the z component of the cross product of l1 (k to each 
+			 * remaining vertex) and l2 (i to each remaining vertex).
+			 *//*
 			float z2 = -1.0;
 			if(k == 2)
 			{	
@@ -519,6 +757,15 @@ void ship::tessilateShip()
 	t.a = temp.front();
 	t.b = temp.at(1);
 	t.c = temp.back();
-	shptris.push_back(t);	
+	shptris.push_back(t);	*/
+
+	for (int i = 0; i < shptris.size(); i++)
+	{
+		cout << "Triangle " << i << endl;
+		cout << "A ( " << shptris[i].a.x << " , " << shptris[i].a.y << " )" << endl;
+		cout << "B ( " << shptris[i].b.x << " , " << shptris[i].b.y << " )" << endl;
+		cout << "C ( " << shptris[i].c.x << " , " << shptris[i].c.y << " )" << endl;
+		cout << endl;
+	}
 }
 #endif

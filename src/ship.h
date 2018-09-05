@@ -25,7 +25,8 @@ class ship
         //actions
         void fire();                    // fire weapon
         void iterateAction();           // move / fire weapon
-        void PowerUp(int power);        // change weapon type
+        //void activatePowerUp(PowerUp pwr);        // change weapon type
+        void activatePowerUp(int pwr);
         void setAction(int act);
         int damageHealth(int dmg);
         void resetShip();
@@ -45,6 +46,7 @@ class ship
         int actionSet;
         int health;
         int cycle;
+        //PowerUp power
 
         //specific variables for things
         double EndGameAnimation;
@@ -54,6 +56,30 @@ class ship
         double seconds;
 
 
+};
+
+class PowerUp
+{
+    
+    public:
+        explicit PowerUp(int type);
+        explicit PowerUp(int frate, int ftype, int fcount, double farch, int dmg, int time);
+        void setLocation(point loc);
+        void increment();
+        void drawPowerUp();
+    private:
+        friend class ship;
+
+        int type;
+        int firerate;
+        int firetype;
+        int firecount;
+        double firearc;
+        int damage;
+        int time;
+        point location;
+
+    
 };
 
 #endif

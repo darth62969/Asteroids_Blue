@@ -169,6 +169,7 @@ void displayScore(void)
 	char hrStr[50];
 	char mode[50];
 	char lvlstr[50];
+	char health[50];
 
 	// Place the text into the charstrings.
 	switch(GameMode)
@@ -193,6 +194,7 @@ void displayScore(void)
 	sprintf(astsOnScr2, "Screen: %3d", (int)asteroidBelt.size()); 
 	sprintf(astsHit, "Asteroids Hit: %4d", bulletsHit);
 	sprintf(hrStr, "Hit Ratio:  %5.2f %%", hitRatio);
+	sprintf(health, "Health: %%%d", enterprise.getHealth() );
 
 	//Set color to green.
 	glColor3f(0.2, 0.5, 0.0);
@@ -206,8 +208,10 @@ void displayScore(void)
 	drawString(480, 30, astsHit);
 	drawString(480, 15, mode);
 	drawString(480, 65, hrStr);
-
+	
+	drawString(20, 565, health);
 	drawString(20, 550, lvlstr);
+	
 }
 
 // Function to print game over on screen.
@@ -417,10 +421,11 @@ void gameView()
 
 #ifdef SHIPTEST
 	enterprise.renderShip();
-	for (int i = 0; i < enemies.size(); i ++)
+	for (int i = 0; i < enemies.size(); i++)
 	{
 		enemies[i].renderShip();
 	}
+
 #endif
 	// Draw the bullets.
 	glColor3f(1.0, 1.0, 0.0);
@@ -578,8 +583,21 @@ void gameLoop()
 			case 2:
 				for (int i = 0; i < enemies.size(); i++)
 					detectCollision(i);
-				break;
+
+				for (int i = 0; i < bullets.size(); i++)
+				{
+					switch(detectCollision(enterprise, bullets[i]))
+					{
+						case 0:
+							bullets.erase(bullets.begin()+i);
+							if (enterprise.damageHealth(10)<=0)
+								gamestate=2;
+							break;
+					}
+				}
+		
 		}
+	
 		// Iterate through and Increment each bullet's location
 			for (int i=0; i < bullets.size(); i++)
 			{

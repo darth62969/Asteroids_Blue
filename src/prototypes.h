@@ -19,6 +19,7 @@
 #define PROTOTYPES
 
 #include "structs.h"
+#include "ship.h"
 #include "asteroid.h"
 #include <vector>
 //#include <GL/glut.h>
@@ -49,11 +50,15 @@ void clip();
 int insideOctogon(point p);
 bool intersect (point v1, point v2, point v3, point v4);
 void detectCollision (int i); 
+int detectCollision(ship s, bullet b);
 bool asteroidProximity (asteroid ast1, asteroid ast2);
 bool bulletProximity (asteroid ast1, bullet b1);
 bool shipProximity (asteroid ast1, std::vector <point> b2);
 bool intersect1 (point v1, point v2, point v3, point v4);
 void clipMeDaddy();
 
+//source: https://stackoverflow.com/questions/2049582/how-to-determine-if-a-point-is-in-a-2d-triangle
+double sign (point p1, point p2, point p3);
+bool PointInTriangle (point pt, point v1, point v2, point v3);
 
 #endif

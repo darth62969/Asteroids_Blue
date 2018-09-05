@@ -44,8 +44,8 @@ bool bulletProximity(asteroid ast1, bullet b1)
 }
 bool bulletProximity(ship shp1, bullet b1)
 {
-	if (	abs(b1.location.x - shp1.getLocation().x) <= ASTEROID_MAX_X 
-		&& 	abs(b1.location.y - shp1.getLocation().y) <= ASTEROID_MAX_Y)
+	if (	abs(b1.location.x - shp1.getLocation().x) <= 50 
+		&& 	abs(b1.location.y - shp1.getLocation().y) <= 50)
 	{
 		return true;
 	}
@@ -169,10 +169,13 @@ void detectCollision(int index)
 							if (intersect(tempj, temp0, cmd[k], cmd[0]))
 							{
 
-
-								//gameover code
-								gamestate = 2;
-								gameOver = true;
+								switch(enterprise.damageHealth(10))
+								{
+									case 0:
+										//gameover code
+										gamestate = 2;
+										gameOver = true;
+								}
 							}
 						}
 						else if (j == a1.size()-1)
@@ -186,11 +189,13 @@ void detectCollision(int index)
 
 							if (intersect(tempj, temp0, cmd[k], cmd[k+1]))
 							{	
-				
-								//gameover code
-								gamestate = 2;
-								gameOver = true;
-						
+								switch(enterprise.damageHealth(10))
+								{
+									case 0:
+										//gameover code
+										gamestate = 2;
+										gameOver = true;
+								}
 							}	
 						}
 						else if (k == cmd.size()-1)
@@ -204,10 +209,13 @@ void detectCollision(int index)
 
 							if (intersect(tempj, tempj1, cmd[k], cmd[0]))
 							{
-							
-								//gameover code
-								gamestate = 2;
-								gameOver = true;
+								switch(enterprise.damageHealth(10))
+								{
+									case 0:
+										//gameover code
+										gamestate = 2;
+										gameOver = true;
+								}
 							}	
 						}
 						else
@@ -221,9 +229,13 @@ void detectCollision(int index)
 
 							if (intersect(tempj, tempj1, cmd[k], cmd[k+1]))
 							{
-								//gameover code
-								gamestate = 2;
-								gameOver = true;
+								switch(enterprise.damageHealth(10))
+								{
+									case 0:
+										//gameover code
+										gamestate = 2;
+										gameOver = true;
+								}
 							}
 						}
 					}
@@ -587,4 +599,66 @@ void detectCollision(int index)
 			asteroidBelt.insert(asteroidBelt.end(), n.begin(), n.end());
 		}	
 	}
-}		
+}	
+#ifdef SHIPTEST	
+int detectCollision(ship s, bullet b)
+{
+	int collision = 1;
+	int remaining;
+	if (bulletProximity (s, b))
+	{
+		//We are creating a Temporary Bullet that is 2 units behind the bullet
+		
+		bullet tmpbul; 
+		tmpbul.location.x = b.location.x - 2.0 * cos(b.theta);
+		tmpbul.location.y = b.location.y - 2.0 * sin(b.theta);
+
+		// We are creating a Temporary Vector Containing the Points in the ship
+		vector<point> ShpPnts = s.getPoints();
+		
+		// A For Loop to cycle throught the points
+		for (int i = 0; i < ShpPnts.size(); i++)
+ 		{
+ 			if (i == ShpPnts.size()-1)
+ 			{
+				// We create 2 points to run in the intersect program.
+				point temp1;
+ 				temp1.x = ShpPnts[i].x;
+	     		temp1.y = ShpPnts[i].y;
+	    		point temp2;
+	    		temp2.x =ShpPnts[0].x;
+  				temp2.y = ShpPnts[0].y;
+
+				// We are checking where it intercepts.
+				if(intersect(temp1, temp2, tmpbul.location, b.location))
+				{
+					//Set collision to true
+					collision = 0; 
+					//breaks out of checking specific bullet loop
+					break;
+				}
+			}
+
+			else 
+			{
+				point temp1;
+ 				temp1.x = ShpPnts[i].x;
+	     		temp1.y = ShpPnts[i].y;
+		    	point temp2;
+		    	temp2.x = ShpPnts[i+1].x;
+    			temp2.y = ShpPnts[i+1].y;
+            
+				if(intersect(temp2, temp1, tmpbul.location, b.location))
+				{				
+					
+					// Set Collision to true
+					collision = 0;
+					//breaks out of checking specific bullet loop
+					break;
+				}
+			}						
+		}
+	}
+	return collision;
+}
+#endif

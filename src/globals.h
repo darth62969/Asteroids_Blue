@@ -36,6 +36,7 @@ extern vector<ship> enemies;
 extern bool gameOver;
 extern int gamestate;
 extern int GameMode;
+extern int filled;
 
 // Log Writers
 extern ofstream asteroidLogger;

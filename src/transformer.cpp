@@ -134,3 +134,21 @@ void translatePoint(point& p,double x, double y, double z)
 	mtop(p, B);
 }
 
+//Source: https://stackoverflow.com/questions/2049582/how-to-determine-if-a-point-is-in-a-2d-triangle
+double sign (point p1, point p2, point p3)
+{
+    return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+}
+
+bool PointInTriangle (point pt, point v1, point v2, point v3)
+{
+    bool b1, b2, b3;
+
+    b1 = sign(pt, v1, v2) < 0.0;
+    b2 = sign(pt, v2, v3) < 0.0;
+    b3 = sign(pt, v3, v1) < 0.0;
+
+    return ((b1 == b2) && (b2 == b3));
+}
+// end Source
+
