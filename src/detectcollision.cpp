@@ -168,13 +168,13 @@ void detectCollision(int index)
 
 							if (intersect(tempj, temp0, cmd[k], cmd[0]))
 							{
-
-								switch(enterprise.damageHealth(10))
+								asteroidBelt.erase(asteroidBelt.begin()+index);
+								enterprise.damageHealth(10);
+								if (enterprise.getHealth()>=0)
 								{
-									case 0:
-										//gameover code
-										gamestate = 2;
-										gameOver = true;
+									//gameover code
+									gamestate = 2;
+									gameOver = true;
 								}
 							}
 						}
@@ -189,12 +189,13 @@ void detectCollision(int index)
 
 							if (intersect(tempj, temp0, cmd[k], cmd[k+1]))
 							{	
-								switch(enterprise.damageHealth(10))
+								asteroidBelt.erase(asteroidBelt.begin()+index);
+								enterprise.damageHealth(10);
+								if (enterprise.getHealth()<=0)
 								{
-									case 0:
-										//gameover code
-										gamestate = 2;
-										gameOver = true;
+									//gameover code
+									gamestate = 2;
+									gameOver = true;
 								}
 							}	
 						}
@@ -209,12 +210,13 @@ void detectCollision(int index)
 
 							if (intersect(tempj, tempj1, cmd[k], cmd[0]))
 							{
-								switch(enterprise.damageHealth(10))
+								asteroidBelt.erase(asteroidBelt.begin()+index);
+								enterprise.damageHealth(10);
+								if (enterprise.getHealth()<=0)
 								{
-									case 0:
-										//gameover code
-										gamestate = 2;
-										gameOver = true;
+									//gameover code
+									gamestate = 2;
+									gameOver = true;
 								}
 							}	
 						}
@@ -229,12 +231,13 @@ void detectCollision(int index)
 
 							if (intersect(tempj, tempj1, cmd[k], cmd[k+1]))
 							{
-								switch(enterprise.damageHealth(10))
+								asteroidBelt.erase(asteroidBelt.begin()+index);
+								enterprise.damageHealth(10);
+								if (enterprise.getHealth()<=0)
 								{
-									case 0:
-										//gameover code
-										gamestate = 2;
-										gameOver = true;
+									//gameover code
+									gamestate = 2;
+									gameOver = true;
 								}
 							}
 						}
@@ -258,7 +261,7 @@ void detectCollision(int index)
 			{
 				case 0:
 				case 1:
-					if (bulletProximity (asteroidBelt[index], bullets[j]))
+				/*	if (bulletProximity (asteroidBelt[index], bullets[j]))
 					{
 						bullet tmpbul; 
 						tmpbul.location.x = bullets.at(j).location.x - 10.0 * cos(bullets.at(j).theta);
@@ -331,7 +334,7 @@ void detectCollision(int index)
 								}
 							}						
 						}
-					}
+					}*/
 					break;
 
 			case 2:
@@ -603,62 +606,23 @@ void detectCollision(int index)
 #ifdef SHIPTEST	
 int detectCollision(ship s, bullet b)
 {
-	int collision = 1;
-	int remaining;
-	if (bulletProximity (s, b))
+	vector<triangle> temp = s.getTriangles();
+	for (int i = 0; i < temp.size(); i++)
 	{
-		//We are creating a Temporary Bullet that is 2 units behind the bullet
-		
-		bullet tmpbul; 
-		tmpbul.location.x = b.location.x - 2.0 * cos(b.theta);
-		tmpbul.location.y = b.location.y - 2.0 * sin(b.theta);
-
-		// We are creating a Temporary Vector Containing the Points in the ship
-		vector<point> ShpPnts = s.getPoints();
-		
-		// A For Loop to cycle throught the points
-		for (int i = 0; i < ShpPnts.size(); i++)
- 		{
- 			if (i == ShpPnts.size()-1)
- 			{
-				// We create 2 points to run in the intersect program.
-				point temp1;
- 				temp1.x = ShpPnts[i].x;
-	     		temp1.y = ShpPnts[i].y;
-	    		point temp2;
-	    		temp2.x =ShpPnts[0].x;
-  				temp2.y = ShpPnts[0].y;
-
-				// We are checking where it intercepts.
-				if(intersect(temp1, temp2, tmpbul.location, b.location))
-				{
-					//Set collision to true
-					collision = 0; 
-					//breaks out of checking specific bullet loop
-					break;
-				}
-			}
-
-			else 
-			{
-				point temp1;
- 				temp1.x = ShpPnts[i].x;
-	     		temp1.y = ShpPnts[i].y;
-		    	point temp2;
-		    	temp2.x = ShpPnts[i+1].x;
-    			temp2.y = ShpPnts[i+1].y;
-            
-				if(intersect(temp2, temp1, tmpbul.location, b.location))
-				{				
-					
-					// Set Collision to true
-					collision = 0;
-					//breaks out of checking specific bullet loop
-					break;
-				}
-			}						
-		}
+		if (PointInTriangle(b.location, temp[i].a, temp[i].b, temp[i].c))
+			return 0;
 	}
-	return collision;
+	return 1;
+	//return collision;
+}
+int detectCollision(asteroid a, bullet b)
+{
+	vector<triangle> temp = a.getTess2();
+	for (int i = 0; i < temp.size(); i++)
+	{
+		if (PointInTriangle(b.location, temp[i].a, temp[i].b, temp[i].c))
+			return 0;
+	}
+	return 1;
 }
 #endif

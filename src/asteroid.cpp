@@ -162,6 +162,7 @@ asteroid::asteroid()
 				astPnts.push_back(b);
 			}
 
+
 		}
 		
 	}
@@ -467,103 +468,180 @@ void asteroid::tessellateAsteriod()
  * 	Organize points in astPnts in counterclockwise direction
  *	Create Triangles from astPnts and save them in to astTris
  */
- 	vector<point> temp = astPnts;
-	// Begin at vertex 0.
-	int i=0;
+	vector<point> temp = astPnts;
+	point A = temp[0];
+	point B = temp[1];
+	point C = temp[2];
+	int Ai = 0;
+	int Bi = 1;
+	int Ci = 2;
+	triangle tri;
+	double z;
 
+	int i = 0;
 	// While there are more than three vertices left in points, run the following code.
-	while(temp.size() > 3)
+	while(temp.size() >= 3)
 	{
-		// Set the middle vertex as the vertex immediately following i. Set the third vertex as the vertex immediately following j.
-		int j=i+1;
-		int k=j+1;
-		// If j is vertex 0, set j to 0 and k to 1. 
-		if(j == temp.size())
-		{
-			j = 0;
-			k = 1;
-		}
-		// If k is vertex 0, set k to 0.
-		else if(k == temp.size())
-			k = 0;	
-	
-		float l1_x = temp.at(i).x - temp.at(j).x;
-		float l1_y = temp.at(i).y - temp.at(j).y;
-		float l2_x = temp.at(k).x - temp.at(j).x;
-		float l2_y = temp.at(k).y - temp.at(j).y;	
-		// z is the z component of the cross product of l1 (i to j) and l2 (k to j).
-		float z = l1_x*l2_y - l2_x*l1_y;
+		//cout << intersect (temp[0], temp[1], A, B) << endl;
 
-		// If CW winding occurs, set the starting vertex to j.
-		if(z > 0.0)
-			i = j;
-		// If the middle point lies on a line segment connecting the first and third points, erase it.
-		else if(z == 0.0)
-			temp.erase(temp.begin() + j);
-		// If CCW winding occurs, run the following code.
-		else if(z < 0.0)
+		bool insect = false;
+		for (int i1  = 0; i1 < astPnts.size(); i1++)
 		{
-			// In the special circumstance that k is vertex 2, determine if all the remaining vertices would cause concavity. Determine the z component of the cross product of l1 (k to each remaining vertex) and l2 (i to each remaining vertex).
-			float z2 = -1.0;
-			if(k == 2)
+			switch (i1)
+			{
+				case 0:
+					if(intersect(astPnts[i1], astPnts[astPnts.size()-1], A, B))
+						insect=true;
+					if(intersect(astPnts[i1], astPnts[astPnts.size()-1], B, C))
+						insect = true;
+					if(intersect(astPnts[i1], astPnts[astPnts.size()-1], C, A))
+						insect = true;
+					break;
+				default:
+					if (intersect(astPnts[i1], astPnts[i1-1], A, B))
+						insect = true;
+					if (intersect(astPnts[i1], astPnts[i1-1], B, C))
+						insect = true;
+					if (intersect(astPnts[i1], astPnts[i1-1], C, A))
+						insect = true;
+					break;
+			}
+			if(insect)
 			{	
-				for(int m=3; m<temp.size(); m++)
-				{	
-					float l1_x = temp.at(k).x - temp.at(m).x;
-					float l1_y = temp.at(k).y - temp.at(m).y;
-					float l2_x = temp.at(i).x - temp.at(m).x;
-					float l2_y = temp.at(i).y - temp.at(m).y;
-					z2 = l1_x*l2_y - l2_x*l1_y;
-					// If the angle is convex or the points lie on a line, break out of the loop.
-					if(z2 <= 0.0)
+				break;
+			}
+		}
+
+		for (int i1  = 0; i1 < astTris.size(); i1++)
+		{
+			point temp1[3] = {astTris[i1].a, astTris[i1].b, astTris[i1].c};
+			for (int j1=0; j1<3; j1++)
+			{
+				switch (j1)
+				{
+					case 0:
+						if(intersect(temp1[j1], temp1[2], A, B))
+							insect = true;
+						if(intersect(temp1[j1], temp1[2], B, C))
+							insect = true;
+						if(intersect(temp1[j1], temp1[2], C, A))
+							insect = true;
+						break;
+					default:
+						if (intersect(temp1[j1], temp1[j1-1], A, B))
+							insect = true;
+						if (intersect(temp1[j1], temp1[j1-1], B, C))
+							insect = true;
+						if (intersect(temp1[j1], temp1[j1-1], C, A))
+							insect = true;
 						break;
 				}
 			}
-
-			// Declare and initialize the boolean intersection as false.
-			bool intersection = false;
-
-			// Check if the newly created diagonal intersects with any formed line segment.
-			for(int n=0; n<temp.size()-1; n++)
+			if(insect)
+				break;
+		}
+		if (insect)
+		{
+			Ci++;
+			if(Ci>=temp.size())
 			{
-				bool v = intersect(temp.at(i), temp.at(k), temp.at(n), temp.at(n+1));
-				if(v)
-					intersection = true;
+				Bi++;
+				if(Bi>=temp.size()-1)
+				{
+					temp.erase(temp.begin());
+					Bi=Ai+1;
+					Ci=Bi+1;
+					A=temp[Ai];
+					B=temp[Bi];
+					C=temp[Ci];
+					
+					
+				}
+				else
+				{
+					Ci=Bi+1;
+					B=temp[Bi];
+					C=temp[Ci];
+				}
 			}
-
-			// Check if the newly created diagonal intersects with the last line segment.
-			bool v = intersect(temp.at(i), temp.at(k), temp.back(), temp.front());
-			if(v)
-				intersection = true;
-
-			// If no intersection has occurred and no CW winding occurs in the special circumstance, run the following code.
-			if(!intersection && z2 <= 0.0)
-			{
-				// Declare and initalize a triangle holding the three vertices, i, j, and j+1.
-				triangle t;
-				t.a = temp.at(i);
-				t.b = temp.at(j);
-				t.c = temp.at(k);
-				astTris.push_back(t);
-
-				// Erase the middle vertex.
-				temp.erase(temp.begin() + j);
-
-				// If i is not at 0, reset it to 0.
-				if(i != 0)
-					i = 0;
-			}
-			// If an intersection has occurred or CW winding occurs in the special circumstance, set the starting vertex to j.
 			else
-				i = j;
+			{
+				C=temp[Ci];
+			}
+		}
+
+		if(!insect)
+		{
+			point l1;
+			l1.x = A.x - B.x;
+			l1.y = A.y - B.y;
+
+			point l2;
+			l2.x = C.x - B.x;
+			l2.y = C.y - B.y;
+
+			z = l1.x*l2.y - l2.x*l1.y;
+
+			//cout << " Index " << Ai << " A  ( "  << A.x << " , " << A.y << " )" << endl;
+			//cout << " Index " << Bi << " B  ( "  << B.x << " , " << B.y << " )" << endl;
+			//cout << " Index " << Ci << " C  ( "  << C.x << " , " << C.y << " )" << endl;
+			//cout << " z = " << z << endl;
+
+			bool within = false;
+			for (int i =0; i < temp.size(); i ++)
+			{
+				if(PointInTriangle(temp[i], A, B, C) && Ai!=i && Bi!=i && Ci!=i)
+					within = true;
+			}
+
+			if (z<0 && !within)
+			{
+				tri.a = A;
+				tri.b = B;
+				tri.c = C;
+				astTris.push_back(tri);
+
+				Bi=Ci;
+				B=temp[Bi];
+				
+				Ci++;
+				C=temp[Ci];
+
+			}
+			else
+			{
+				Ci++;
+				if(Ci>=temp.size())
+				{
+					Bi++;
+					if(Bi>=temp.size()-1)
+					{
+						temp.erase(temp.begin());
+						Bi=Ai+1;
+						Ci=Bi+1;
+						A=temp[Ai];
+						B=temp[Bi];
+						C=temp[Ci];
+
+						cout << " Index " << Ai << " A  ( "  << A.x << " , " << A.y << " )" << endl;
+				cout << " Index " << Bi << " B  ( "  << B.x << " , " << B.y << " )" << endl;
+				cout << " Index " << Ci << " C  ( "  << C.x << " , " << C.y << " )" << endl;
+					}
+					else
+					{
+						Ci=Bi+1;
+						B=temp[Bi];
+						C=temp[Ci];
+					}
+				}
+				else
+				{
+					C=temp[Ci];
+				}
+			}
+
 		}
 	}
-	// Create the final triangle with the remaining three vertices in points.	
-	triangle t;
-	t.a = temp.front();
-	t.b = temp.at(1);
-	t.c = temp.back();
-	astTris.push_back(t);
 }
 
 void asteroid::sortPoints()
@@ -615,6 +693,24 @@ vector<triangle> asteroid::getTess()
 {
 	return astTris;
 }
+vector<triangle> asteroid::getTess2()
+{
+	vector<triangle> temp = astTris;
+	for (int i =0; i < temp.size(); i++)
+	{
+		point a[3] = {temp[i].a, temp[i].b, temp[i].c};
+		for (int j = 0; j < 3; j++ )
+		{
+			a[j].x += center.x;
+			a[j].y += center.y;
+		}
+		temp[i].a = a[0];
+		temp[i].b = a[1];
+		temp[i].c = a[2];
+	}
+	return temp;
+}
+
 
 vector<point> asteroid::getRealPoints(){
 

@@ -566,23 +566,49 @@ void gameLoop()
 					}
 			}
 
-	#ifdef LOGGING
-	/*	collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::app);
-		collisionLogger << "\nRunning Collision Detection checks\n";
-		collisionLogger << asteroidBelt.size() << endl;
-		collisionLogger.close();*/
-	#endif
 		// detect colitions with each asteroid in the belt.
 		switch(GameMode)
 		{
 			case 0:
 			case 1:
 				for (int i = 0; i < asteroidBelt.size(); i++)
+				{
 					detectCollision(i);
+					for (int j = 0; j<bullets.size(); j++)
+					{
+						switch(detectCollision(asteroidBelt[i], bullets[j]))
+						{
+							case 0:
+								vector<asteroid> tmp = asteroidBelt[i].breakupAsteroid();
+								asteroidBelt.erase(asteroidBelt.begin()+i);
+								
+								for (asteroid a : tmp)
+								{
+									asteroidBelt.push_back(a);
+									/* code */
+								}
+								
+								bullets.erase(bullets.begin()+j);
+								break;
+						}
+
+					}
+				}
 				break;
 			case 2:
 				for (int i = 0; i < enemies.size(); i++)
-					detectCollision(i);
+				{
+					for (int j =0;  j < bullets.size(); j++ )
+					switch (detectCollision(enemies[i], bullets[j]))
+					{
+						case 0:
+							bullets.erase(bullets.begin()+j);
+							if(enemies[i].damageHealth(10)<=0)
+								enemies.erase(enemies.begin()+i);
+							break;
+					}
+				}
+					//detectCollision(i);
 
 				for (int i = 0; i < bullets.size(); i++)
 				{

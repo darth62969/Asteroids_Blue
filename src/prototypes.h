@@ -51,6 +51,7 @@ int insideOctogon(point p);
 bool intersect (point v1, point v2, point v3, point v4);
 void detectCollision (int i); 
 int detectCollision(ship s, bullet b);
+int detectCollision(asteroid a, bullet b);
 bool asteroidProximity (asteroid ast1, asteroid ast2);
 bool bulletProximity (asteroid ast1, bullet b1);
 bool shipProximity (asteroid ast1, std::vector <point> b2);

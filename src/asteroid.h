@@ -31,6 +31,7 @@ class asteroid
 		std::vector<point> getPoints();
 		std::vector<point> getRealPoints();
 		std::vector<triangle> getTess();
+		std::vector<triangle> getTess2();
 		float getRotation();
 		void incrementLocation();
 		//void renderAsteroid(int mode);

@@ -242,6 +242,32 @@ std::vector<point> ship::getPoints()
 
 	return temp;	
 }
+
+std::vector<triangle> ship::getTriangles()
+{
+	vector<triangle> temp = shptris;
+	for (int i =0; i < temp.size(); i++)
+	{
+		point a[3] = {temp[i].a, temp[i].b, temp[i].c};
+		for (int j = 0; j < 3; j++ )
+		{
+			scalePoint(a[j], 5);
+
+			point tempp;
+
+			tempp.x= a[j].x*cos(location.angle)-a[j].y*sin(location.angle);
+			tempp.y= a[j].x*sin(location.angle)+a[j].y*cos(location.angle);
+			
+			a[j] = tempp;
+			a[j].x += location.x;
+			a[j].y += location.y;
+		}
+		temp[i].a = a[0];
+		temp[i].b = a[1];
+		temp[i].c = a[2];
+	}
+	return temp;
+}
 std::vector<point> ship::getAtkPnts()
 {
 	vector<point> temp = atkpnts;
@@ -287,6 +313,8 @@ void ship::fire()
 	for (int i = 0; i < temp.size(); i++)
 	{
 		//cout << temp[i].x << " " << temp[i].y << endl;
+		temp[i].x+=sin(location.angle);
+		temp[i].y+=cos(location.angle);
 		bullet shot;
 		shot.location= temp[i];
 		shot.theta = location.angle;
@@ -448,44 +476,32 @@ void ship::tessilateShip()
 	triangle tri;
 	double z;
 
-	// Begin at vertex 0.
-
-/*	while (temp.size()>3)
-	{
-		point l1;
-		l1.x = A.x - B.x;
-		l1.y = A.y - B.y;
-
-		point l2;
-		l2.x = C.x - B.x;
-		l2.y = C.y - c.x;
-
-		double z = l1.x*l2.y = l2.x*l2.y
-	}
-*/
 	int i = 0;
 	// While there are more than three vertices left in points, run the following code.
-	while(temp.size() > 3)
+	while(temp.size() >= 3)
 	{
 		//cout << intersect (temp[0], temp[1], A, B) << endl;
 
 		bool insect = false;
-		for (int i1  = 0; i1 < temp.size(); i1++)
+		for (int i1  = 0; i1 < shppnts.size(); i1++)
 		{
 			switch (i1)
 			{
 				case 0:
-					if(intersect(temp[i1], temp[temp.size()-1], A, B))
+					if(intersect(shppnts[i1], shppnts[shppnts.size()-1], A, B))
 						insect=true;
+					if(intersect(shppnts[i1], shppnts[shppnts.size()-1], B, C))
+						insect = true;
+					if(intersect(shppnts[i1], shppnts[shppnts.size()-1], C, A))
+						insect = true;
 					break;
 				default:
-					if (intersect(temp[i1], temp[i1-1], A, B))
-					{
-						cout	<< " A->B intersects (" << temp[i1].x << " , " 
-								<< temp[i1].y << " ),( " << temp[i1-1].x << " , "
-								<< temp[i1-1].y << " )" << endl;
+					if (intersect(shppnts[i1], shppnts[i1-1], A, B))
 						insect = true;
-					}
+					if (intersect(shppnts[i1], shppnts[i1-1], B, C))
+						insect = true;
+					if (intersect(shppnts[i1], shppnts[i1-1], C, A))
+						insect = true;
 					break;
 			}
 			if(insect)
@@ -493,48 +509,7 @@ void ship::tessilateShip()
 				break;
 			}
 		}
-		for (int i1  = 0; i1 < temp.size(); i1++)
-		{
-			switch (i1)
-			{
-				case 0:
-					if(intersect(temp[i1], temp[temp.size()-1], B, C))
-						insect = true;
-					break;
-				default:
-					if (intersect(temp[i1], temp[i1-1], B, C))
-					{
-						cout	<< " B->C intersects (" << temp[i1].x << " , " 
-							<< temp[i1].y << " ),( " << temp[i1-1].x << " , "
-							<< temp[i1-1].y << " )" << endl;
-						insect = true;
-					}
-					break;
-			}
-			if(insect)
-				break;
-		}
-		for (int i1  = 0; i1 < temp.size(); i1++)
-		{
-			switch (i1)
-			{
-				case 0:
-					if(intersect(temp[i1], temp[temp.size()-1], C, A))
-						insect = true;
-					break;
-				default:
-					if (intersect(temp[i1], temp[i1-1], C, A))
-					{
-						cout	<< "C->A intersects (" << temp[i1].x << " , " 
-							<< temp[i1].y << " ),( " << temp[i1-1].x << " , "
-							<< temp[i1-1].y << " )" << endl;
-						insect = true;
-					}
-					break;
-			}
-			if(insect)
-				break;
-		}
+
 		for (int i1  = 0; i1 < shptris.size(); i1++)
 		{
 			point temp1[3] = {shptris[i1].a, shptris[i1].b, shptris[i1].c};
@@ -577,6 +552,8 @@ void ship::tessilateShip()
 					A=temp[Ai];
 					B=temp[Bi];
 					C=temp[Ci];
+					
+					
 				}
 				else
 				{
@@ -646,6 +623,10 @@ void ship::tessilateShip()
 						A=temp[Ai];
 						B=temp[Bi];
 						C=temp[Ci];
+
+						cout << " Index " << Ai << " A  ( "  << A.x << " , " << A.y << " )" << endl;
+				cout << " Index " << Bi << " B  ( "  << B.x << " , " << B.y << " )" << endl;
+				cout << " Index " << Ci << " C  ( "  << C.x << " , " << C.y << " )" << endl;
 					}
 					else
 					{
@@ -658,106 +639,10 @@ void ship::tessilateShip()
 				{
 					C=temp[Ci];
 				}
-
 			}
 
 		}
 	}
-		/*
-		// Set the middle vertex as the vertex immediately following i. Set the third vertex as the vertex immediately following j.
-		int j=i+1;
-		int k=j+1;
-		// If j is vertex 0, set j to 0 and k to 1. 
-		if(j == temp.size())
-		{
-			j = 0;
-			k = 1;
-		}
-		// If k is vertex 0, set k to 0.
-		else if(k == temp.size())
-			k = 0;	
-	
-		float l1_x = temp.at(i).x - temp.at(j).x;
-		float l1_y = temp.at(i).y - temp.at(j).y;
-		float l2_x = temp.at(k).x - temp.at(j).x;
-		float l2_y = temp.at(k).y - temp.at(j).y;	
-		// z is the z component of the cross product of l1 (i to j) and l2 (k to j).
-		z = l1_x*l2_y - l2_x*l1_y;
-		cout << " z = " << z << endl;
-		// If CW winding occurs, set the starting vertex to j.
-		if(z > 0.0)
-			i = j;
-		// If the middle point lies on a line segment connecting the first and third points, erase it.
-		else if(z == 0.0)
-			temp.erase(temp.begin() + j);
-		// If CCW winding occurs, run the following code.
-		else if(z < 0.0)
-		{*/
-			/*
-			 * In the special circumstance that k is vertex 2, determine if all the remaining vertices 
-			 * would cause concavity. Determine the z component of the cross product of l1 (k to each 
-			 * remaining vertex) and l2 (i to each remaining vertex).
-			 *//*
-			float z2 = -1.0;
-			if(k == 2)
-			{	
-				for(int m=3; m<temp.size(); m++)
-				{	
-					float l1_x = temp.at(k).x - temp.at(m).x;
-					float l1_y = temp.at(k).y - temp.at(m).y;
-					float l2_x = temp.at(i).x - temp.at(m).x;
-					float l2_y = temp.at(i).y - temp.at(m).y;
-					z2 = l1_x*l2_y - l2_x*l1_y;
-					// If the angle is convex or the points lie on a line, break out of the loop.
-					if(z2 <= 0.0)
-						break;
-				}
-			}
-
-			// Declare and initialize the boolean intersection as false.
-			bool intersection = false;
-
-			// Check if the newly created diagonal intersects with any formed line segment.
-			for(int n=0; n<temp.size()-1; n++)
-			{
-				bool v = intersect(temp.at(i), temp.at(k), temp.at(n), temp.at(n+1));
-				if(v)
-					intersection = true;
-			}
-
-			// Check if the newly created diagonal intersects with the last line segment.
-			bool v = intersect(temp.at(i), temp.at(k), temp.back(), temp.front());
-			if(v)
-				intersection = true;
-
-			// If no intersection has occurred and no CW winding occurs in the special circumstance, run the following code.
-			if(!intersection && z2 <= 0.0)
-			{
-				// Declare and initalize a triangle holding the three vertices, i, j, and j+1.
-				triangle t;
-				t.a = temp.at(i);
-				t.b = temp.at(j);
-				t.c = temp.at(k);
-				shptris.push_back(t);
-
-				// Erase the middle vertex.
-				temp.erase(temp.begin() + j);
-
-				// If i is not at 0, reset it to 0.
-				if(i != 0)
-					i = 0;
-			}
-			// If an intersection has occurred or CW winding occurs in the special circumstance, set the starting vertex to j.
-			else
-				i = j;
-		}
-	}
-	// Create the final triangle with the remaining three vertices in points.	
-	triangle t;
-	t.a = temp.front();
-	t.b = temp.at(1);
-	t.c = temp.back();
-	shptris.push_back(t);	*/
 
 	for (int i = 0; i < shptris.size(); i++)
 	{
