@@ -221,6 +221,22 @@ ship::ship(int tp)
 			cycle = 25;
 
 			break;
+		case 2:
+			shppnts.push_back(point{ 3,  0, 0 ,1});
+			shppnts.push_back(point{ 0,  1, 0 ,1});
+			shppnts.push_back(point{-2,  3, 0 ,1});
+			shppnts.push_back(point{-2, -3, 0 ,1});
+			shppnts.push_back(point{ 0, -1, 0 ,1});
+			
+			tessilateShip();
+
+			atkpnts.push_back(point{ 3,  0, 0, 1});
+
+			actionSet = 2;
+			health = 20;
+			cycle = 25;
+
+			
 	}
 }
 std::vector<point> ship::getPoints()
@@ -354,6 +370,41 @@ void ship::iterateAction()
 					fire();
 					break;
 			}
+			break;
+		case 2:
+			cycle++;
+
+			point pnt = enterprise.getAtkPnts()[0];
+			double bearing =(atan2f(pnt.y-this->getAtkPnts()[0].y, pnt.x-this->getAtkPnts()[0].x));
+			this->setRotation(bearing);
+
+			switch(cycle/50)
+			{
+				case 0:
+					location.x++;
+					break;
+				case 1:
+					location.x--;
+					break;
+			}
+			switch(cycle%50)
+			{
+				case 0:
+					location.y-=10;
+					break;
+
+			}
+			if (cycle >= 100)
+			{
+				cycle = 0;
+			}
+			switch(rand()%70)
+			{
+				case 0: 
+					fire();
+					break;
+			}
+			break;
 
 	}		
 }

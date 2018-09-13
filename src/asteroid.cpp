@@ -19,6 +19,8 @@
 #include "structs.h"
 #include "globals.h"
 #include "prototypes.h"
+#include <random>
+#include <chrono>
 
 
 point center;
@@ -29,9 +31,17 @@ vector<triangle> astTris;
 bool clipped;
 int numsides = 0;
 
+std::uniform_int_distribution<int> numsidesdist(ASTEROID_MIN_SIZE, ASTEROID_MAX_SIZE);
+std::uniform_real_distribution<double> dirdist(0, 2*M_PI);
+std::uniform_real_distribution<double> xlocdist(WORLD_COORDINATE_MIN_X, WORLD_COORDINATE_MAX_X);
+std::uniform_real_distribution<double> ylocdist(WORLD_COORDINATE_MIN_Y, WORLD_COORDINATE_MAX_Y);
+std::uniform_real_distribution<double> spddist(ASTEROID_MIN_SPEED, ASTEROID_MAX_SPEED);
+std::uniform_int_distribution<int> sizedist(ASTEROID_MIN_AVG, ASTEROID_MAX_AVG);
+
 asteroid::asteroid()
 {
 /*	Algorithem:
+ * 	Stet up Random Number Generators
  *	Generate random number between 0 and 8; 
  * 	Add 4 to that number so that that number is between 4 and 12 sides.
  *  Set the center to (0,0)
@@ -43,11 +53,38 @@ asteroid::asteroid()
  * 	Return the asteroid
  */
 
-	int r = rand();
-	srand (static_cast <unsigned> (time(0))*r/10);	
+	//std::default_random_engine generator;
+/*	chrono::high_resolution_clock::time_point s = chrono::high_resolution_clock::now();
+	chrono::high_resolution_clock::duration d = chrono::high_resolution_clock::now()-s;
+	unsigned s2 = d.count();
+
+	std::mt19937_64 generator (s2);
+	//generator.seed(chrono::high_resolution_clock::now());
+	
+	std::binomial_distribution<int> numsidesdist(ASTEROID_MIN_SIZE, ASTEROID_MAX_SIZE);
+	std::uniform_real_distribution<double> dirdist(0, 2*M_PI);
+	std::uniform_real_distribution<double> xlocdist(WORLD_COORDINATE_MIN_X, WORLD_COORDINATE_MAX_X);
+	std::uniform_real_distribution<double> ylocdist(WORLD_COORDINATE_MIN_Y, WORLD_COORDINATE_MAX_Y);
+	std::uniform_real_distribution<double> spddist(ASTEROID_MIN_SPEED, ASTEROID_MAX_SPEED);
+	std::uniform_int_distribution<int> sizedist(ASTEROID_MIN_SIZE, ASTEROID_MAX_SIZE);
+*/
+	int avgSize = sizedist(generator);
+//	int r = rand();
+//	srand (static_cast <unsigned> (time(0))*r/10);	
 
 // Generating a Random Number and adding 4, this will be the number of sides the asteroid has. 
- 	numsides = rand()% (ASTEROID_MAX_SIZE - ASTEROID_MIN_SIZE + 1) + ASTEROID_MIN_SIZE;
+ 	numsides = numsidesdist(generator);
+
+	double irregularity= ASTEROID_IRREGULARITY*(2*M_PI)/numsides;
+	double spikeyness= ASTEROID_SPIKEYNESS;
+
+	double irlower = (2*M_PI)/numsides-irregularity;
+	double irupper = (2*M_PI)/numsides+irregularity;
+	double splower = spikeyness*avgSize;
+	double spupper = 2*avgSize-splower;
+
+	std::uniform_real_distribution<double> irdist(irlower, irupper);
+	std::uniform_real_distribution<double> spkdist(splower, spupper);
 
 // Logging for debug information, this tells us what the the program is doing. 
 // The number of sides it is going to generate
@@ -90,10 +127,10 @@ asteroid::asteroid()
 		// Keep generateing points till the asteroid is not withing range of the ship
 		do
 		{
-			center.x = rand() % (WORLD_COORDINATE_MAX_X + 1) + WORLD_COORDINATE_MIN_X;
-			center.y = rand() % (WORLD_COORDINATE_MAX_Y + 1) + WORLD_COORDINATE_MIN_Y;
+			center.x = xlocdist(generator);
+			center.y = ylocdist(generator);
 		}
-		while(getVectorLength(center, point{WORLD_COORDINATE_MAX_X/2, WORLD_COORDINATE_MAX_Y/2, 0, 1})<50);
+		while(getVectorLength(center, point{WORLD_COORDINATE_MAX_X/2, WORLD_COORDINATE_MAX_Y/2, 0, 1})<100);
 
 		// Check the new asteroid for it's vecinity to other asteriods.
 		bool nv = false;
@@ -101,7 +138,7 @@ asteroid::asteroid()
 		{
 			// If it is withing range of an asteroid set center back to (0,0)
 			// This causes it to try again, till it finds a position that works.
-			if (abs(center.x - asteroidBelt[i].getCenter().x) <= 20 && abs(center.y - asteroidBelt[i].getCenter().y) <= 20)
+			if (abs(center.x - asteroidBelt[i].getCenter().x) <= 2*ASTEROID_MAX_AVG && abs(center.y - asteroidBelt[i].getCenter().y) <= 2*ASTEROID_MAX_AVG)
 			{
 				center.x = 0;
 				center.y = 0;
@@ -109,10 +146,9 @@ asteroid::asteroid()
 		}
 	}
 	// Generate a random "translation.angle" or directional vector, in radians.
-	translation.angle = rand() % 360;
-	translation.angle *= M_PI / 180.0;
+	translation.angle = dirdist(generator);
 	//cout << translation.angle << endl;
-	translation.w = ((rand() % 16)+1)/2;
+	translation.w = spddist(generator);
 
 
 	// This logging protocal lets us know where the center of the asteroid is. 
@@ -121,56 +157,38 @@ asteroid::asteroid()
 #endif
 
 // Random number for seed.
-	int i = rand();
-	srand (static_cast <unsigned> (time(0))*(i*(0+67)/10));
-	point b;
-	b.x = rand() % (ASTEROID_MAX_X+1);
-	b.y = rand() % (ASTEROID_MAX_Y+1);
-	astPnts.push_back(b); 
+   	std::vector<double> angleSteps;
 
-// This generates the sides. 	
-	for (int j = 1; j < numsides; j++)
+	double sum =0;
+	double t=0;
+	
+	for (int i=0; i < numsides; i++)
 	{
-		//seed the psudo-random number generator. 
-		srand (static_cast <unsigned> (time(0))*(i*(j+67)/10));
-		// Increment i for the next point.
-		i++;
-		bool goodpoint = false;
-		while(!goodpoint)
-		{			
-			//generate a random point. 
-			b.x = rand() % (ASTEROID_MAX_X+1);
-			b.y = rand() % (ASTEROID_MAX_Y+1);
-			int goodDistance=0;
-			//check  the point against other points. to ensure that they are not of a minimum distance from each other.
-			for (int k = j-1; k >= 0; k--)
-			{
-				// if within that distance try again.
-				point a = astPnts[k];
-				if(getVectorLength(b, a) >= ASTEROID_MIN_DIST)
-				{ 
-					goodDistance++;
-				}
-			}
-			if(goodDistance==astPnts.size())
-			{
-				goodpoint=true;
-			}
-			// if all is good, add it to the list.
-			if(goodpoint)
-			{
-				astPnts.push_back(b);
-			}
-
-
-		}
-		
+		t = irdist(generator);
+		angleSteps.push_back(t);
+		sum+=t;
 	}
+	t = sum/(2*M_PI);
+	
+	for (int i=0; i < angleSteps.size(); i++)
+	{
+		angleSteps[i]/=t;
+	}
+	double angle=irdist(generator);
+	for (int i=0; i < numsides; i++)
+	{
+			double length = spkdist(generator);
+			point tempp;
+			tempp.x= length*cos(angle);
+			tempp.y= length*sin(angle);
+			astPnts.push_back(tempp);
+			angle+=angleSteps[i];
+	}
+
 
 	sortPoints();
 	tessellateAsteriod();
 	//translation.angle = drand48();
-	float rotation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 #ifdef LOGGING	
 	//asteroidLogger << "translation.angle was set to : " << translation.angle << "\n\n";
 	//asteroidLogger.close();
@@ -468,7 +486,7 @@ void asteroid::tessellateAsteriod()
  * 	Organize points in astPnts in counterclockwise direction
  *	Create Triangles from astPnts and save them in to astTris
  */
-	vector<point> temp = astPnts;
+	std::vector<point> temp = astPnts;
 	point A = temp[0];
 	point B = temp[1];
 	point C = temp[2];
@@ -482,32 +500,26 @@ void asteroid::tessellateAsteriod()
 	// While there are more than three vertices left in points, run the following code.
 	while(temp.size() >= 3)
 	{
-		//cout << intersect (temp[0], temp[1], A, B) << endl;
+		//cout << intersect (temp[0], temp[1], A, B) << std::endl;
 
 		bool insect = false;
 		for (int i1  = 0; i1 < astPnts.size(); i1++)
 		{
-			switch (i1)
-			{
-				case 0:
-					if(intersect(astPnts[i1], astPnts[astPnts.size()-1], A, B))
-						insect=true;
-					if(intersect(astPnts[i1], astPnts[astPnts.size()-1], B, C))
-						insect = true;
-					if(intersect(astPnts[i1], astPnts[astPnts.size()-1], C, A))
-						insect = true;
-					break;
-				default:
-					if (intersect(astPnts[i1], astPnts[i1-1], A, B))
-						insect = true;
-					if (intersect(astPnts[i1], astPnts[i1-1], B, C))
-						insect = true;
-					if (intersect(astPnts[i1], astPnts[i1-1], C, A))
-						insect = true;
-					break;
-			}
+			if(intersect(astPnts[i1], astPnts[(i1+1)%astPnts.size()], A, B))
+				insect=true;
+			if(intersect(astPnts[i1], astPnts[(i1+1)%astPnts.size()], B, C))
+				insect = true;
+			if(intersect(astPnts[i1], astPnts[(i1+1)%astPnts.size()], C, A))
+				insect = true;
+
 			if(insect)
-			{	
+			{	/*
+				std::cout << std::endl << "INTERSECT!!" << std::endl;
+				std::cout << "A = ( " << A.x << " , " << A.y << " ) " << std::endl;
+				std::cout << "B = ( " << B.x << " , " << B.y << " ) " << std::endl;
+				std::cout << "C = ( " << C.x << " , " << C.y << " ) " << std::endl;
+				std::cout << "astPnts 1 = ( " << astPnts[i1].x << " , " << astPnts[i1].y << " ) " << std::endl;
+				std::cout << "astPnts 1 = ( " << astPnts[i1%astPnts.size()].x << " , " << astPnts[i1%astPnts.size()].y << " ) " << std::endl;*/
 				break;
 			}
 		}
@@ -517,28 +529,25 @@ void asteroid::tessellateAsteriod()
 			point temp1[3] = {astTris[i1].a, astTris[i1].b, astTris[i1].c};
 			for (int j1=0; j1<3; j1++)
 			{
-				switch (j1)
-				{
-					case 0:
-						if(intersect(temp1[j1], temp1[2], A, B))
-							insect = true;
-						if(intersect(temp1[j1], temp1[2], B, C))
-							insect = true;
-						if(intersect(temp1[j1], temp1[2], C, A))
-							insect = true;
-						break;
-					default:
-						if (intersect(temp1[j1], temp1[j1-1], A, B))
-							insect = true;
-						if (intersect(temp1[j1], temp1[j1-1], B, C))
-							insect = true;
-						if (intersect(temp1[j1], temp1[j1-1], C, A))
-							insect = true;
-						break;
-				}
+				if(intersect(temp1[j1], temp1[(j1+1)%3], A, B))
+					insect = true;
+				if(intersect(temp1[j1], temp1[(j1+1)%3], B, C))
+					insect = true;
+				if(intersect(temp1[j1], temp1[(j1+1)%3], C, A))
+					insect = true;
 			}
 			if(insect)
+			{	/*
+				std::cout << std::endl << "INTERSECT!!" << std::endl;
+				std::cout << "A = ( " << A.x << " , " << A.y << " ) " << std::endl;
+				std::cout << "B = ( " << B.x << " , " << B.y << " ) " << std::endl;
+				std::cout << "C = ( " << C.x << " , " << C.y << " ) " << std::endl;
+				std::cout << "Triangle 1 = ( " << temp[0].x << " , " << temp1[0].y << " ) " << std::endl;
+				std::cout << "Triangle 2 = ( " << temp[1].x << " , " << temp1[1].y << " ) " << std::endl;
+				std::cout << "Triangle 3 = ( " << temp[2].x << " , " << temp1[2].y << " ) " << std::endl;
+				*/
 				break;
+			}
 		}
 		if (insect)
 		{
@@ -582,16 +591,18 @@ void asteroid::tessellateAsteriod()
 
 			z = l1.x*l2.y - l2.x*l1.y;
 
-			//cout << " Index " << Ai << " A  ( "  << A.x << " , " << A.y << " )" << endl;
-			//cout << " Index " << Bi << " B  ( "  << B.x << " , " << B.y << " )" << endl;
-			//cout << " Index " << Ci << " C  ( "  << C.x << " , " << C.y << " )" << endl;
-			//cout << " z = " << z << endl;
-
 			bool within = false;
 			for (int i =0; i < temp.size(); i ++)
 			{
 				if(PointInTriangle(temp[i], A, B, C) && Ai!=i && Bi!=i && Ci!=i)
+				{/*
+					std::cout << std::endl << "WITHIN!!" << std::endl;
+					std::cout << "A = ( " << A.x << " , " << A.y << " ) " << std::endl;
+					std::cout << "B = ( " << B.x << " , " << B.y << " ) " << std::endl;
+					std::cout << "C = ( " << C.x << " , " << C.y << " ) " << std::endl;
+					std::cout << "Point = ( " << temp[i].x << " , " << temp[i].y << " ) " << std::endl;*/
 					within = true;
+				}
 			}
 
 			if (z<0 && !within)
@@ -601,15 +612,29 @@ void asteroid::tessellateAsteriod()
 				tri.c = C;
 				astTris.push_back(tri);
 
-				Bi=Ci;
-				B=temp[Bi];
-				
-				Ci++;
-				C=temp[Ci];
-
+				Bi++;
+				if(Bi>=temp.size()-1)
+				{
+					temp.erase(temp.begin());
+					Bi=Ai+1;
+					Ci=Bi+1;
+					A=temp[Ai];
+					B=temp[Bi];
+					C=temp[Ci];
+				}
+				else
+				{
+					Ci=Bi+1;
+					B=temp[Bi];
+					C=temp[Ci];
+				}
 			}
 			else
-			{
+			{/*
+				std::cout << std::endl << "NOT CONCAVE!!" << std::endl;
+				std::cout << "A = ( " << A.x << " , " << A.y << " ) " << std::endl;
+				std::cout << "B = ( " << B.x << " , " << B.y << " ) " << std::endl;
+				std::cout << "C = ( " << C.x << " , " << C.y << " ) " << std::endl;*/
 				Ci++;
 				if(Ci>=temp.size())
 				{
@@ -622,10 +647,6 @@ void asteroid::tessellateAsteriod()
 						A=temp[Ai];
 						B=temp[Bi];
 						C=temp[Ci];
-
-						cout << " Index " << Ai << " A  ( "  << A.x << " , " << A.y << " )" << endl;
-				cout << " Index " << Bi << " B  ( "  << B.x << " , " << B.y << " )" << endl;
-				cout << " Index " << Ci << " C  ( "  << C.x << " , " << C.y << " )" << endl;
 					}
 					else
 					{

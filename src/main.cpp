@@ -79,7 +79,7 @@ int gamestate = 0; 				// 0 Paused, 1 Play, 2 Game Over, 3 Win!!
 int gametick = 0;
 int timeKeyPressed = 0;			// Iterator for Debug reasons
 int filled = 0;					// 0 if lines should be drawn, 1 if filled (asteroids)   
-int Level = 1;
+int Level = 2;
 
 int frames = 0;					// How many frames have been counted.
 int timeC = 0;					// Time the last was frame drawn
@@ -89,6 +89,15 @@ int timeP2 = 0;					// Time of at the end of the game loop
 
 int bulletsFired = 0;			// The number of bullets fired
 int bulletsHit = 0;				// The number of bullets hit
+std::mt19937_64 generator;
+
+/*std::binomial_distribution<int> numsidesdist(ASTEROID_MIN_SIZE, ASTEROID_MAX_SIZE);
+std::uniform_real_distribution<double> dirdist(0, 2*M_PI);
+std::uniform_real_distribution<double> xlocdist(WORLD_COORDINATE_MIN_X, WORLD_COORDINATE_MAX_X);
+std::uniform_real_distribution<double> ylocdist(WORLD_COORDINATE_MIN_Y, WORLD_COORDINATE_MAX_Y);
+std::uniform_real_distribution<double> spddist(ASTEROID_MIN_SPEED, ASTEROID_MAX_SPEED);
+std::uniform_int_distribution<int> sizedist(ASTEROID_MIN_SIZE, ASTEROID_MAX_SIZE);*/
+
 
 //double EndGameAnimation =2;
 
@@ -257,7 +266,43 @@ void drawString(GLuint x, GLuint y, const char* string)
 		glutBitmapCharacter(currentfont, *c);	
 }
 
-
+#ifdef SHIPTEST
+void generateShips()
+{ 
+	int x, y;
+	switch(Level)
+	{
+		case 1:
+			for (int i = 0; i < 9; i++)
+			{
+				enemies.push_back(ship(1));
+				x=WORLD_COORDINATE_MAX_X/10*(i+1);
+				y=WORLD_COORDINATE_MAX_Y/5*4;
+				enemies[i].setLocation(x, y);
+				enemies[i].setRotation(3*M_PI_2);
+			}
+			break;
+		case 2:
+			for (int i = 0; i < 9; i++)
+			{
+				switch(i%8)
+				{
+					case 0:
+						enemies.push_back(ship(2));
+						break;
+					default:
+						enemies.push_back(ship(1));
+						break;
+				}
+				x=WORLD_COORDINATE_MAX_X/10*(i+1);
+				y=WORLD_COORDINATE_MAX_Y/5*4;
+				enemies[i].setLocation(x, y);
+				enemies[i].setRotation(3*M_PI_2);
+			}
+			break;
+	}
+}
+#endif
 // Here we calculate the FPS of the game. (Technically the FrameTime)
 void calculateFPS()
 {
@@ -421,9 +466,14 @@ void gameView()
 
 #ifdef SHIPTEST
 	enterprise.renderShip();
-	for (int i = 0; i < enemies.size(); i++)
+	switch(GameMode)
 	{
-		enemies[i].renderShip();
+		case 2:
+			for (int i = 0; i < enemies.size(); i++)
+			{
+				enemies[i].renderShip();
+			}
+			break;
 	}
 
 #endif
@@ -483,7 +533,11 @@ void gameLoop()
 					break;
 				case 2:
 					if (enemies.size()==0)
-						gamestate=3;
+					{
+						Level++;
+						generateShips();
+					}
+
 					break;
 			}
 
@@ -576,49 +630,66 @@ void gameLoop()
 					detectCollision(i);
 					for (int j = 0; j<bullets.size(); j++)
 					{
-						switch(detectCollision(asteroidBelt[i], bullets[j]))
+						switch((int)(abs(asteroidBelt[i].getCenter().x-bullets[j].location.x)/30)
+								-(int)(abs(asteroidBelt[i].getCenter().y-bullets[j].location.y)/30))
 						{
 							case 0:
-								vector<asteroid> tmp = asteroidBelt[i].breakupAsteroid();
-								asteroidBelt.erase(asteroidBelt.begin()+i);
-								
-								for (asteroid a : tmp)
+								switch(detectCollision(asteroidBelt[i], bullets[j]))
 								{
-									asteroidBelt.push_back(a);
-									/* code */
-								}
+									case 0:
+										vector<asteroid> tmp = asteroidBelt[i].breakupAsteroid();
+									asteroidBelt.erase(asteroidBelt.begin()+i);
+
+									for (asteroid a : tmp)
+									{
+										asteroidBelt.push_back(a);
+									}
 								
-								bullets.erase(bullets.begin()+j);
-								break;
+									bullets.erase(bullets.begin()+j);
+									break;
+								}
 						}
 
 					}
 				}
 				break;
+				
 			case 2:
 				for (int i = 0; i < enemies.size(); i++)
 				{
 					for (int j =0;  j < bullets.size(); j++ )
-					switch (detectCollision(enemies[i], bullets[j]))
 					{
-						case 0:
-							bullets.erase(bullets.begin()+j);
-							if(enemies[i].damageHealth(10)<=0)
-								enemies.erase(enemies.begin()+i);
-							break;
+						switch((int)(abs(enemies[i].getLocation().x-bullets[j].location.x)/50)
+							-(int)(abs(enemies[i].getLocation().y-bullets[j].location.y)/50))
+						{
+							case 0:
+								switch (detectCollision(enemies[i], bullets[j]))
+								{
+									case 0:
+										bullets.erase(bullets.begin()+j);
+										if(enemies[i].damageHealth(10)<=0)
+											enemies.erase(enemies.begin()+i);
+										break;
+								}
+						}
 					}
 				}
 					//detectCollision(i);
 
 				for (int i = 0; i < bullets.size(); i++)
 				{
-					switch(detectCollision(enterprise, bullets[i]))
+					switch((int)(abs(enterprise.getLocation().x-bullets[i].location.x)/50)
+							-(int)(abs(enterprise.getLocation().y-bullets[i].location.y)/50))
 					{
 						case 0:
-							bullets.erase(bullets.begin()+i);
-							if (enterprise.damageHealth(10)<=0)
-								gamestate=2;
-							break;
+							switch(detectCollision(enterprise, bullets[i]))
+							{
+								case 0:
+									bullets.erase(bullets.begin()+i);
+									if (enterprise.damageHealth(10)<=0)
+										gamestate=2;
+									break;
+							}
 					}
 				}
 		
@@ -911,14 +982,7 @@ void keyboard(unsigned char key, int x, int y)
 #ifdef SHIPTEST
 					enterprise.setLocation(WORLD_COORDINATE_MAX_X/2, WORLD_COORDINATE_MAX_Y/5);
 					enterprise.setRotation(M_PI_2);
-					for (int i = 0; i < 9; i++)
-					{
-						enemies.push_back(ship(1));
-						x=WORLD_COORDINATE_MAX_X/10*(i+1);
-						y=WORLD_COORDINATE_MAX_Y/5*4;
-						enemies[i].setLocation(x, y);
-						enemies[i].setRotation(3*M_PI_2);
-					}
+					generateShips();
 #endif
 					break;
 				case 2:
@@ -948,7 +1012,6 @@ void keyboard(unsigned char key, int x, int y)
 	}
 #endif
 }
-
 
 // Handles the firing of bullets.
 void keyReleased(unsigned char key, int x, int y)
@@ -1066,6 +1129,10 @@ int main(int argc, char** argv)
 	collisionLogger << "Collision Logging Started " << endl;
 	collisionLogger.close();
 #endif
+	chrono::high_resolution_clock::time_point s = chrono::high_resolution_clock::now();
+	chrono::high_resolution_clock::duration d = chrono::high_resolution_clock::now()-s;
+	unsigned s2 = d.count();
+	generator.seed(s2);
 	initiateWindow(argc, argv); 				/* Set up Window 					*/
 	initiateGL();								/* Initiate GL   					*/
 	initiateOctogon();							/* Initiate The Game View 			*/
