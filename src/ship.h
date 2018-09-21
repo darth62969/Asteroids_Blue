@@ -2,7 +2,9 @@
 #define __SHIP_H_INCLUDED__
 
 #include "structs.h"
+#include "bullet.h"
 #include <vector>
+#include <random>
 
 class ship
 {
@@ -46,6 +48,7 @@ class ship
         int actionSet;
         int health;
         int cycle;
+		bullet blt;
         //PowerUp power
 
         //specific variables for things

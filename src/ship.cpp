@@ -19,6 +19,9 @@
 #include "structs.h"
 #include "globals.h"
 #include "prototypes.h"
+#include "bullet.h"
+#include <random>
+#include <chrono>
 
 double EndGameAnimation=7;
 double WinGameAnimation=0;
@@ -161,7 +164,7 @@ ship::ship(int tp)
 {
 	//set the type.
 	type=tp;
-
+	vector<point> temp;
 	//based on the type generate the ship.
 	switch(type)
 	{
@@ -183,11 +186,20 @@ ship::ship(int tp)
 			shppnts.push_back(point{ 2, -1, 0, 1});
 
 			//Generate Trangles
-			cout << "teslating ship" << endl;
 			tessilateShip();
 
 			//set attack points (i.e. where it shoots from)
 			atkpnts.push_back(point{ 5,  0, 0, 1});
+
+			
+			temp.push_back(point { 3, -1, 0, 1});
+			temp.push_back(point { 3,  1, 0, 1});
+			temp.push_back(point { 1,  2, 0, 1});
+			temp.push_back(point {-3,  2, 0, 1});
+			temp.push_back(point {-3, -2, 0, 1});
+			temp.push_back(point { 1, -2, 0, 1});
+
+			blt = bullet(temp, 10, 2);
 
 			actionSet = 0;
 			health = 100;
@@ -216,11 +228,21 @@ ship::ship(int tp)
 
 			atkpnts.push_back(point{ 3,  0, 0, 1});
 
+			temp.push_back(point { 3, -1, 0, 1});
+			temp.push_back(point { 3,  1, 0, 1});
+			temp.push_back(point { 1,  2, 0, 1});
+			temp.push_back(point {-3,  2, 0, 1});
+			temp.push_back(point {-3, -2, 0, 1});
+			temp.push_back(point { 1, -2, 0, 1});
+
+			blt = bullet(temp, 5, 2);
+
 			actionSet = 1;
 			health = 20;
 			cycle = 25;
 
 			break;
+
 		case 2:
 			shppnts.push_back(point{ 3,  0, 0 ,1});
 			shppnts.push_back(point{ 0,  1, 0 ,1});
@@ -232,9 +254,23 @@ ship::ship(int tp)
 
 			atkpnts.push_back(point{ 3,  0, 0, 1});
 
+			temp.push_back(point { 3, -1, 0, 1});
+			temp.push_back(point { 3,  1, 0, 1});
+			temp.push_back(point { 1,  2, 0, 1});
+			temp.push_back(point {-3,  2, 0, 1});
+			temp.push_back(point {-3, -2, 0, 1});
+			temp.push_back(point { 1, -2, 0, 1});
+
+			blt = bullet(temp, 10, 2);
+
 			actionSet = 2;
 			health = 20;
 			cycle = 25;
+			
+			break;
+		
+		case 3:
+			shppnts.push_back(point { 1, 3});
 
 			
 	}
@@ -331,9 +367,9 @@ void ship::fire()
 		//cout << temp[i].x << " " << temp[i].y << endl;
 		temp[i].x+=sin(location.angle);
 		temp[i].y+=cos(location.angle);
-		bullet shot;
-		shot.location= temp[i];
-		shot.theta = location.angle;
+		bullet shot = blt.createBullet(temp[i].x, temp[i].y, location.angle);
+	//	shot.location= temp[i];
+	//	shot.theta = location.angle;
 		bullets.push_back(shot);
 	}
 }

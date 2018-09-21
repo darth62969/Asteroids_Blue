@@ -79,7 +79,7 @@ int gamestate = 0; 				// 0 Paused, 1 Play, 2 Game Over, 3 Win!!
 int gametick = 0;
 int timeKeyPressed = 0;			// Iterator for Debug reasons
 int filled = 0;					// 0 if lines should be drawn, 1 if filled (asteroids)   
-int Level = 2;
+int Level = 1;
 
 int frames = 0;					// How many frames have been counted.
 int timeC = 0;					// Time the last was frame drawn
@@ -128,7 +128,7 @@ void DisplayPause()
 	char ToggleGameMode[50];
 	
 	// Input the information into the char strings
-	sprintf(pausedString, "%s", "Paused");
+	sprintf(pausedString, "%s", "ASTEROIDS: Return of Meteor");
 	sprintf(Startgame, "%s", "S = Start Game");
 	sprintf(PauseGame, "%s", "P = Pause Game");
 	sprintf(FireBullets, "%s", "Space = Fire Misiles");
@@ -369,156 +369,164 @@ void debugDisplay()
  */
 void gameView()
 {
-	//output game to window
 
-	calculateFPS();					// Calculate the interval between this frame and the last.
+		calculateFPS();					// Calculate the interval between this frame and the last.
 									// We use this to make game speed independent of framerate. *not anymore
-    glColor3f (0.1, 0.5, 0.0); 		// Set draw color to green
-	glPointSize(4.0);				// Set the Point size to 4
-	glClear(GL_COLOR_BUFFER_BIT);	// Clear the buffer bit for some reason...?
-
-	drawOctogon();					// Draw the Octogon on Screen 
-	clipMeDaddy();					//Draw the asteroids, Why is this "clipMeDaddy?"
-
-	// Print you win if asteroid belt is empty.
-		
-	// Print Game over if "gameOver" has been set
-
-		
-	// This is where we decide if we need to draw asteroids one way or the other.	
-	switch(filled)
+    	glColor3f (0.1, 0.5, 0.0); 		// Set draw color to green
+		glPointSize(4.0);				// Set the Point size to 4
+		glClear(GL_COLOR_BUFFER_BIT);	// Clear the buffer bit for some reason...?
+	switch (gamestate)
 	{
-		// If not filled
-		case 0:
-			// For each asteroid...
-    		for (int i = 0; i < (asteroidBelt.size()); i++)
-    		{
-				// Get the Location of the lower left corner of the asteroid
-				point loc = asteroidBelt.at(i).getCenter();
-
-				// get the location of the points on the asteroid grid
-				vector<point> pnt = asteroidBelt.at(i).getPoints();
-
-				for (int j = 0; j < (pnt.size()); j++)
-        		{
-					glBegin (GL_LINES);
-						glVertex2d(pnt[j].x+loc.x, pnt[j].y+loc.y);
-						glVertex2d( pnt.at((j+1)%pnt.size()).x + loc.x , pnt.at((j+1)%pnt.size()).y + loc.y);
-					glEnd ();         
-        		}
-			}
-			break;
-
-		// If filled
+		//output game to window
 		case 1:
-			for (int i = 0; i < (asteroidBelt.size()); i++)
+		drawOctogon();					// Draw the Octogon on Screen 
+		clipMeDaddy();					//Draw the asteroids, Why is this "clipMeDaddy?"
+
+		// Print you win if asteroid belt is empty.
+		
+		// Print Game over if "gameOver" has been set
+
+		
+		// This is where we decide if we need to draw asteroids one way or the other.	
+		switch(filled)
+		{
+		// If not filled
+			case 0:
+				// For each asteroid...
+    			for (int i = 0; i < (asteroidBelt.size()); i++)
+    			{
+					// Get the Location of the lower left corner of the asteroid
+					point loc = asteroidBelt.at(i).getCenter();
+
+					// get the location of the points on the asteroid grid
+					vector<point> pnt = asteroidBelt.at(i).getPoints();
+
+					for (int j = 0; j < (pnt.size()); j++)
+        			{
+						glBegin (GL_LINES);
+							glVertex2d(pnt[j].x+loc.x, pnt[j].y+loc.y);
+							glVertex2d( pnt.at((j+1)%pnt.size()).x + loc.x , pnt.at((j+1)%pnt.size()).y + loc.y);
+						glEnd ();         
+        			}
+				}
+				break;
+
+			// If filled
+			case 1:
+				for (int i = 0; i < (asteroidBelt.size()); i++)
     			{
 				// Get the tesslated Triangles for the Asteroid.
-				vector<triangle> a = asteroidBelt.at(i).getTess();
+					vector<triangle> a = asteroidBelt.at(i).getTess();
 
 				// Get the center
-				point b = asteroidBelt.at(i).getCenter();
+					point b = asteroidBelt.at(i).getCenter();
 
 				// Draw the triangles
-				for (int j = 0; j < (a.size()); j++)
-        		{
-					glBegin (GL_TRIANGLES);
-						glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
-						glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
-						glVertex2d(a.at(j).c.x + b.x, a.at(j).c.y + b.y);
-					glEnd ();         
-        		}
-			}
-			break;
-		// If filled == 2
-		case 2: 
-			for (int i = 0; i < (asteroidBelt.size()); i++)
-    		{
-				// Get the pre formated triangles.
-				vector<triangle> a = asteroidBelt.at(i).getTess();
-
-				// get the center point
-				point b = asteroidBelt.at(i).getCenter();
-
-				// draw the triangles, and the tesselations.
-				for (int j = 0; j < (a.size()); j++)
-				{
-					glBegin (GL_LINES);
-						glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
-						glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
-						glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
-						glVertex2d(a.at(j).c.x + b.x, a.at(j).c.y + b.y);
-						glVertex2d(a.at(j).c.x + b.x, a.at(j).c.y + b.y);
-						glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
-					glEnd();
+					for (int j = 0; j < (a.size()); j++)
+        			{
+						glBegin (GL_TRIANGLES);
+							glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
+							glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
+							glVertex2d(a.at(j).c.x + b.x, a.at(j).c.y + b.y);
+						glEnd ();         
+        			}
 				}
-			}
-	}
-	if (paused)
-	{
-		
-	}
-	// Draw the ship
+				break;
+			// If filled == 2
+			case 2: 
+				for (int i = 0; i < (asteroidBelt.size()); i++)
+    			{
+					// Get the pre formated triangles.
+					vector<triangle> a = asteroidBelt.at(i).getTess();
+
+					// get the center point
+					point b = asteroidBelt.at(i).getCenter();
+
+					// draw the triangles, and the tesselations.
+					for (int j = 0; j < (a.size()); j++)
+					{
+						glBegin (GL_LINES);
+							glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
+							glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
+							glVertex2d(a.at(j).b.x + b.x, a.at(j).b.y + b.y);
+							glVertex2d(a.at(j).c.x + b.x, a.at(j).c.y + b.y);
+							glVertex2d(a.at(j).c.x + b.x, a.at(j).c.y + b.y);
+							glVertex2d(a.at(j).a.x + b.x, a.at(j).a.y + b.y);
+						glEnd();
+					}
+				}
+		}
+		if (paused)
+		{
+			
+		}
+		// Draw the ship
 
 #ifndef SHIPTEST
-	drawShip(enterprise);		
+		drawShip(enterprise);		
 #endif
 
 #ifdef SHIPTEST
-	enterprise.renderShip();
-	switch(GameMode)
-	{
-		case 2:
-			for (int i = 0; i < enemies.size(); i++)
-			{
-				enemies[i].renderShip();
-			}
-			break;
-	}
+		enterprise.renderShip();
+		switch(GameMode)
+		{
+			case 2:
+				for (int i = 0; i < enemies.size(); i++)
+				{
+					enemies[i].renderShip();
+				}
+				break;
+		}
 
 #endif
-	// Draw the bullets.
-	glColor3f(1.0, 1.0, 0.0);
-	for(int i = 0; i < bullets.size(); i++)
-		drawBullet(bullets[i]);
+		// Draw the bullets.
+		glColor3f(1.0, 1.0, 0.0);
+		for(int i = 0; i < bullets.size(); i++)
+		{
+#ifndef SHIPTEST
+			drawBullet(bullets[i]);
+#endif
+#ifdef SHIPTEST
+			bullets[i].drawBullet();
+#endif
+		}
 	
-	switch (GameMode)
-	{
-		case 0:
-		case 1:
-			clipMeDaddy(); // Why is this "clip me daddy... i will have to fix this..."
+		switch (GameMode)
+		{
+			case 0:
+			case 1:
+				clipMeDaddy(); // Why is this "clip me daddy... i will have to fix this..."
 
 			// draw the octogon
-			drawOctogon();
-			break;
+				drawOctogon();
+				break;
 
-		case 2:
-			break;
-	}
+			case 2:
+				break;
+		}
 	
 	//display the score.
-	displayScore();
-	
-	switch (gamestate)
-	{
-		case 0:
-			DisplayPause();
-			break;
-		case 2:
-			printGameOver();
-			break;
-		case 3:
-			printYouWin();
-			break;
-	}
+		displayScore();
+		break;
+	case 0:
+		DisplayPause();
+		break;
+	case 2:
+		printGameOver();
+		break;
+	case 3:
+		printYouWin();
+		break;
 
 #ifdef DEBUG
-	debugDisplay();
+		debugDisplay();
 #endif
-
+	}
 	// Swap the buffers.
 	glutSwapBuffers();
+	
 }
+
 
 void gameLoop()
 {
@@ -630,8 +638,8 @@ void gameLoop()
 					detectCollision(i);
 					for (int j = 0; j<bullets.size(); j++)
 					{
-						switch((int)(abs(asteroidBelt[i].getCenter().x-bullets[j].location.x)/30)
-								-(int)(abs(asteroidBelt[i].getCenter().y-bullets[j].location.y)/30))
+						switch((int)(abs(asteroidBelt[i].getCenter().x-bullets[j].getLocation().x)/30)
+								-(int)(abs(asteroidBelt[i].getCenter().y-bullets[j].getLocation().y)/30))
 						{
 							case 0:
 								switch(detectCollision(asteroidBelt[i], bullets[j]))
@@ -659,15 +667,15 @@ void gameLoop()
 				{
 					for (int j =0;  j < bullets.size(); j++ )
 					{
-						switch((int)(abs(enemies[i].getLocation().x-bullets[j].location.x)/50)
-							-(int)(abs(enemies[i].getLocation().y-bullets[j].location.y)/50))
+						switch((int)(abs(enemies[i].getLocation().x-bullets[j].getLocation().x)/50)
+							-(int)(abs(enemies[i].getLocation().y-bullets[j].getLocation().y)/50))
 						{
 							case 0:
 								switch (detectCollision(enemies[i], bullets[j]))
 								{
 									case 0:
 										bullets.erase(bullets.begin()+j);
-										if(enemies[i].damageHealth(10)<=0)
+										if(enemies[i].damageHealth(bullets[i].getDamage())<=0)
 											enemies.erase(enemies.begin()+i);
 										break;
 								}
@@ -678,15 +686,15 @@ void gameLoop()
 
 				for (int i = 0; i < bullets.size(); i++)
 				{
-					switch((int)(abs(enterprise.getLocation().x-bullets[i].location.x)/50)
-							-(int)(abs(enterprise.getLocation().y-bullets[i].location.y)/50))
+					switch((int)(abs(enterprise.getLocation().x-bullets[i].getLocation().x)/50)
+							-(int)(abs(enterprise.getLocation().y-bullets[i].getLocation().y)/50))
 					{
 						case 0:
 							switch(detectCollision(enterprise, bullets[i]))
 							{
 								case 0:
 									bullets.erase(bullets.begin()+i);
-									if (enterprise.damageHealth(10)<=0)
+									if (enterprise.damageHealth(bullets[i].getDamage())<=0)
 										gamestate=2;
 									break;
 							}
@@ -701,9 +709,10 @@ void gameLoop()
 			// We use sine and cosine because we need to tesslate them 
 			// along the direction they need to be going or the direction
 			// they were shot. We are moving them by 2 each time.
-				bullets.at(i).location.x += 2.0 * cos(bullets.at(i).theta)/**(60/FPS)*/; 
-				bullets.at(i).location.y += 2.0 * sin(bullets.at(i).theta)/**(60/FPS)*/;
-				if(!insideOctogon(bullets[i].location) && bullets.size() > 1 && i <bullets.size())
+				//bullets.at(i).location.x += 2.0 * cos(bullets.at(i).theta)/**(60/FPS)*/; 
+				//bullets.at(i).location.y += 2.0 * sin(bullets.at(i).theta)/**(60/FPS)*/;
+				bullets[i].increment();
+				if(!insideOctogon(bullets[i].getLocation()) && bullets.size() > 1 && i <bullets.size())
 					bullets.erase(bullets.begin() + i);
 			}
 
@@ -942,11 +951,11 @@ void keyboard(unsigned char key, int x, int y)
 				case 1:
 					glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
 					if(!spacePressed)
-					{
+					{/*
 						spacePressed = true;
 						bullet shot = createBullet();
 						bullets.push_back(shot);
-						bulletsFired++;
+						bulletsFired++;*/
 					}	
 					break;
 			}

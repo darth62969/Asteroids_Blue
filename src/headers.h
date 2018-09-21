@@ -35,6 +35,7 @@
 
 #ifdef SHIPTEST
 #include "ship.h"
+#include "bullet.h"
 #endif
 
 //#include "detectcollision.cpp"

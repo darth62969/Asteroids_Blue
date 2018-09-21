@@ -27,7 +27,7 @@ CFLAGS = -v -std=c++11
 COPTFLAGS = -O3 
 LIBFLAGS = -lglut -lGLU -lGL -lm 
 HEADERS = src/headers.h src/structs.h src/globals.h src/prototypes.h
-OBJS = main.o asteroid.o ship.o bullets.o transformer.o clipper.o detectcollision.o
+OBJS = main.o asteroid.o ship.o bullet.o transformer.o clipper.o detectcollision.o
 
 debug ?= n
 logging ?= n
@@ -61,8 +61,8 @@ main.o : src/main.cpp $(HEADERS)
 asteroid.o: src/asteroid.cpp
 	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/asteroid.cpp
 
-bullets.o: src/bullets.cpp
-	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/bullets.cpp
+bullet.o: src/bullet.cpp
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/bullet.cpp
 
 ship.o: src/ship.cpp
 	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/ship.cpp

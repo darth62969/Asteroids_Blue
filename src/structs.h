@@ -18,7 +18,7 @@ struct ship
     float rotation;
     point aLocation;
 };
-#endif
+
 
 struct bullet
 {
@@ -27,5 +27,5 @@ struct bullet
     point translation;
     
 };
-
+#endif
 #endif

@@ -34,8 +34,8 @@ bool asteroidProximity(asteroid ast1, asteroid ast2)
 //checks proximity of asteroids and bullets
 bool bulletProximity(asteroid ast1, bullet b1)
 {
-	if (	abs(b1.location.x - ast1.getCenter().x) <= ASTEROID_MAX_X 
-		&& 	abs(b1.location.y - ast1.getCenter().y) <= ASTEROID_MAX_Y)
+	if (	abs(b1.getLocation().x - ast1.getCenter().x) <= ASTEROID_MAX_X 
+		&& 	abs(b1.getLocation().y - ast1.getCenter().y) <= ASTEROID_MAX_Y)
 	{
 		return true;
 	}
@@ -44,8 +44,8 @@ bool bulletProximity(asteroid ast1, bullet b1)
 }
 bool bulletProximity(ship shp1, bullet b1)
 {
-	if (	abs(b1.location.x - shp1.getLocation().x) <= 50 
-		&& 	abs(b1.location.y - shp1.getLocation().y) <= 50)
+	if (	abs(b1.getLocation().x - shp1.getLocation().x) <= 50 
+		&& 	abs(b1.getLocation().y - shp1.getLocation().y) <= 50)
 	{
 		return true;
 	}
@@ -339,7 +339,7 @@ void detectCollision(int index)
 
 			case 2:
 				if (bulletProximity (enemies[index], bullets[j]))
-					{
+					{/*
 						bullet tmpbul; 
 						tmpbul.location.x = bullets.at(j).location.x - 2.0 * cos(bullets.at(j).theta);
 						tmpbul.location.y = bullets.at(j).location.y - 2.0 * sin(bullets.at(j).theta);
@@ -397,7 +397,7 @@ void detectCollision(int index)
 									break;
 								}
 							}
-						}						
+						}	*/					
 					}
 			}
 		}
@@ -609,7 +609,7 @@ int detectCollision(ship s, bullet b)
 	vector<triangle> temp = s.getTriangles();
 	for (int i = 0; i < temp.size(); i++)
 	{
-		if (PointInTriangle(b.location, temp[i].a, temp[i].b, temp[i].c))
+		if (PointInTriangle(b.getLocation(), temp[i].a, temp[i].b, temp[i].c))
 			return 0;
 	}
 	return 1;
@@ -620,7 +620,7 @@ int detectCollision(asteroid a, bullet b)
 	vector<triangle> temp = a.getTess2();
 	for (int i = 0; i < temp.size(); i++)
 	{
-		if (PointInTriangle(b.location, temp[i].a, temp[i].b, temp[i].c))
+		if (PointInTriangle(b.getLocation(), temp[i].a, temp[i].b, temp[i].c))
 			return 0;
 	}
 	return 1;
