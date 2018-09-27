@@ -170,7 +170,7 @@ ship::ship(int tp)
 	{
 		case 0:  //Enterprise class ship, this is the player ship
 			//set Location of the ship
-			location = {WORLD_COORDINATE_MAX_X/2, WORLD_COORDINATE_MAX_Y/2, 0, 1, 0};
+			location = {0, 0, 0, 1, 0};
 			
 			//Generate the Enterprise
 			shppnts.push_back(point{ 5,  0, 0, 1});
@@ -456,7 +456,7 @@ void ship::resetShip()
 	switch (type)
 	{
 		case 0:
-			location = {WORLD_COORDINATE_MAX_X/2, WORLD_COORDINATE_MAX_Y/2, 0, 1, 0};
+			location = {0, 0, 0, 1, 0};
 			EndGameAnimation=5;
 			break;
 		case 1:

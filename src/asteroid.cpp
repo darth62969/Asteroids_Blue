@@ -95,8 +95,8 @@ asteroid::asteroid()
 #endif
 
 //Setting the center (x,y) to (0,0)
-	center.x = 0;
-	center.y = 0;
+	center.x = INT32_MAX;
+	center.y = INT32_MAX;
 	
 // Getting the point of the ship so that we can check the location of the asteriods against it.
 // This prevents insta-"Game Overs". 
@@ -130,7 +130,7 @@ asteroid::asteroid()
 			center.x = xlocdist(generator);
 			center.y = ylocdist(generator);
 		}
-		while(getVectorLength(center, point{WORLD_COORDINATE_MAX_X/2, WORLD_COORDINATE_MAX_Y/2, 0, 1})<100);
+		while(getVectorLength(center, point{0, 0, 0, 1})<100);
 
 		// Check the new asteroid for it's vecinity to other asteriods.
 		bool nv = false;
@@ -140,8 +140,8 @@ asteroid::asteroid()
 			// This causes it to try again, till it finds a position that works.
 			if (abs(center.x - asteroidBelt[i].getCenter().x) <= 2*ASTEROID_MAX_AVG && abs(center.y - asteroidBelt[i].getCenter().y) <= 2*ASTEROID_MAX_AVG)
 			{
-				center.x = 0;
-				center.y = 0;
+				center.x = INT32_MAX;
+				center.y = INT32_MAX;
 			}
 		}
 	}
@@ -308,9 +308,8 @@ void asteroid::incrementLocation()
 	
 	//this checks to see if it is still in the octogon them moves it to where it to the other side.
 	if(!insideOctogon(center)){
-		point position {center.x-origin,center.y-origin,0,1};
-		center.x -= 2*position.x; 
-		center.y -= 2*position.y; 
+		center.x*=-1;
+		center.y*=-1;
 	}
 }
 

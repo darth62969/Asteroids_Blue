@@ -617,12 +617,25 @@ int detectCollision(ship s, bullet b)
 }
 int detectCollision(asteroid a, bullet b)
 {
+	int collision = 1;
 	vector<triangle> temp = a.getTess2();
+	vector<point> temp2 = a.getRealPoints();
 	for (int i = 0; i < temp.size(); i++)
 	{
 		if (PointInTriangle(b.getLocation(), temp[i].a, temp[i].b, temp[i].c))
 			return 0;
 	}
+	point tmp[2];
+	tmp[0]=b.getLocation();
+	tmp[1].x = tmp[0].x+2*cos(tmp[0].angle);
+	tmp[1].x = tmp[0].y+2*sin(tmp[0].angle);
+	for (int i = 0; i < temp2.size(); i++)
+ 	{
+		if(intersect(temp2[i], temp2[(i+1)%temp2.size()], tmp[0], tmp[1]))
+		{
+			return 0;
+		}
+	 }
 	return 1;
 }
 #endif

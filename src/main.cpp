@@ -22,6 +22,7 @@
 #include <thread>
 #include <chrono>
 #include <unistd.h>
+#include <string.h>
 
 #define SPACEBAR 32
 
@@ -65,6 +66,10 @@ float deltaRot = 1.0; 		// For use in the accelleration of ship rotation
 double FPS = 0.0;	// FPS calcuatitions 
 double avgFPS;
 double origin = (WORLD_COORDINATE_MAX_X / 2);
+
+double aspectRatio;
+int WinHeight, WinWidth;
+int coordinateXoffset, coordinateYoffset;
 
 bool rightKeyPressed = false;	// These are for the ship rotation functions
 bool rightReached10 = false;	// right rotation reached 10
@@ -115,11 +120,45 @@ void setFont(void *font)
 {
 	currentfont = font;
 }
+
+void WindowResizeHandler(int windowWidth, int windowHeight)
+{
+	aspectRatio = (double) windowWidth/(double)windowHeight;
+	WinHeight=windowHeight;
+	WinWidth=windowWidth;
+
+	int cxo	= WORLD_COORDINATE_MAX_X-WORLD_COORDINATE_MIN_X;
+	int cyo = WORLD_COORDINATE_MAX_Y-WORLD_COORDINATE_MIN_Y;
+	
+	
+	double xSpan=1;
+	double ySpan=1;
+	glViewport(0,0,WinWidth,WinHeight);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	if(aspectRatio>1)
+	{
+		xSpan*=aspectRatio;
+	}
+	else
+	{
+		ySpan = xSpan/aspectRatio;
+	}
+
+	glOrtho(xSpan*WORLD_COORDINATE_MIN_X, xSpan*WORLD_COORDINATE_MAX_X, 
+		ySpan*WORLD_COORDINATE_MIN_Y, ySpan*WORLD_COORDINATE_MAX_Y, 1.0, -1.0);
+	
+
+
+}
+
+
+
 void DisplayPause()
 {
 	// set up the charstrings.
-	char pausedString[25];
-	char Startgame[50];
+	string pausedString = "ASTEROIDS: Return of Meteor";
+	string Startgame = "S = Start Game";
 	char PauseGame[50];
 	char FireBullets[50];
 	char MoveEnterprise[50];
@@ -128,8 +167,8 @@ void DisplayPause()
 	char ToggleGameMode[50];
 	
 	// Input the information into the char strings
-	sprintf(pausedString, "%s", "ASTEROIDS: Return of Meteor");
-	sprintf(Startgame, "%s", "S = Start Game");
+	//sprintf(pausedString, "%s", "ASTEROIDS: Return of Meteor");
+	//sprintf(Startgame, "%s", "S = Start Game");
 	sprintf(PauseGame, "%s", "P = Pause Game");
 	sprintf(FireBullets, "%s", "Space = Fire Misiles");
 	sprintf(MoveEnterprise, "%s", "Arrow Keys = Rotate Enterprise");
@@ -139,17 +178,17 @@ void DisplayPause()
 
 	//set font draw "paused on screen"
 	setFont(GLUT_BITMAP_TIMES_ROMAN_24);
-	drawString(260, 320, pausedString);
+	drawString(-200, 220, pausedString.c_str());
 
 	//set font draw help on screen
 	setFont(GLUT_BITMAP_HELVETICA_12);
-	drawString(220, 275, Startgame);
-	drawString(220, 255, PauseGame);
-	drawString(220, 235, FireBullets);
-	drawString(220, 215, MoveEnterprise);
-	drawString(220, 195, ReloadAsteroids);
-	drawString(220, 175, ToggleTeslation);
-	drawString(220, 155, ToggleGameMode);
+	drawString(-120, -275, Startgame.c_str());
+	drawString(-120, -255, PauseGame);
+	drawString(-120, -235, FireBullets);
+	drawString(-120, -215, MoveEnterprise);
+	drawString(-120, -195, ReloadAsteroids);
+	drawString(-120, -175, ToggleTeslation);
+	drawString(-120, -155, ToggleGameMode);
 }
 
 // Function to display the score.
@@ -185,6 +224,7 @@ void displayScore(void)
 	{
 		case 0:
 			sprintf(mode, "Game Mode: %s", "Normal");
+			sprintf(lvlstr, "                       ");
 			break;
 		case 1:
 			sprintf(mode, "Game Mode: %s", "Endless");
@@ -209,17 +249,17 @@ void displayScore(void)
 	glColor3f(0.2, 0.5, 0.0);
 	
 	//Draw the strings, left side
-	drawString(20, 30, bulletsFiredStr);
-	drawString(20, 70, astsOnScr1);
-	drawString(20, 55, astsOnScr2);
+	drawString(-280, -230, bulletsFiredStr);
+	drawString(-280, -270, astsOnScr1);
+	drawString(-280, -255, astsOnScr2);
 	
 	// draw the strings, right side.
-	drawString(480, 30, astsHit);
-	drawString(480, 15, mode);
-	drawString(480, 65, hrStr);
+	drawString(180, 30, astsHit);
+	drawString(180, 15, mode);
+	drawString(180, 65, hrStr);
 	
-	drawString(20, 565, health);
-	drawString(20, 550, lvlstr);
+	drawString(-280, 265, health);
+	drawString(-280, 250, lvlstr);
 	
 }
 
@@ -234,7 +274,7 @@ void printGameOver(void)
     sprintf(gameOver, "%s", "GAME OVER");
 
 	//Draw the string
-    drawString(225, 320, gameOver);
+    drawString(25, 50, gameOver);
 }
 
 // Function to print "you win" on screen.
@@ -248,12 +288,13 @@ void printYouWin(void)
 	sprintf(youWin, "%s", "YOU WIN!!!");
 	
 	// Draw the string.
-	drawString(235, 320, youWin);
+	drawString(25, 50, youWin);
 }
 
 //Function to draw strings.
 void drawString(GLuint x, GLuint y, const char* string)
 {
+	
 	// create a pointer to the character
 	const char *c;
 
@@ -269,6 +310,9 @@ void drawString(GLuint x, GLuint y, const char* string)
 #ifdef SHIPTEST
 void generateShips()
 { 
+	point world;
+	world.x = WORLD_COORDINATE_MAX_X-WORLD_COORDINATE_MIN_X;
+	world.y = WORLD_COORDINATE_MAX_Y-WORLD_COORDINATE_MIN_Y;
 	int x, y;
 	switch(Level)
 	{
@@ -276,8 +320,8 @@ void generateShips()
 			for (int i = 0; i < 9; i++)
 			{
 				enemies.push_back(ship(1));
-				x=WORLD_COORDINATE_MAX_X/10*(i+1);
-				y=WORLD_COORDINATE_MAX_Y/5*4;
+				x=WORLD_COORDINATE_MAX_X-world.x/10*(i+1);
+				y=WORLD_COORDINATE_MIN_Y+world.y/10*9;
 				enemies[i].setLocation(x, y);
 				enemies[i].setRotation(3*M_PI_2);
 			}
@@ -294,8 +338,8 @@ void generateShips()
 						enemies.push_back(ship(1));
 						break;
 				}
-				x=WORLD_COORDINATE_MAX_X/10*(i+1);
-				y=WORLD_COORDINATE_MAX_Y/5*4;
+				x=WORLD_COORDINATE_MAX_X-world.x/10*(i+1);
+				y=WORLD_COORDINATE_MIN_Y+world.y/10*9;
 				enemies[i].setLocation(x, y);
 				enemies[i].setRotation(3*M_PI_2);
 			}
@@ -370,15 +414,19 @@ void debugDisplay()
 void gameView()
 {
 
+
 		calculateFPS();					// Calculate the interval between this frame and the last.
 									// We use this to make game speed independent of framerate. *not anymore
-    	glColor3f (0.1, 0.5, 0.0); 		// Set draw color to green
+    	glColor3f (0.1, 1, 0.1); 		// Set draw color to green
 		glPointSize(4.0);				// Set the Point size to 4
 		glClear(GL_COLOR_BUFFER_BIT);	// Clear the buffer bit for some reason...?
-	switch (gamestate)
+	switch(gamestate)	
 	{
-		//output game to window
+
+	
 		case 1:
+		//output game to window
+
 		drawOctogon();					// Draw the Octogon on Screen 
 		clipMeDaddy();					//Draw the asteroids, Why is this "clipMeDaddy?"
 
@@ -462,33 +510,33 @@ void gameView()
 		}
 		// Draw the ship
 
-#ifndef SHIPTEST
-		drawShip(enterprise);		
-#endif
+		#ifndef SHIPTEST
+			drawShip(enterprise);		
+		#endif
 
-#ifdef SHIPTEST
-		enterprise.renderShip();
-		switch(GameMode)
-		{
-			case 2:
-				for (int i = 0; i < enemies.size(); i++)
-				{
-					enemies[i].renderShip();
-				}
-				break;
-		}
+		#ifdef SHIPTEST
+			enterprise.renderShip();
+			switch(GameMode)
+			{
+				case 2:
+					for (int i = 0; i < enemies.size(); i++)
+					{
+						enemies[i].renderShip();
+					}
+					break;
+			}
 
-#endif
+		#endif
 		// Draw the bullets.
 		glColor3f(1.0, 1.0, 0.0);
 		for(int i = 0; i < bullets.size(); i++)
 		{
-#ifndef SHIPTEST
-			drawBullet(bullets[i]);
-#endif
-#ifdef SHIPTEST
-			bullets[i].drawBullet();
-#endif
+			#ifndef SHIPTEST
+				drawBullet(bullets[i]);
+			#endif
+			#ifdef SHIPTEST
+				bullets[i].drawBullet();
+			#endif
 		}
 	
 		switch (GameMode)
@@ -505,9 +553,11 @@ void gameView()
 				break;
 		}
 	
-	//display the score.
+	//display the score;
+
 		displayScore();
 		break;
+
 	case 0:
 		DisplayPause();
 		break;
@@ -517,11 +567,11 @@ void gameView()
 	case 3:
 		printYouWin();
 		break;
-
-#ifdef DEBUG
-		debugDisplay();
-#endif
 	}
+
+	#ifdef DEBUG
+		debugDisplay();
+	#endif
 	// Swap the buffers.
 	glutSwapBuffers();
 	
@@ -755,11 +805,6 @@ void initiateAsteroids()
 {
 	// Open log file, record number of asteroids we are going to gnerate, then close to 
 	// save changes.
-#ifdef LOGGING
-	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-	asteroidLogger << "\nGenerating " << NUMBER_OF_ASTEROIDS << " asteroids\n\n";
-	asteroidLogger.close();
-#endif
 	//Generate Asteroids
 	switch (GameMode)
 	{
@@ -779,11 +824,6 @@ void initiateAsteroids()
 
 	// Open log file, record that we have generated asteroidBelt.size() asteroids,
 	// then close to save changes.
-#ifdef LOGGING	
-	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-	asteroidLogger << "\nGenerated " << asteroidBelt.size() << " asteroids\n";
-	asteroidLogger.close();
-#endif
 }
 
 /*
@@ -808,8 +848,6 @@ void initiateGL(void)
 
     	glMatrixMode(GL_PROJECTION);
     	glLoadIdentity();
-	gluOrtho2D(WORLD_COORDINATE_MIN_X, WORLD_COORDINATE_MAX_X,
-        WORLD_COORDINATE_MIN_Y, WORLD_COORDINATE_MAX_Y);
 	glMatrixMode(GL_MODELVIEW);
 }
 
@@ -825,19 +863,32 @@ void initiateOctogon(void)
 	vector<point> pts; 
 
 	// Set the first point, rotate it then push it to the vector of points.
-	point p = {WORLD_COORDINATE_MIN_X ,WORLD_COORDINATE_MAX_Y / 2,0,1};
-	point c = {-WORLD_COORDINATE_MAX_X , WORLD_COORDINATE_MAX_Y / 2, 0,1};	
+	point p = { WORLD_COORDINATE_MIN_X , 0, 0, 1};
+	point c = {-WORLD_COORDINATE_MAX_X , 0, 0, 1};	
 
-	rotatePoint(p,(45.0/2.0)*(M_PI/180));
-	rotatePoint(c,(45.0/2.0)*(M_PI/180));
+	point tempp;
+	tempp.x = p.x*cos(M_PI_4/2)-p.y*sin(M_PI_4/2);
+	tempp.y = p.x*sin(M_PI_4/2)+p.y*cos(M_PI_4/2);
+	p = tempp;
+	
+	tempp.x = c.x*cos(M_PI_4/2)-c.y*sin(M_PI_4/2);
+	tempp.y = c.x*sin(M_PI_4/2)+c.y*cos(M_PI_4/2);
+	c = tempp;
+
 
 	octogon.push_back(p);
 	clipPts.push_back(c);
 
 	for (int i = 0; i < 7; i++)
 	{
-		rotatePoint(p,-45*(M_PI/180));
-		rotatePoint(c,-45*(M_PI/180));
+		tempp.x = p.x*cos(-M_PI_4)-p.y*sin(-M_PI_4);
+		tempp.y = p.x*sin(-M_PI_4)+p.y*cos(-M_PI_4);
+		p = tempp;
+
+		tempp.x = c.x*cos(-M_PI_4)-c.y*sin(-M_PI_4);
+		tempp.y = c.x*sin(-M_PI_4)+c.y*cos(-M_PI_4);
+		c = tempp;
+
 		octogon.push_back(p);
 		clipPts.push_back(c);
 	}
@@ -1096,30 +1147,33 @@ void mouse(int button, int state, int x, int y)
 }
 void passiveMouse(int x, int y)
 {
+	//cout<< "mouse at ( " << x << " , " << y << " )\n";
+	int x2 = WinWidth/2-x;
+	int y2 = y-WinHeight/2;
 	point temp ={x, y, 0, 1};
 	point pnt;
 	double bearing;
-#ifndef SHIPTEST
-	double bearing =-1*( atan2f(enterprise.aLocation.y-y, enterprise.aLocation.x-x)); //* (180 / M_PI))+180;
-	enterprise.rotation=bearing;
-#endif
+	#ifndef SHIPTEST
+		double bearing =-1( atan2f(enterprise.aLocation.y-y2, enterprise.aLocation.x-x2)); //* (180 / M_PI))+180;
+		enterprise.rotation=bearing;
+	#endif
 
-#ifdef SHIPTEST
+	#ifdef SHIPTEST
 	switch(GameMode)
 	{
 		case 0:
 		case 1:
 			pnt = enterprise.getAtkPnts()[0];
-			bearing =-1*(atan2f(pnt.y-y, pnt.x-x))+M_PI;
+			bearing =(atan2f(pnt.y-y2, pnt.x-x2));
 			enterprise.setRotation(bearing);
 			break;
 
 		case 2:
-			enterprise.setLocation(x, WORLD_COORDINATE_MAX_Y/5);
+			enterprise.setLocation(-1*x2, WORLD_COORDINATE_MIN_Y+((WORLD_COORDINATE_MAX_Y-WORLD_COORDINATE_MIN_Y)/5));
 			break;
 	}
 
-#endif
+	#endif
 }
 
 int main(int argc, char** argv)
@@ -1147,6 +1201,7 @@ int main(int argc, char** argv)
 	initiateOctogon();							/* Initiate The Game View 			*/
 	initiateAsteroids();						/* Generate Asteroids				*/
 	initiateGameDisplay();						/* Does nothing 					*/
+	glutReshapeFunc(WindowResizeHandler);
 	glutSetKeyRepeat(GLUT_KEY_REPEAT_ON);		/* Set Key Repeat on 				*/
 	glutMouseFunc(mouse);						/* Set a Mouse funtion				*/
 	glutPassiveMotionFunc(passiveMouse);
