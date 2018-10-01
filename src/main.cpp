@@ -94,7 +94,15 @@ int timeP2 = 0;					// Time of at the end of the game loop
 
 int bulletsFired = 0;			// The number of bullets fired
 int bulletsHit = 0;				// The number of bullets hit
+
 std::mt19937_64 generator;
+
+int bottomFifth = WORLD_COORDINATE_MIN_Y+((WORLD_COORDINATE_MAX_Y-WORLD_COORDINATE_MIN_Y)/5);
+
+int menuLevel = 0;
+int menuSelection = 0;
+int menuOptions = 0;
+vector<int> selections;
 
 /*std::binomial_distribution<int> numsidesdist(ASTEROID_MIN_SIZE, ASTEROID_MAX_SIZE);
 std::uniform_real_distribution<double> dirdist(0, 2*M_PI);
@@ -110,6 +118,8 @@ void *currentfont;				// Bit map font pointer.
 
 void initiateOctogon();			// Function to construct the Octagonal game screen.
 void drawOctogon(void);			// Function to draw the octogon.
+void initiateAsteroids();
+void generateShips();
 
 // Function to set up draw strings on screen at a particular x and y. 
 
@@ -152,43 +162,165 @@ void WindowResizeHandler(int windowWidth, int windowHeight)
 
 }
 
+void setGameMode(int i)
+{
+	asteroidBelt.clear();
+	enemies.clear();
+	bullets.clear();
+	bulletsFired=0;
+	paused=true;
+	gameOver = false;
+	enterprise.setHealth(100);
+	
+	switch (i)
+	{
+		case 0:
+		case 1:
+			GameMode=i;
+			initiateAsteroids();
+			enterprise.setLocation(0,0);
+				
+			#ifdef SHIPTEST
+				enterprise.setRotation(0);
+			#endif
 
+			break;
+		case 2:
+			GameMode=2;
+
+			#ifdef SHIPTEST
+				enterprise.setLocation(0, bottomFifth);
+				enterprise.setRotation(M_PI_2);
+				generateShips();
+			#endif
+			break;
+	}
+}
 
 void DisplayPause()
 {
 	// set up the charstrings.
 	string pausedString = "ASTEROIDS: Return of Meteor";
-	string Startgame = "S = Start Game";
-	char PauseGame[50];
-	char FireBullets[50];
-	char MoveEnterprise[50];
-	char ReloadAsteroids[50];
-	char ToggleTeslation[50];
+	vector<string> items;
 	char ToggleGameMode[50];
-	
-	// Input the information into the char strings
-	//sprintf(pausedString, "%s", "ASTEROIDS: Return of Meteor");
-	//sprintf(Startgame, "%s", "S = Start Game");
-	sprintf(PauseGame, "%s", "P = Pause Game");
-	sprintf(FireBullets, "%s", "Space = Fire Misiles");
-	sprintf(MoveEnterprise, "%s", "Arrow Keys = Rotate Enterprise");
-	sprintf(ReloadAsteroids, "%s", "R = Restart Game");
-	sprintf(ToggleTeslation, "%s", "F = Filled Asteroids");
-	sprintf(ToggleGameMode, "%s", "M = Toggle between endless and normal");
+	char menu[50];
+	sprintf(menu, "Menu level = %d and menuSelection = %d",  menuLevel, menuSelection);
 
-	//set font draw "paused on screen"
 	setFont(GLUT_BITMAP_TIMES_ROMAN_24);
 	drawString(-200, 220, pausedString.c_str());
 
-	//set font draw help on screen
-	setFont(GLUT_BITMAP_HELVETICA_12);
-	drawString(-120, -275, Startgame.c_str());
-	drawString(-120, -255, PauseGame);
-	drawString(-120, -235, FireBullets);
-	drawString(-120, -215, MoveEnterprise);
-	drawString(-120, -195, ReloadAsteroids);
-	drawString(-120, -175, ToggleTeslation);
-	drawString(-120, -155, ToggleGameMode);
+	if (selections.empty())
+	{
+		
+		items.push_back("Modes");
+		items.push_back("Options");
+		items.push_back("Controls");
+		items.push_back("Quit");
+		menuOptions=items.size();
+		setFont(GLUT_BITMAP_HELVETICA_18);
+		for(int i = 0; i < items.size(); i++)
+		{
+			if(i==menuSelection)
+			{
+				glColor3f (1, 1, 0.1);
+				drawString(-120, 0+(-20*i),items[i].c_str());
+				glColor3f (0.1, 1, 0.1);
+			}
+			else
+			{
+				drawString(-120, 0+(-20*i),items[i].c_str());
+			}
+		}
+	}
+	else
+	{
+		switch(selections.size())
+		{
+			case 0:
+				items.push_back("Modes");
+				items.push_back("Options");
+				items.push_back("Controls");
+				items.push_back("Quit");
+
+				setFont(GLUT_BITMAP_HELVETICA_18);
+				for(int i = 0; i < items.size(); i++)
+				{
+					if(i==menuSelection)
+					{
+						glColor3f (1, 1, 0.1);
+						drawString(-120, 0+(-20*i),items[i].c_str());
+						glColor3f (0.1, 1, 0.1);
+					}
+					else
+					{
+						drawString(-120, 0+(-20*i),items[i].c_str());
+					}
+				}
+				break;
+
+			case 1:
+				switch(selections[0])
+				{
+					case 0:
+						items.push_back("Normal");
+						items.push_back("Endless");
+						items.push_back("Invaders");
+						items.push_back("Bullet Hell");
+						
+						menuOptions=items.size();
+
+						setFont(GLUT_BITMAP_HELVETICA_18);
+						
+						for(int i = 0; i < items.size(); i++)
+						{
+							if(i==menuSelection)
+							{
+								glColor3f (1, 1, 0.1);
+								drawString(-120, 0+(-20*i),items[i].c_str());
+								glColor3f (0.1, 1, 0.1);
+							}
+							else
+							{
+								drawString(-120, 0+(-20*i),items[i].c_str());
+							}
+						}
+						break;	
+
+					case 2:
+						menuOptions=0;
+						items.push_back("S = Start Game");
+						items.push_back("P = Pause Game");
+						items.push_back("Space = Fire Misiles");
+						items.push_back("Arrow Keys = Rotate Enterprise");
+						items.push_back("R = Restart Game");
+						items.push_back("F = Filled Asteroids");
+						items.push_back("M = Toggle between endless and normal");
+
+						setFont(GLUT_BITMAP_HELVETICA_12);
+						for (int i = 0; i<items.size(); i++)
+						{
+							drawString(-120, 0+(-20*i),items[i].c_str());
+						}
+
+					break;
+					
+					case 3:
+						exit(0);
+						break;
+
+				}
+				break;
+			case 2:
+				switch(selections[0])
+				{
+					case 0:
+						setGameMode(selections[1]);
+						selections.clear();
+						gamestate=1;
+						break;
+				}
+		}
+	}
 }
 
 // Function to display the score.
@@ -963,14 +1095,17 @@ void keyboard(unsigned char key, int x, int y)
 			bulletsFired=0;
 			paused=true;
 			gameOver = false;
-#ifndef SHIPTEST
-			enterprise.rotation=0;		
-			resetShip();
-#endif
-#ifdef SHIPTEST
-			enterprise.setRotation(0);
-			enterprise.resetShip();
-#endif
+
+			#ifndef SHIPTEST
+				enterprise.rotation=0;		
+				resetShip();
+			#endif
+
+			#ifdef SHIPTEST
+				enterprise.setRotation(0);
+				enterprise.resetShip();
+			#endif
+
 			bulletsHit = 0;	
 			break;
 		//quits game
@@ -1020,10 +1155,11 @@ void keyboard(unsigned char key, int x, int y)
 			bulletsFired=0;
 			paused=true;
 			gameOver = false;
+			enterprise.setHealth(100);
 
-#ifndef SHIPTEST
-			enterprise.rotation=0;		
-#endif
+			#ifndef SHIPTEST
+				enterprise.rotation=0;		
+			#endif
 
 			int x, y;
 
@@ -1033,32 +1169,54 @@ void keyboard(unsigned char key, int x, int y)
 				case 0:
 					GameMode=1;
 					initiateAsteroids();
-#ifdef SHIPTEST
-					enterprise.setRotation(0);
-#endif
+				
+					#ifdef SHIPTEST
+						enterprise.setRotation(0);
+					#endif
+					
 					break;
 				case 1:
 					GameMode=2;
-#ifdef SHIPTEST
-					enterprise.setLocation(WORLD_COORDINATE_MAX_X/2, WORLD_COORDINATE_MAX_Y/5);
-					enterprise.setRotation(M_PI_2);
-					generateShips();
-#endif
+
+					#ifdef SHIPTEST
+						enterprise.setLocation(WORLD_COORDINATE_MAX_X/2, WORLD_COORDINATE_MAX_Y/5);
+						enterprise.setRotation(M_PI_2);
+						generateShips();
+					#endif
+					
 					break;
 				case 2:
 					GameMode=0;
 					initiateAsteroids();
-#ifdef SHIPTEST
-					enterprise.setRotation(0);
-#endif
+					
+					#ifdef SHIPTEST
+						enterprise.setRotation(0);
+					#endif
+
 					break;
 			}
 			break;
+			
+		case 13 :
+			if(menuOptions>0)
+			{
+				selections.push_back(menuSelection);
+				menuSelection=0;
+				menuLevel++;
+			}
+			break;
 
-
+		case 8 :
+			if(menuLevel>0)
+			{
+				menuLevel--;
+				selections.erase(selections.begin()+menuLevel);
+				menuSelection=0;
+			}
+			break;
 	}
 
-#ifdef DEBUG	
+	#ifdef DEBUG	
 	if(key == 'b')
 	{
 		vector<asteroid> temp = asteroidBelt.at(0).breakupAsteroid();
@@ -1070,7 +1228,7 @@ void keyboard(unsigned char key, int x, int y)
 		// REMOVE LATER
 		bulletsHit++;
 	}
-#endif
+	#endif
 }
 
 // Handles the firing of bullets.
@@ -1087,6 +1245,19 @@ void keyReleased(unsigned char key, int x, int y)
 // Handles the rotation of the ship.
 void specialKeys(int key, int x, int y)
 {
+	switch (gamestate)
+	{
+		case 0:
+			switch (key)
+			{
+				case GLUT_KEY_UP:
+					menuSelection=(menuSelection-1)%menuOptions;
+					break;
+				case GLUT_KEY_DOWN:
+					menuSelection=(menuSelection+1)%menuOptions;
+					break;
+			}
+	}
 	switch(key)
 	{
 		case GLUT_KEY_RIGHT:
@@ -1098,6 +1269,10 @@ void specialKeys(int key, int x, int y)
 			leftKeyPressed = true;
 			//glutIdleFunc(gameLoop);
 			break;
+
+
+			
+
 
 		default: break;
 	}

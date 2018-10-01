@@ -344,10 +344,6 @@ point ship::getLocation()
 {
 	return location;
 }
-int  ship::getHealth()
-{
-	return health;
-}
 
 void ship::setRotation(double rot)
 {
@@ -358,6 +354,16 @@ void ship::setLocation(double x, double y)
 	location.x = x;
 	location.y = y;
 }
+
+int  ship::getHealth()
+{
+	return health;
+}
+void ship::setHealth(int dmg)
+{
+	health=dmg;
+}
+
 
 void ship::fire()
 {
@@ -448,6 +454,11 @@ void ship::iterateAction()
 int ship::damageHealth(int dmg)
 {
 	health-=dmg;
+	return health;
+}
+int ship::addHealth(int dmg)
+{
+	health+=dmg;
 	return health;
 }
 

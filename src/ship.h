@@ -20,9 +20,13 @@ class ship
         
         //setters
         point getLocation();
-        int getHealth();
+		void setLocation(double x, double y);
         void setRotation(double rot);
-        void setLocation(double x, double y);
+		
+		int getHealth();         
+		void setHealth(int dmg);
+
+
 
         //actions
         void fire();                    // fire weapon
@@ -31,6 +35,7 @@ class ship
         void activatePowerUp(int pwr);
         void setAction(int act);
         int damageHealth(int dmg);
+		int addHealth(int dmg);
         void resetShip();
 
         //render functions
