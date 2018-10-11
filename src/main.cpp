@@ -23,6 +23,7 @@
 #include <chrono>
 #include <unistd.h>
 #include <string.h>
+#include "FileHandler.h"
 
 #define SPACEBAR 32
 
@@ -171,10 +172,15 @@ void setGameMode(int i)
 	paused=true;
 	gameOver = false;
 	enterprise.setHealth(100);
-	
+	fileHandler normal = fileHandler("Normal.mode");
 	switch (i)
 	{
+		
 		case 0:
+			GameMode=0;
+			normal.executeNext();
+			enterprise.setLocation(0,0);
+			break;
 		case 1:
 			GameMode=i;
 			initiateAsteroids();
