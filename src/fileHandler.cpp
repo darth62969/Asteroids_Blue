@@ -5,6 +5,12 @@
 #include <stdio.h>
 #include <regex>
 
+
+std::regex num ("[0-9]");
+std::regex dot ("[\.]");
+std::regex alpha("[a-z]");
+std::regex ALPHA("[A-Z]");
+
 fileHandler::fileHandler(std::string in)
 {
 	char buff[FILENAME_MAX];
@@ -20,7 +26,8 @@ fileHandler::fileHandler(std::string in)
 	if(file)
 	{
 		std::string temp;
-		getline(file,temp);
+		getline(file,temp);/*
+		std:queue<std::string> que =  breakLine(temp);*/
 		std::string line[3];
 		line[0]=temp.substr(0, temp.find_first_of(' '));
 		line[1]=temp.substr(temp.find_first_of(' ')+1, temp.find_last_of(' '));
@@ -35,21 +42,37 @@ fileHandler::fileHandler(std::string in)
 		{
 			type=1;
 			//std::cout << "found type Ship\n";
+		} /*
+
+		if (que.front().compare(0,4, "Mode")==0)
+		{
+			type=0;
+			//std::cout << "found type Mode\n";
 		} 
+		if (que.front().compare(0,4, "Ship")==0)
+		{
+			type=1;
+			//std::cout << "found type Ship\n";
+		} */
 
 		
 	}
 }
+fileHandler::fileHandler()
+{
+
+}
+
 int fileHandler::executeNext()
 {
-//	std::cout << "executing next\n" << "type is " << type << std::endl;
+	std::cout << "executing next\n" << "type is " << type << std::endl;
 	switch(type)
 	{
 		case 0:
 			std::string temp;
 			stk.push(file.tellg());
 			getline(file,temp);
-//			std::cout << temp  << std::endl;
+			//std::cout << temp  << std::endl;
 			if (temp.size()<=1)
 			{
 				stk.pop();
@@ -61,7 +84,7 @@ int fileHandler::executeNext()
 			while(true)
 			{
 				que.push(temp.substr(0, temp.find_first_of(" ")));
-//				std::cout << que.back() << std::endl;
+				//std::cout << que.back() << std::endl;
 				thing = temp.find_first_of(" ");
 				temp=temp.substr(thing+1);
 				if(thing==std::string::npos) break;
@@ -100,7 +123,7 @@ int fileHandler::executeNext()
 			temp=temp.substr(thing+1);
 			if(thing==std::string::npos) break;
 		}
-		cout << instructionSet.empty() << endl;
+		//cout << instructionSet.empty() << endl;
 		switch(instructionSet.front())
 		{
 			instructionSet.pop();
@@ -114,7 +137,7 @@ int fileHandler::executeNext()
 				
 						if (a.compare("Number")==0)
 						{
-							cout<<  que.front() << endl;
+							//cout<<  que.front() << endl;
 							que.pop();
 							int Generate =std::stoi(que.front(), nullptr, 10);
 							for(int i =0; i < Generate ; i++)
@@ -155,27 +178,28 @@ int fileHandler::executeNext()
 	return 1 ; 					// return 1 if done;
 }
 
-value fileHandler::findValue(string key)
+value fileHandler::findValue(std::string key)
 {
 	stk.push(file.tellg());
 	file.seekg(0);
 	value rtv;
 	std::string line;
 	std::smatch matcher;
-	std::regex num ("[0-9]");
-	std::regex dot ("[\.]");
-	std::regex alpha("[a-z]");
-	std::regex ALPHA("[A-Z]");
+
 
 	while (file.good())
 	{
 		getline(file, line);
+		std::cout << line << std::endl;
 		std::queue<std::string> que = breakLine(line);
 		switch(que.front().compare(key))
 		{
-			que.pop();
+			
 			case 0:
+				que.pop();
 				std::string a = que.front();
+				std::cout  << a << " alpha is : " << std::regex_search(a, matcher, alpha)
+					<< "ALPHA is : " << std::regex_search(a, matcher, ALPHA) << std::endl;
 				if(!std::regex_search(a, matcher, alpha) && !std::regex_search(a, matcher, ALPHA))
 				{
 					if(std::regex_search(a, matcher, num))
@@ -207,7 +231,7 @@ value fileHandler::findValue(string key)
 	return rtv;
 }
 
-int setAfterValue(std:string key)
+int fileHandler::setAfterValue(std::string key)
 {
 	stk.push(file.tellg());
 	file.seekg(0);
@@ -222,13 +246,13 @@ int setAfterValue(std:string key)
 		{
 			que.pop();
 			case 0:
-				file.setstate(ios::eofbit);
+				file.setstate(std::ios::eofbit);
 				found =true;
 				break;
 		}
 
 	}
-	file.setstate(ios::clear);
+	file.clear();
 	if(!found)
 	{
 		file.seekg(stk.top());
@@ -250,6 +274,7 @@ std::queue<std::string> fileHandler::breakLine(std::string line)
 		line=line.substr(thing+1);
 		if(thing==std::string::npos) break;
 	}
+	return que;
 }
 
 /*

@@ -6,6 +6,7 @@
 #include <vector>
 #include <stack>
 #include <queue>
+#include <map>
 #include "asteroid.h"
 #include "ship.h"
 #include "bullet.h"
@@ -21,15 +22,19 @@ class mode
 {
 	public:
 		explicit mode(std::string path);
+		void generateLevel();
 		void generateObjects();
+		bool checkWinConditions();
+		
 
 		
 
 	private:
-		fileHander file;
+		fileHandler file;
 		char* name;
 		map<std::string, value> constants;
 		int maxlevel;
+		int curLevel;
 		vector<condition> winConditions;
 		short objects;
 

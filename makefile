@@ -27,7 +27,7 @@ CFLAGS = -v -std=c++11
 COPTFLAGS = -O3 
 LIBFLAGS = -lglut -lGLU -lGL -lm 
 HEADERS = src/headers.h src/structs.h src/globals.h src/prototypes.h
-OBJS = main.o asteroid.o ship.o bullet.o transformer.o clipper.o detectcollision.o FileHandler.o
+OBJS = main.o asteroid.o ship.o bullet.o transformer.o clipper.o detectcollision.o FileHandler.o mode.o
 
 debug ?= n
 logging ?= n
@@ -78,6 +78,9 @@ detectcollision.o : src/detectcollision.cpp
 
 FileHandler.o : src/FileHandler.cpp
 	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/FileHandler.cpp
+
+mode.o : src/mode.cpp
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/mode.cpp
 
 # Default Targets for Cleaning up the Environment
 

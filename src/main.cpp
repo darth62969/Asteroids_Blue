@@ -24,6 +24,7 @@
 #include <unistd.h>
 #include <string.h>
 #include "FileHandler.h"
+#include "mode.h"
 
 #define SPACEBAR 32
 
@@ -173,6 +174,7 @@ void setGameMode(int i)
 	gameOver = false;
 	enterprise.setHealth(100);
 	fileHandler normal = fileHandler("Normal.mode");
+	mode endless = mode("Endless.mode");
 	switch (i)
 	{
 		
@@ -201,6 +203,7 @@ void setGameMode(int i)
 			#endif
 			break;
 	}
+	paused = false;
 }
 
 void DisplayPause()

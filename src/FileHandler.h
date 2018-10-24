@@ -16,6 +16,7 @@ class fileHandler
 {
 	public:
 		explicit fileHandler(std::string in);
+		explicit fileHandler();
 		
 		int executeNext();
 
@@ -26,7 +27,7 @@ class fileHandler
 
 	private:
 		std::fstream file;
-		std::stack<int>  stk;
+		std::stack<int> stk;
 		std::queue<int> instructionSet;
 		int type;
 
