@@ -26,6 +26,10 @@
 #include "FileHandler.h"
 #include "mode.h"
 
+#ifdef WINDOWS
+#include "mingw.thread.h"
+#endif
+
 #define SPACEBAR 32
 
 //Global Variables
@@ -921,7 +925,7 @@ void gameLoop()
 		//sleep thread for for a time.
 			if(timeP2-timeC2>0)
 			{
-				this_thread::sleep_for(chrono::milliseconds(18-(timeP2-timeC2)));
+				std::this_thread::sleep_for(chrono::milliseconds(18-(timeP2-timeC2)));
 			}
 	}
 

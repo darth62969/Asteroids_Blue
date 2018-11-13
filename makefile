@@ -25,7 +25,7 @@
 CC = g++
 CFLAGS = -v -std=c++11
 COPTFLAGS = -O3 
-LIBFLAGS = -lglut -lGLU -lGL -lm 
+LIBFLAGS = -lglut -lGLU -lGL -lm
 HEADERS = src/headers.h src/structs.h src/globals.h src/prototypes.h
 OBJS = main.o asteroid.o ship.o bullet.o transformer.o clipper.o detectcollision.o FileHandler.o mode.o
 
@@ -33,6 +33,7 @@ debug ?= n
 logging ?= n
 multit ?=n
 shiptest ?=n
+windows ?=n
 
 ifeq ($(shiptest), y)
 	CFLAGS += -DSHIPTEST
@@ -47,6 +48,12 @@ ifeq ($(logging), y)
 endif
 ifeq ($(multit), y)
 	CFLAGS += -DMULTIT
+endif
+ifeq ($(windows), y)
+	CC = x86_64-w64-mingw32-g++
+	CFLAGS += -I/mnt/d/CSC315/asteroids_blue/lib/freeglut/include/ -DWINDOWS
+	LIBFLAGS = -L/mnt/d/CSC315/asteroids_blue/lib/freeglut/lib/x64/ -Wl,--subsystem,windows -lfreeglut -lopengl32
+	#CFLAGS += --subsystem,windows
 endif
 
 # Independent Targets - first is executable, second is object
@@ -86,7 +93,7 @@ mode.o : src/mode.cpp
 
 clean :
 	rm *.o
-	rm bin/*
+	rm bin/Asteroids*
 
 pristine :
 	rm *.o

@@ -18,7 +18,7 @@ fileHandler::fileHandler(std::string in)
 	string CurrentDirectory(buff);
 	std::cout << in << ' '<< CurrentDirectory << endl;
 
-	readlink("/proc/self/exe", buff, FILENAME_MAX);
+	//readlink("/proc/self/exe", buff, FILENAME_MAX);
 	std::cout << buff << endl;
 
 	file.open(in.c_str(), std::fstream::in);

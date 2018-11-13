@@ -57,5 +57,5 @@ bool mode::checkWinConditions()
 	 * getState(what, )
 	 * 
 	 * 
-	 * 
+	 */
 }

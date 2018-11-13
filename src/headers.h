@@ -17,6 +17,7 @@
 
 #ifndef HEADERS
 #define HEADERS
+#define _USE_MATH_DEFINES
 
 #include <cmath>
 #include <GL/glut.h>
