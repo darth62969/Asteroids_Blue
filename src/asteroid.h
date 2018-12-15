@@ -20,21 +20,25 @@
 
 #include "structs.h"
 #include <vector>
+#include "object.h"
 
-class asteroid
+class asteroid : public object
 {
 	public:
-        	explicit asteroid();
+        explicit asteroid();
 		explicit asteroid(triangle a, point location, point offset, int num, float Orotation);
+
 		point getCenter();
-		std::vector<asteroid> breakupAsteroid();
 		std::vector<point> getPoints();
 		std::vector<point> getRealPoints();
 		std::vector<triangle> getTess();
 		std::vector<triangle> getTess2();
 		float getRotation();
+
+		std::vector<asteroid> breakupAsteroid();
 		void incrementLocation();
-		//void renderAsteroid(int mode);
+		void render();
+		
 
 	private:
 		point center;

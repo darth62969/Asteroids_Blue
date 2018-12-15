@@ -43,7 +43,7 @@ class ship
         void tessilateShip();           // Tesslate the ship
         
     
-    private:
+    protected:
         //main variables
         int type;
         point location;

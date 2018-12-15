@@ -580,27 +580,22 @@ void gameView()
 		// Print Game over if "gameOver" has been set
 
 		
+
+		for(asteroid a : asteroidBelt)
+		{
+			a.render();
+		}
 		// This is where we decide if we need to draw asteroids one way or the other.	
 		switch(filled)
 		{
 		// If not filled
 			case 0:
 				// For each asteroid...
-    			for (int i = 0; i < (asteroidBelt.size()); i++)
+    			
+
+				for (int i = 0; i < (asteroidBelt.size()); i++)
     			{
-					// Get the Location of the lower left corner of the asteroid
-					point loc = asteroidBelt.at(i).getCenter();
-
-					// get the location of the points on the asteroid grid
-					vector<point> pnt = asteroidBelt.at(i).getPoints();
-
-					for (int j = 0; j < (pnt.size()); j++)
-        			{
-						glBegin (GL_LINES);
-							glVertex2d(pnt[j].x+loc.x, pnt[j].y+loc.y);
-							glVertex2d( pnt.at((j+1)%pnt.size()).x + loc.x , pnt.at((j+1)%pnt.size()).y + loc.y);
-						glEnd ();         
-        			}
+				
 				}
 				break;
 
@@ -612,7 +607,7 @@ void gameView()
 					vector<triangle> a = asteroidBelt.at(i).getTess();
 
 				// Get the center
-					point b = asteroidBelt.at(i).getCenter();
+					point b = asteroidBelt.at(i).getLocation();
 
 				// Draw the triangles
 					for (int j = 0; j < (a.size()); j++)
@@ -633,7 +628,7 @@ void gameView()
 					vector<triangle> a = asteroidBelt.at(i).getTess();
 
 					// get the center point
-					point b = asteroidBelt.at(i).getCenter();
+					point b = asteroidBelt.at(i).getLocation();
 
 					// draw the triangles, and the tesselations.
 					for (int j = 0; j < (a.size()); j++)
@@ -833,8 +828,8 @@ void gameLoop()
 					detectCollision(i);
 					for (int j = 0; j<bullets.size(); j++)
 					{
-						switch((int)(abs(asteroidBelt[i].getCenter().x-bullets[j].getLocation().x)/30)
-								-(int)(abs(asteroidBelt[i].getCenter().y-bullets[j].getLocation().y)/30))
+						switch((int)(abs(asteroidBelt[i].getLocation().x-bullets[j].getLocation().x)/30)
+								-(int)(abs(asteroidBelt[i].getLocation().y-bullets[j].getLocation().y)/30))
 						{
 							case 0:
 								switch(detectCollision(asteroidBelt[i], bullets[j]))
@@ -1366,6 +1361,7 @@ void passiveMouse(int x, int y)
 
 int main(int argc, char** argv)
 {
+	cout << "Starting Game\n";
 #ifdef LOGGING
 	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::trunc);
 	asteroidLogger << "Asteroid Logging Started" << endl;
@@ -1380,10 +1376,12 @@ int main(int argc, char** argv)
 	collisionLogger << "Collision Logging Started " << endl;
 	collisionLogger.close();
 #endif
+	cout << "Seeding Generator\n";
 	chrono::high_resolution_clock::time_point s = chrono::high_resolution_clock::now();
 	chrono::high_resolution_clock::duration d = chrono::high_resolution_clock::now()-s;
 	unsigned s2 = d.count();
 	generator.seed(s2);
+	cout << "initiating window\n";
 	initiateWindow(argc, argv); 				/* Set up Window 					*/
 	initiateGL();								/* Initiate GL   					*/
 	initiateOctogon();							/* Initiate The Game View 			*/

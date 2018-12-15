@@ -27,95 +27,6 @@ double EndGameAnimation=7;
 double WinGameAnimation=0;
 point shipRender;
 
-#ifndef SHIPTEST
-ship createShip(void)
-{
-	/* 
-	 * Create a ship, enterprise, in the middle of the window.
-	 */
-
-	// Create Ship
-	ship temp;
-
-	// Set the values to the ship's grid, these don't get changed.
-	temp.body.a.x = 2;
-	temp.body.a.y = 0.0;
-	temp.body.b.x = -2.0;
-	temp.body.b.y = -1.0;
-	temp.body.c.x = -2;
-	temp.body.c.y = 1.0;
-
-	shipRender = {WORLD_COORDINATE_MAX_X/2, WORLD_COORDINATE_MAX_Y/2, 0, 1};
-	
-	// Rotation will be changed if the user presses the left or right arrow keys.
-	temp.rotation = 0.0;
-
-	return temp;
-}
-
-// This is the function that draws the ship. 
-void drawShip(ship a)
-{
-	/*
-	 * Here we create a temporary point that we use to preform operations on and to draw the ship.
-	 * We scale the this point and then rotate it so that it is the proper size for it to show properly
-	 * Then we translate these points directly by the half the Max size of the World Coordinates  
-	 */
-
-	//Create Point to hold temperary points to draw the ship
-	point b[3];
-
-	//Copy the points in the ship (a) to b
-	b[0] = {a.body.a.x, a.body.a.y, a.body.a.z, a.body.a.w, a.body.a.angle};
-	b[1] = {a.body.b.x, a.body.b.y, a.body.b.z, a.body.b.w, a.body.b.angle};
-	b[2] = {a.body.c.x, a.body.c.y, a.body.c.z, a.body.c.w, a.body.c.angle};
-
-	//Now we want to scale each point then rotate it into position
-	for (int i = 0; i < 3; i++)
-	{
-		switch (gamestate)
-		{
-			case 2:
-				scalePoint(b[i], EndGameAnimation);
-				EndGameAnimation*=0.99;
-				break;
-			default:
-				scalePoint(b[i], 7);
-		}
-		//scalePoint(b[i], 7);
-		rotatePoint(b[i], a.rotation);
-	}
-
-	//We want to save the location of the nose of the ship for use with the positioning of bullets later on
-	enterprise.aLocation = {b[0].x+WORLD_COORDINATE_MAX_X/2, b[0].y+WORLD_COORDINATE_MAX_Y/2} ;
-
-	switch(gamestate)
-	{
-		case 3:
-			WinGameAnimation = (WinGameAnimation+.01)*1.01;
-			shipRender.x += WinGameAnimation*sin(a.rotation*(180/M_PI)+(M_PI));
-			shipRender.y += WinGameAnimation*cos(a.rotation*(180/M_PI)+(M_PI));
-	}
-
-	///Now we want to draw the ship.
-	glBegin(GL_TRIANGLES);
-		for(int i = 0; i<3; i++)
-		{    
-			glVertex2d(b[i].x + shipRender.x, b[i].y + shipRender.y);
-		}
-	glEnd();
-}
-
-void resetShip()
-{
-	EndGameAnimation=7;
-	shipRender = {WORLD_COORDINATE_MAX_X/2, WORLD_COORDINATE_MAX_Y/2, 0, 1};
-	WinGameAnimation=0;
-}
-#endif
-
-#ifdef SHIPTEST
-
 int type;
 
 
@@ -751,4 +662,4 @@ void ship::tessilateShip()
 		cout << endl;
 	}
 }
-#endif
+

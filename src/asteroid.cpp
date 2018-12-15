@@ -23,7 +23,7 @@
 #include <chrono>
 
 
-point center;
+point location;
 float rotation;
 point translation;
 vector<point> astPnts;
@@ -44,7 +44,7 @@ asteroid::asteroid()
  * 	Stet up Random Number Generators
  *	Generate random number between 0 and 8; 
  * 	Add 4 to that number so that that number is between 4 and 12 sides.
- *  Set the center to (0,0)
+ *  Set the location to (0,0)
  *  Get the points for the Enterprise.
  *  Find a location for the asteroid that is within the octogon and away from the ship.
  * 
@@ -53,24 +53,7 @@ asteroid::asteroid()
  * 	Return the asteroid
  */
 
-	//std::default_random_engine generator;
-/*	chrono::high_resolution_clock::time_point s = chrono::high_resolution_clock::now();
-	chrono::high_resolution_clock::duration d = chrono::high_resolution_clock::now()-s;
-	unsigned s2 = d.count();
-
-	std::mt19937_64 generator (s2);
-	//generator.seed(chrono::high_resolution_clock::now());
-	
-	std::binomial_distribution<int> numsidesdist(ASTEROID_MIN_SIZE, ASTEROID_MAX_SIZE);
-	std::uniform_real_distribution<double> dirdist(0, 2*M_PI);
-	std::uniform_real_distribution<double> xlocdist(WORLD_COORDINATE_MIN_X, WORLD_COORDINATE_MAX_X);
-	std::uniform_real_distribution<double> ylocdist(WORLD_COORDINATE_MIN_Y, WORLD_COORDINATE_MAX_Y);
-	std::uniform_real_distribution<double> spddist(ASTEROID_MIN_SPEED, ASTEROID_MAX_SPEED);
-	std::uniform_int_distribution<int> sizedist(ASTEROID_MIN_SIZE, ASTEROID_MAX_SIZE);
-*/
 	int avgSize = sizedist(generator);
-//	int r = rand();
-//	srand (static_cast <unsigned> (time(0))*r/10);	
 
 // Generating a Random Number and adding 4, this will be the number of sides the asteroid has. 
  	numsides = numsidesdist(generator);
@@ -94,54 +77,31 @@ asteroid::asteroid()
 	//asteroidLogger << "Number of sides to generate : " << numsides << endl;
 #endif
 
-//Setting the center (x,y) to (0,0)
-	center.x = INT32_MAX;
-	center.y = INT32_MAX;
+//Setting the location (x,y) to (0,0)
+	location.x = INT32_MAX;
+	location.y = INT32_MAX;
 	
-// Getting the point of the ship so that we can check the location of the asteriods against it.
-// This prevents insta-"Game Overs". 
-#ifndef SHIPTEST
-	vector<point> cmd;
-	cmd.push_back(enterprise.body.a);
-	cmd.push_back(enterprise.body.b);
-	cmd.push_back(enterprise.body.c);
-
-// Since we store the ship in ratios, we scale the ship to get the accurate representation of 
-// where it is on the map.
-	for (int i = 0; i < 3; i++)
-	{
-		scalePoint(cmd[i], 7);
-		rotatePoint(cmd[i], enterprise.rotation);
-		cmd[i].x += WORLD_COORDINATE_MAX_X/2;
-		cmd[i].y += WORLD_COORDINATE_MAX_Y/2;
-	}
-
-// This finds the center of the ship. 
-	int x = (cmd[0].x + cmd[1].x + cmd[2].x)/3;
-	int y = (cmd[0].y + cmd[1].y + cmd[2].y)/3;
-#endif
-
-// While the center is not wihtin the octogon, generate random positions
-	while(!insideOctogon(center))
+// While the location is not wihtin the octogon, generate random positions
+	while(!insideOctogon(location))
 	{
 		// Keep generateing points till the asteroid is not withing range of the ship
 		do
 		{
-			center.x = xlocdist(generator);
-			center.y = ylocdist(generator);
+			location.x = xlocdist(generator);
+			location.y = ylocdist(generator);
 		}
-		while(getVectorLength(center, point{0, 0, 0, 1})<100);
+		while(getVectorLength(location, point{0, 0, 0, 1})<100);
 
 		// Check the new asteroid for it's vecinity to other asteriods.
 		bool nv = false;
 		for (int i = 0; i < asteroidBelt.size(); i++)
 		{
-			// If it is withing range of an asteroid set center back to (0,0)
+			// If it is withing range of an asteroid set location back to (0,0)
 			// This causes it to try again, till it finds a position that works.
-			if (abs(center.x - asteroidBelt[i].getCenter().x) <= 2*ASTEROID_MAX_AVG && abs(center.y - asteroidBelt[i].getCenter().y) <= 2*ASTEROID_MAX_AVG)
+			if (abs(location.x - asteroidBelt[i].getLocation().x) <= 2*ASTEROID_MAX_AVG && abs(location.y - asteroidBelt[i].getLocation().y) <= 2*ASTEROID_MAX_AVG)
 			{
-				center.x = INT32_MAX;
-				center.y = INT32_MAX;
+				location.x = INT32_MAX;
+				location.y = INT32_MAX;
 			}
 		}
 	}
@@ -151,12 +111,13 @@ asteroid::asteroid()
 	translation.w = spddist(generator);
 
 
-	// This logging protocal lets us know where the center of the asteroid is. 
+	// This logging protocal lets us know where the location of the asteroid is. 
 #ifdef LOGGING
-	//asteroidLogger << "Bottom Left corner of asteroid at : " << center.x << " " << center.y << endl;
+	//asteroidLogger << "Bottom Left corner of asteroid at : " << location.x << " " << location.y << endl;
 #endif
 
 // Random number for seed.
+	layer lyr;
    	std::vector<double> angleSteps;
 
 	double sum =0;
@@ -181,13 +142,15 @@ asteroid::asteroid()
 			point tempp;
 			tempp.x= length*cos(angle);
 			tempp.y= length*sin(angle);
-			astPnts.push_back(tempp);
+			lyr.pnts.push_back(tempp);
 			angle+=angleSteps[i];
 	}
+	tesselate(&lyr);
+	lyrs.push_back(lyr);
 
 
-	sortPoints();
-	tessellateAsteriod();
+	//sortPoints();
+	//tessellateAsteriod();
 	//translation.angle = drand48();
 #ifdef LOGGING	
 	//asteroidLogger << "translation.angle was set to : " << translation.angle << "\n\n";
@@ -202,11 +165,12 @@ asteroid::asteroid(triangle a, point location, point offset, int num, float Orot
 	//asteroidLogger << "Creating Simple Asteroid #" << num << endl;
 	//asteroidLogger.close();
 #endif
-	astPnts.push_back(a.a);
-	astPnts.push_back(a.b);
-	astPnts.push_back(a.c);
+	layer lyr;
+	lyr.pnts.push_back(a.a);
+	lyr.pnts.push_back(a.b);
+	lyr.pnts.push_back(a.c);
 
-	astTris.push_back(a);
+	lyr.tris.push_back(a);
 
 	int j = rand();
 	srand (static_cast <unsigned> (time(0))*(num*(j+67)/10));	
@@ -215,8 +179,8 @@ asteroid::asteroid(triangle a, point location, point offset, int num, float Orot
 	translation.angle *= M_PI / 180.0;
 	translation.w = (rand()%16+1)/2.0;
 
-	center.x = location.x + offset.x;
-	center.y = location.y + offset.y;
+	location.x = location.x + offset.x;
+	location.y = location.y + offset.y;
 #ifdef LOGGING
 	//asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 	//asteroidLogger << "Created Simple Asteroid\n\n";
@@ -226,7 +190,7 @@ asteroid::asteroid(triangle a, point location, point offset, int num, float Orot
 
 point asteroid::getCenter()
 {
-	return center;
+	return location;
 }
 float asteroid::getVectorLength(point a, point b)
 {
@@ -236,7 +200,7 @@ float asteroid::getVectorLength(point a, point b)
 
 float asteroid::getVectorLength(asteroid b)
 {
-	return sqrt(pow(abs(center.x-b.getCenter().x),2)+pow(abs(center.y-b.getCenter().y),2));
+	return sqrt(pow(abs(location.x-b.getLocation().x),2)+pow(abs(location.y-b.getLocation().y),2));
 }
 
 vector<asteroid> asteroid::getInfluencers()
@@ -251,6 +215,7 @@ vector<asteroid> asteroid::getInfluencers()
 	}
 	return infl;
 }
+
 void asteroid::incrementLocation()
 {
 	// If Paused, return. this is to ensure the program does not continue if the game is paused. (depreciated)
@@ -264,7 +229,7 @@ void asteroid::incrementLocation()
 	for(int i =0; i< infl.size(); i++)
 	{
 		// This is where we calculate  the bearing of the asteroid to the current influencer.
-		double bearing = atan2f(center.y-infl[i].getCenter().y, center.x-infl[i].getCenter().x);		
+		double bearing = atan2f(location.y-infl[i].getLocation().y, location.x-infl[i].getLocation().x);		
 		
 		// This ensures this value is above 0.
 		if(bearing < 0 )
@@ -302,15 +267,60 @@ void asteroid::incrementLocation()
 			translation.w = .2;
 	}
 
-	// After we calculate the positions of the asteroids, we need to move them. so we move the center by use of trig.
-	center.x += cos(translation.angle)*translation.w/**(60/FPS)*/;
-	center.y += sin(translation.angle)*translation.w/**(60/FPS)*/;
+	// After we calculate the positions of the asteroids, we need to move them. so we move the location by use of trig.
+	location.x += cos(translation.angle)*translation.w/**(60/FPS)*/;
+	location.y += sin(translation.angle)*translation.w/**(60/FPS)*/;
 	
 	//this checks to see if it is still in the octogon them moves it to where it to the other side.
-	if(!insideOctogon(center)){
-		center.x*=-1;
-		center.y*=-1;
+	if(!insideOctogon(location)){
+		location.x*=-1;
+		location.y*=-1;
 	}
+}
+
+void asteroid::render()
+{
+	switch(filled)
+	{
+	// If not filled
+		case 0:
+			for (int j = 0; j < (lyrs[0].pnts.size()); j++)
+     		{
+				glBegin (GL_LINES);
+					glVertex2d(lyrs[0].pnts[j].x+location.x, lyrs[0].pnts[j].y+location.y);
+					glVertex2d(lyrs[0].pnts[(j+1)%lyrs[0].pnts.size()].x + location.x , lyrs[0].pnts[(j+1)%lyrs[0].pnts.size()].y + location.y);
+				glEnd ();         
+       		}
+			break;
+
+			// If filled
+		case 1:
+			// Draw the triangles
+			for (triangle t : lyrs[0].tris)
+        	{
+				glBegin (GL_TRIANGLES);
+					glVertex2d(t.a.x + location.x, t.a.y + location.y);
+					glVertex2d(t.b.x + location.x, t.b.y + location.y);
+					glVertex2d(t.c.x + location.x, t.c.y + location.y);
+				glEnd ();         
+        	}
+			
+			break;
+			// If filled == 2
+		case 2: 
+			// draw the triangles, and the tesselations.
+			for (triangle t : lyrs[0].tris)
+			{
+				glBegin (GL_LINES);
+					glVertex2d(t.a.x + location.x, t.a.y + location.y);
+					glVertex2d(t.b.x + location.x, t.b.y + location.y);
+					glVertex2d(t.b.x + location.x, t.b.y + location.y);
+					glVertex2d(t.c.x + location.x, t.c.y + location.y);
+					glVertex2d(t.c.x + location.x, t.c.y + location.y);
+					glVertex2d(t.a.x + location.x, t.a.y + location.y);
+				glEnd();
+			}
+		}
 }
 
 void asteroid::clear()
@@ -340,8 +350,8 @@ void asteroid::createAsteroid(triangle a, point location, point offset, int num)
 	translation.angle *= M_PI / 180.0;
 	translation.w = ((rand()%16)+1)/4.0;
 
-	center.x = location.x + offset.x;
-	center.y = location.y + offset.y;
+	location.x = location.x + offset.x;
+	location.y = location.y + offset.y;
 #ifdef LOGGING
 	//asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 	//asteroidLogger << "Created Simple Asteroid\n" << endl;
@@ -465,8 +475,8 @@ vector<asteroid> asteroid::breakupAsteroid()
 		//translation.angle MUST BE A RANDOM FLOAT
 		//srand (static_cast <unsigned> (time(0))*((asteroidBelt.size()+67)/10));
 		float rotate = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-		asteroid a(tmpt, center, tmpp, i, rotate);
-		//a.createAsteroid(tmpt, center, tmpp, i);
+		asteroid a(tmpt, location, tmpp, i, rotate);
+		//a.createAsteroid(tmpt, location, tmpp, i);
 		breakup.push_back(a);
 	}
 #ifdef LOGGING
@@ -721,8 +731,8 @@ vector<triangle> asteroid::getTess2()
 		point a[3] = {temp[i].a, temp[i].b, temp[i].c};
 		for (int j = 0; j < 3; j++ )
 		{
-			a[j].x += center.x;
-			a[j].y += center.y;
+			a[j].x += location.x;
+			a[j].y += location.y;
 		}
 		temp[i].a = a[0];
 		temp[i].b = a[1];
@@ -738,7 +748,7 @@ vector<point> asteroid::getRealPoints(){
 
 	for(int i = 0; i < astPnts.size(); i++){
 
-		point p = {astPnts[i].x + center.x,astPnts[i].y + center.y, 0, 1};
+		point p = {astPnts[i].x + location.x,astPnts[i].y + location.y, 0, 1};
 		/*asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 		asteroidLogger << "real points are: " << p.x << " " << p.y << "\n";
 		asteroidLogger.close();	*/

@@ -28,6 +28,14 @@ struct condition
 	
 };
 
+struct color
+{
+	double red;
+	double green;
+	double blue;
+	double alpha;
+};
+
 #ifndef SHIPTEST
 struct ship
 {
@@ -44,5 +52,7 @@ struct bullet
     point translation;
     
 };
+
+
 #endif
 #endif

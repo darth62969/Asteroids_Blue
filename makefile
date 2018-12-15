@@ -27,7 +27,7 @@ CFLAGS = -v -std=c++11
 COPTFLAGS = -O3 
 LIBFLAGS = -lglut -lGLU -lGL -lm
 HEADERS = src/headers.h src/structs.h src/globals.h src/prototypes.h
-OBJS = main.o asteroid.o ship.o bullet.o transformer.o clipper.o detectcollision.o FileHandler.o mode.o
+OBJS = main.o asteroid.o ship.o bullet.o transformer.o clipper.o detectcollision.o FileHandler.o mode.o object.o
 
 debug ?= n
 logging ?= n
@@ -52,8 +52,7 @@ endif
 ifeq ($(windows), y)
 	CC = x86_64-w64-mingw32-g++
 	CFLAGS += -I/mnt/d/CSC315/asteroids_blue/lib/freeglut/include/ -DWINDOWS
-	LIBFLAGS = -L/mnt/d/CSC315/asteroids_blue/lib/freeglut/lib/x64/ -Wl,--subsystem,windows -lfreeglut -lopengl32
-	#CFLAGS += --subsystem,windows
+	LIBFLAGS = -L/mnt/d/CSC315/asteroids_blue/lib/freeglut/lib/x64/ -Wl,--subsystem,windows -lfreeglut -lopengl32 -lglu32 
 endif
 
 # Independent Targets - first is executable, second is object
@@ -88,6 +87,9 @@ FileHandler.o : src/FileHandler.cpp
 
 mode.o : src/mode.cpp
 	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/mode.cpp
+
+object.o : src/object.cpp
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/object.cpp
 
 # Default Targets for Cleaning up the Environment
 

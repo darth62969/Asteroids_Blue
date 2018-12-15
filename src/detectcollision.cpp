@@ -22,8 +22,8 @@
 //checks proximity of asteroids
 bool asteroidProximity(asteroid ast1, asteroid ast2)
 {
-	if (	abs(ast2.getCenter().x - ast1.getCenter().x) <= ASTEROID_MAX_X 
-		&& 	abs(ast2.getCenter().y - ast1.getCenter().y) <= ASTEROID_MAX_Y)
+	if (	abs(ast2.getLocation().x - ast1.getLocation().x) <= ASTEROID_MAX_X 
+		&& 	abs(ast2.getLocation().y - ast1.getLocation().y) <= ASTEROID_MAX_Y)
 	{
 		return true;
 	}
@@ -34,8 +34,8 @@ bool asteroidProximity(asteroid ast1, asteroid ast2)
 //checks proximity of asteroids and bullets
 bool bulletProximity(asteroid ast1, bullet b1)
 {
-	if (	abs(b1.getLocation().x - ast1.getCenter().x) <= ASTEROID_MAX_X 
-		&& 	abs(b1.getLocation().y - ast1.getCenter().y) <= ASTEROID_MAX_Y)
+	if (	abs(b1.getLocation().x - ast1.getLocation().x) <= ASTEROID_MAX_X 
+		&& 	abs(b1.getLocation().y - ast1.getLocation().y) <= ASTEROID_MAX_Y)
 	{
 		return true;
 	}
@@ -59,8 +59,8 @@ bool shipProximity(asteroid ast1, vector<point> b2)
 	int x = (b2[0].x + b2[1].x + b2[2].x)/3;
 	int y = (b2[0].y + b2[1].y + b2[2].y)/3;
 
-	if (	abs(x - ast1.getCenter().x) <= ASTEROID_MAX_X*5 
-		&& 	abs(y - ast1.getCenter().y) <= ASTEROID_MAX_Y*5)
+	if (	abs(x - ast1.getLocation().x) <= ASTEROID_MAX_X*5 
+		&& 	abs(y - ast1.getLocation().y) <= ASTEROID_MAX_Y*5)
 	{
 		return true;
 	}
@@ -126,24 +126,8 @@ void detectCollision(int index)
 	//gets points of ship
 	
 	vector<point> cmd;
-#ifndef SHIPTEST
-	cmd.push_back(enterprise.body.a);
-	cmd.push_back(enterprise.body.b);
-	cmd.push_back(enterprise.body.c);
-#endif
-#ifdef SHIPTEST
 	cmd=enterprise.getPoints();
-#endif
 
-#ifndef SHIPTEST
-	for (int i = 0; i < 3; i++)
-	{
-		scalePoint(cmd[i], 7);
-		rotatePoint(cmd[i], enterprise.rotation);
-		cmd[i].x += WORLD_COORDINATE_MAX_X/2;
-		cmd[i].y += WORLD_COORDINATE_MAX_Y/2;
-	}
-#endif
 	switch (GameMode)
 	{
 		case 0:
@@ -160,11 +144,11 @@ void detectCollision(int index)
 						{
 
 							point tempj;
-							tempj.x = a1[j].x + asteroidBelt[index].getCenter().x;
-							tempj.y = a1[j].y + asteroidBelt[index].getCenter().y;
+							tempj.x = a1[j].x + asteroidBelt[index].getLocation().x;
+							tempj.y = a1[j].y + asteroidBelt[index].getLocation().y;
 							point temp0;
-							temp0.x = a1[0].x + asteroidBelt[index].getCenter().x;
-							temp0.y = a1[0].y + asteroidBelt[index].getCenter().y;
+							temp0.x = a1[0].x + asteroidBelt[index].getLocation().x;
+							temp0.y = a1[0].y + asteroidBelt[index].getLocation().y;
 
 							if (intersect(tempj, temp0, cmd[k], cmd[0]))
 							{
@@ -181,11 +165,11 @@ void detectCollision(int index)
 						else if (j == a1.size()-1)
 						{	
 							point tempj;
-							tempj.x = a1[j].x + asteroidBelt[index].getCenter().x;
-							tempj.y = a1[j].y + asteroidBelt[index].getCenter().y;
+							tempj.x = a1[j].x + asteroidBelt[index].getLocation().x;
+							tempj.y = a1[j].y + asteroidBelt[index].getLocation().y;
 							point temp0;
-							temp0.x = a1[0].x + asteroidBelt[index].getCenter().x;
-							temp0.y = a1[0].y + asteroidBelt[index].getCenter().y;
+							temp0.x = a1[0].x + asteroidBelt[index].getLocation().x;
+							temp0.y = a1[0].y + asteroidBelt[index].getLocation().y;
 
 							if (intersect(tempj, temp0, cmd[k], cmd[k+1]))
 							{	
@@ -202,11 +186,11 @@ void detectCollision(int index)
 						else if (k == cmd.size()-1)
 						{
 							point tempj;
-							tempj.x = a1[j].x + asteroidBelt[index].getCenter().x;
-							tempj.y = a1[j].y + asteroidBelt[index].getCenter().y;
+							tempj.x = a1[j].x + asteroidBelt[index].getLocation().x;
+							tempj.y = a1[j].y + asteroidBelt[index].getLocation().y;
 							point tempj1;
-							tempj1.x = a1[j+1].x + asteroidBelt[index].getCenter().x;
-							tempj1.y = a1[j+1].y + asteroidBelt[index].getCenter().y;
+							tempj1.x = a1[j+1].x + asteroidBelt[index].getLocation().x;
+							tempj1.y = a1[j+1].y + asteroidBelt[index].getLocation().y;
 
 							if (intersect(tempj, tempj1, cmd[k], cmd[0]))
 							{
@@ -223,11 +207,11 @@ void detectCollision(int index)
 						else
 						{
 							point tempj;
-							tempj.x = a1[j].x + asteroidBelt[index].getCenter().x;
-							tempj.y = a1[j].y + asteroidBelt[index].getCenter().y;
+							tempj.x = a1[j].x + asteroidBelt[index].getLocation().x;
+							tempj.y = a1[j].y + asteroidBelt[index].getLocation().y;
 							point tempj1;
-							tempj1.x = a1[j+1].x + asteroidBelt[index].getCenter().x;
-							tempj1.y = a1[j+1].y + asteroidBelt[index].getCenter().y;
+							tempj1.x = a1[j+1].x + asteroidBelt[index].getLocation().x;
+							tempj1.y = a1[j+1].y + asteroidBelt[index].getLocation().y;
 
 							if (intersect(tempj, tempj1, cmd[k], cmd[k+1]))
 							{
@@ -271,11 +255,11 @@ void detectCollision(int index)
  							if (k == a1.size()-1)
  							{
 								point tempk;
- 				    			tempk.x = a1[k].x + asteroidBelt[index].getCenter().x;
-	     						tempk.y = a1[k].y + asteroidBelt[index].getCenter().y;
+ 				    			tempk.x = a1[k].x + asteroidBelt[index].getLocation().x;
+	     						tempk.y = a1[k].y + asteroidBelt[index].getLocation().y;
 	    						point tempk0;
-	    						tempk0.x = a1[0].x + asteroidBelt[index].getCenter().x;
-  								tempk0.y = a1[0].y + asteroidBelt[index].getCenter().y;
+	    						tempk0.x = a1[0].x + asteroidBelt[index].getLocation().x;
+  								tempk0.y = a1[0].y + asteroidBelt[index].getLocation().y;
 
 								if(intersect(tempk, tempk0, tmpbul.location, bullets[j].location))
 								{
@@ -303,11 +287,11 @@ void detectCollision(int index)
 							else 
 							{
 								point tempk2;
- 				   				tempk2.x = a1[k].x + asteroidBelt[index].getCenter().x;
-	     						tempk2.y = a1[k].y + asteroidBelt[index].getCenter().y;
+ 				   				tempk2.x = a1[k].x + asteroidBelt[index].getLocation().x;
+	     						tempk2.y = a1[k].y + asteroidBelt[index].getLocation().y;
 		    					point tempk1;
-		    					tempk1.x = a1[k+1].x + asteroidBelt[index].getCenter().x;
-    							tempk1.y = a1[k+1].y + asteroidBelt[index].getCenter().y;
+		    					tempk1.x = a1[k+1].x + asteroidBelt[index].getLocation().x;
+    							tempk1.y = a1[k+1].y + asteroidBelt[index].getLocation().y;
             
 							if (intersect(tempk2, tempk1, tmpbul.location, bullets[j].location))
 							{
@@ -451,17 +435,17 @@ void detectCollision(int index)
 									if (k == a1.size()-1 && l == a2.size()-1)
 									{
 										point tempa1k;
-										tempa1k.x = a1[k].x + asteroidBelt[index].getCenter().x;
-										tempa1k.y = a1[k].y + asteroidBelt[index].getCenter().y;
+										tempa1k.x = a1[k].x + asteroidBelt[index].getLocation().x;
+										tempa1k.y = a1[k].y + asteroidBelt[index].getLocation().y;
 										point tempa10;
-										tempa10.x = a1[0].x + asteroidBelt[index].getCenter().x;
-										tempa10.y = a1[0].y + asteroidBelt[index].getCenter().y;
+										tempa10.x = a1[0].x + asteroidBelt[index].getLocation().x;
+										tempa10.y = a1[0].y + asteroidBelt[index].getLocation().y;
 										point tempa2l;
-										tempa2l.x = a2[l].x + asteroidBelt[j].getCenter().x;
-										tempa2l.y = a2[l].y + asteroidBelt[j].getCenter().y;
+										tempa2l.x = a2[l].x + asteroidBelt[j].getLocation().x;
+										tempa2l.y = a2[l].y + asteroidBelt[j].getLocation().y;
 										point tempa20;
-										tempa20.x = a2[0].x + asteroidBelt[j].getCenter().x;
-										tempa20.y = a2[0].y + asteroidBelt[j].getCenter().y;
+										tempa20.x = a2[0].x + asteroidBelt[j].getLocation().x;
+										tempa20.y = a2[0].y + asteroidBelt[j].getLocation().y;
 
 										if (intersect(tempa1k, tempa10, tempa2l, tempa20))
 										{	
@@ -486,17 +470,17 @@ void detectCollision(int index)
 									else if(k == a1.size()-1)
 									{
 										point tempa1k;
-										tempa1k.x = a1[k].x + asteroidBelt[index].getCenter().x;
-										tempa1k.y = a1[k].y + asteroidBelt[index].getCenter().y;
+										tempa1k.x = a1[k].x + asteroidBelt[index].getLocation().x;
+										tempa1k.y = a1[k].y + asteroidBelt[index].getLocation().y;
 										point tempa10;
-										tempa10.x = a1[0].x + asteroidBelt[index].getCenter().x;
-										tempa10.y = a1[0].y + asteroidBelt[index].getCenter().y;
+										tempa10.x = a1[0].x + asteroidBelt[index].getLocation().x;
+										tempa10.y = a1[0].y + asteroidBelt[index].getLocation().y;
 										point tempa2l;
-										tempa2l.x = a2[l].x + asteroidBelt[j].getCenter().x;
-										tempa2l.y = a2[l].y + asteroidBelt[j].getCenter().y;
+										tempa2l.x = a2[l].x + asteroidBelt[j].getLocation().x;
+										tempa2l.y = a2[l].y + asteroidBelt[j].getLocation().y;
 										point tempa2l1;
-										tempa2l1.x = a2[l+1].x + asteroidBelt[j].getCenter().x;
-										tempa2l1.y = a2[l+1].y + asteroidBelt[j].getCenter().y;
+										tempa2l1.x = a2[l+1].x + asteroidBelt[j].getLocation().x;
+										tempa2l1.y = a2[l+1].y + asteroidBelt[j].getLocation().y;
 
 										if (intersect(tempa1k, tempa10, tempa2l, tempa2l1))
 										{	
@@ -522,17 +506,17 @@ void detectCollision(int index)
 									{
 
 										point tempa1k;
-										tempa1k.x = a1[k].x + asteroidBelt[index].getCenter().x;
-										tempa1k.y = a1[k].y + asteroidBelt[index].getCenter().y;
+										tempa1k.x = a1[k].x + asteroidBelt[index].getLocation().x;
+										tempa1k.y = a1[k].y + asteroidBelt[index].getLocation().y;
 										point tempa1k1;
-										tempa1k1.x = a1[k+1].x + asteroidBelt[index].getCenter().x;
-										tempa1k1.y = a1[k+1].y + asteroidBelt[index].getCenter().y;
+										tempa1k1.x = a1[k+1].x + asteroidBelt[index].getLocation().x;
+										tempa1k1.y = a1[k+1].y + asteroidBelt[index].getLocation().y;
 										point tempa2l;
-										tempa2l.x = a2[l].x + asteroidBelt[j].getCenter().x;
-										tempa2l.y = a2[l].y + asteroidBelt[j].getCenter().y;
+										tempa2l.x = a2[l].x + asteroidBelt[j].getLocation().x;
+										tempa2l.y = a2[l].y + asteroidBelt[j].getLocation().y;
 										point tempa20;
-										tempa20.x = a2[0].x + asteroidBelt[j].getCenter().x;
-										tempa20.y = a2[0].y + asteroidBelt[j].getCenter().y;
+										tempa20.x = a2[0].x + asteroidBelt[j].getLocation().x;
+										tempa20.y = a2[0].y + asteroidBelt[j].getLocation().y;
 
 										if (intersect(tempa1k, tempa1k1, tempa2l, tempa20))
 										{	
@@ -558,17 +542,17 @@ void detectCollision(int index)
 									{
 
 										point tempa1k;
-										tempa1k.x = a1[k].x + asteroidBelt[index].getCenter().x;
-										tempa1k.y = a1[k].y + asteroidBelt[index].getCenter().y;
+										tempa1k.x = a1[k].x + asteroidBelt[index].getLocation().x;
+										tempa1k.y = a1[k].y + asteroidBelt[index].getLocation().y;
 										point tempa1k1;
-										tempa1k1.x = a1[k+1].x + asteroidBelt[index].getCenter().x;
-										tempa1k1.y = a1[k+1].y + asteroidBelt[index].getCenter().y;
+										tempa1k1.x = a1[k+1].x + asteroidBelt[index].getLocation().x;
+										tempa1k1.y = a1[k+1].y + asteroidBelt[index].getLocation().y;
 										point tempa2l;
-										tempa2l.x = a2[l].x + asteroidBelt[j].getCenter().x;
-										tempa2l.y = a2[l].y + asteroidBelt[j].getCenter().y;
+										tempa2l.x = a2[l].x + asteroidBelt[j].getLocation().x;
+										tempa2l.y = a2[l].y + asteroidBelt[j].getLocation().y;
 										point tempa2l1;
-										tempa2l1.x = a2[l+1].x + asteroidBelt[j].getCenter().x;
-										tempa2l1.y = a2[l+1].y + asteroidBelt[j].getCenter().y;
+										tempa2l1.x = a2[l+1].x + asteroidBelt[j].getLocation().x;
+										tempa2l1.y = a2[l+1].y + asteroidBelt[j].getLocation().y;
 
 										if (intersect(tempa1k, tempa1k1, tempa2l, tempa2l1))
 										{	
