@@ -25,8 +25,8 @@
 class asteroid : public object
 {
 	public:
-        explicit asteroid();
-		explicit asteroid(triangle a, point location, point offset, int num, float Orotation);
+        asteroid();
+		asteroid(triangle a, point location, point offset, int num, float Orotation);
 
 		point getCenter();
 		std::vector<point> getPoints();
@@ -37,7 +37,8 @@ class asteroid : public object
 
 		std::vector<asteroid> breakupAsteroid();
 		void incrementLocation();
-		void render();
+		void render() override;
+		void doAction() override;
 		
 
 	private:

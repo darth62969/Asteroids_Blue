@@ -3,15 +3,17 @@
 
 #include "structs.h"
 #include "bullet.h"
+#include "object.h"
 #include <vector>
 #include <random>
 
-class ship
+class ship : public object
 {
     public:
         //constructors
-        explicit ship(int tp, std::vector<point> pnts); 
-        explicit ship(int tp);
+		ship();
+        ship(int tp, std::vector<point> pnts); 
+        ship(int tp);
 
         //getters
         std::vector<point> getPoints();
@@ -19,36 +21,33 @@ class ship
         std::vector<point> getAtkPnts();
         
         //setters
-        point getLocation();
-		void setLocation(double x, double y);
-        void setRotation(double rot);
-		
+	
 		int getHealth();         
 		void setHealth(int dmg);
+		int getAction();
+		void setAction(int act);
+		
 
 
 
         //actions
-        void fire();                    // fire weapon
+        virtual void fire();                    // fire weapon
         void iterateAction();           // move / fire weapon
-        //void activatePowerUp(PowerUp pwr);        // change weapon type
-        void activatePowerUp(int pwr);
-        void setAction(int act);
+//        void activatePowerUp(PowerUp pwr);        // change weapon type
+//        void activatePowerUp(int pwr);
+
         int damageHealth(int dmg);
 		int addHealth(int dmg);
         void resetShip();
 
         //render functions
         void renderShip();              // draw the ship
+		void render();
         void tessilateShip();           // Tesslate the ship
         
     
     protected:
-        //main variables
-        int type;
-        point location;
-        std::vector<point> shppnts;
-        std::vector<triangle> shptris;
+    	//main variables
         std::vector<point> atkpnts;
         int actionSet;
         int health;

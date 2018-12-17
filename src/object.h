@@ -19,16 +19,23 @@ class object
 		//Virtual Fucntions
 		virtual void render() = 0;
 		virtual void doAction();
-		void tesselate(layer* lyr);
+		void tessellate(layer* lyr);
+
 		//get / set
 		point getLocation();
 		void setLocation(double x, double y);
 		void setLocation(point loc);
 		double getRotation();
 		void setRotation( double rot );
+		virtual std::vector<point> getBounds();
 		
 	protected:
 		point location;
+
+		/* 
+		 * Base layer 0 is always the bounds of the object. 
+		 * Use Layer 0 for collision detection
+		 */
 		std::vector<layer> lyrs;
 
 

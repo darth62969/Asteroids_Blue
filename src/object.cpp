@@ -4,8 +4,12 @@
 #include "object.h"
 #include "prototypes.h"
 
+void object::doAction()
+{
+	return;
+}
 
-void object::tesselate(layer* lyr)
+void object::tessellate(layer* lyr)
 {
 	vector<point> temp = lyr->pnts;
 	point A = temp[0];
@@ -194,6 +198,12 @@ void object::tesselate(layer* lyr)
 		cout << endl;
 	}
 }
+
+/*
+ * Getters and setters, for security and other reasons. 
+ * Most of this stuff shouldn't be public.
+ */
+
 point object::getLocation()
 {
 	return location;
@@ -217,4 +227,8 @@ double object::getRotation()
 void object::setRotation(double rot)
 {
 	location.angle = rot;
+}
+void getBounds()
+{
+	return lyrs[0].pnts;
 }

@@ -145,7 +145,7 @@ asteroid::asteroid()
 			lyr.pnts.push_back(tempp);
 			angle+=angleSteps[i];
 	}
-	tesselate(&lyr);
+	tessellate(&lyr);
 	lyrs.push_back(lyr);
 
 
@@ -278,7 +278,7 @@ void asteroid::incrementLocation()
 	}
 }
 
-void asteroid::render()
+void asteroid::render() 
 {
 	switch(filled)
 	{
@@ -321,6 +321,67 @@ void asteroid::render()
 				glEnd();
 			}
 		}
+}
+void asteroid::doAction()
+{
+	// If Paused, return. this is to ensure the program does not continue if the game is paused. (depreciated)
+	if(paused)
+		return;
+
+	//This is a vector for the asteroid's gravity influence effect.
+	vector<asteroid> infl = getInfluencers();
+
+	//This takes the vector returned by getInfluencers and calculates the new direction of the current asteroid.
+	for(int i =0; i< infl.size(); i++)
+	{
+		// This is where we calculate  the bearing of the asteroid to the current influencer.
+		double bearing = atan2f(location.y-infl[i].getLocation().y, location.x-infl[i].getLocation().x);		
+		
+		// This ensures this value is above 0.
+		if(bearing < 0 )
+			bearing+=M_PI;
+
+		// Here we are checking to see if the setting a value DBearing that is needed for later calculations.
+		// Dbearing is the difference in the angle between the direction the asteroid is going and the influencer.
+		double Dbearing;
+		if (bearing <= translation.angle)
+		{
+		 	Dbearing = translation.angle - bearing;
+		}
+		if (bearing > translation.angle)
+		{
+			Dbearing = bearing - translation.angle;
+		}
+
+		// We need to calculate the gravity potential for the asteroids. this is the amount of "force" that is going to be aplied in the
+		// direction of the influncer.
+		double magnatude = GRAVITY_POTENTIAL*((2*ASTEROID_MASS)/getVectorLength(infl[i]));
+
+		// Here we are calculating variables that were half phased out... cause debug issues.
+		double Uvelocity = pow(translation.w,2)+pow(magnatude,2);
+		double Ubearing = cos(M_PI-(Dbearing));
+
+		// Here we are calculating the new speed. this takes the previous speed, and add the calculated values of the change in velocity and direction.
+		// Vector math is a pain in the behind. you don't want to know how long it took me to find the trig for these calcuations.
+		translation.w = pow(pow(translation.w,2)+pow(magnatude,2) - ((2 * magnatude * translation.w)*Ubearing), .5);
+		translation.angle += asinf((magnatude*sin((M_PI-Dbearing)))/translation.w);
+
+		// Here i'm setting a minimum and maximum speed for gameplay purposes.
+		if (translation.w >  1.5)
+			translation.w =  1.5;
+		if (translation.w < .2)
+			translation.w = .2;
+	}
+
+	// After we calculate the positions of the asteroids, we need to move them. so we move the location by use of trig.
+	location.x += cos(translation.angle)*translation.w/**(60/FPS)*/;
+	location.y += sin(translation.angle)*translation.w/**(60/FPS)*/;
+	
+	//this checks to see if it is still in the octogon them moves it to where it to the other side.
+	if(!insideOctogon(location)){
+		location.x*=-1;
+		location.y*=-1;
+	}
 }
 
 void asteroid::clear()
@@ -716,12 +777,12 @@ void asteroid::sortPoints()
 
 vector<point> asteroid::getPoints()
 {
-	return astPnts;
+	return lyrs[0].pnts;
 }
 
 vector<triangle> asteroid::getTess()
 {
-	return astTris;
+	return lyrs[0].tris;
 }
 vector<triangle> asteroid::getTess2()
 {

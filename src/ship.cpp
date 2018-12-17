@@ -251,21 +251,6 @@ std::vector<point> ship::getAtkPnts()
 	return temp;	
 }
 
-point ship::getLocation()
-{
-	return location;
-}
-
-void ship::setRotation(double rot)
-{
-	location.angle=rot;
-}
-void ship::setLocation(double x, double y)
-{
-	location.x = x;
-	location.y = y;
-}
-
 int  ship::getHealth()
 {
 	return health;
@@ -391,6 +376,89 @@ void ship::resetShip()
 }
 
 void ship::renderShip()
+{
+	// Create a temporary vector with the ship's Triangles
+	vector<triangle> temp = shptris;
+
+	//scale the points
+	for (int i = 0; i < temp.size(); i++)
+	{
+		point b[3];
+		b[0]=temp[i].a;
+		b[1]=temp[i].b;
+		b[2]=temp[i].c;
+		for(int j=0; j<3; j++)
+		{ 
+			switch(gamestate)
+			{
+				//if end game we want to play the end animation
+				case 2: 
+					scalePoint(b[j], EndGameAnimation);
+					EndGameAnimation*=0.999;
+					break;
+				// all other cases leave the ship alone
+				default:
+					scalePoint(b[j], 5);
+					break;
+			}
+
+			point tempp;
+
+			tempp.x= b[j].x*cos(location.angle)-b[j].y*sin(location.angle);
+			tempp.y= b[j].x*sin(location.angle)+b[j].y*cos(location.angle);
+			b[j] = tempp;
+		}
+
+		temp[i].a=b[0];
+		temp[i].b=b[1];
+		temp[i].c=b[2];
+	}
+		
+	for(int i = 0; i<temp.size(); i++)
+	{    
+		switch (filled)
+		{
+			case 0:
+			case 1:
+				glBegin(GL_TRIANGLES);
+					glVertex2d((temp[i].a.x)+(location.x), (temp[i].a.y)+(location.y));
+					glVertex2d((temp[i].b.x)+(location.x), (temp[i].b.y)+(location.y));
+					glVertex2d((temp[i].c.x)+(location.x), (temp[i].c.y)+(location.y));
+				glEnd();
+				break;
+			case 2:
+				glBegin (GL_LINES);
+					glVertex2d((temp[i].a.x)+(location.x), (temp[i].a.y)+(location.y));
+					glVertex2d((temp[i].b.x)+(location.x), (temp[i].b.y)+(location.y));
+					glVertex2d((temp[i].b.x)+(location.x), (temp[i].b.y)+(location.y));
+					glVertex2d((temp[i].c.x)+(location.x), (temp[i].c.y)+(location.y));
+					glVertex2d((temp[i].c.x)+(location.x), (temp[i].c.y)+(location.y));
+					glVertex2d((temp[i].a.x)+(location.x), (temp[i].a.y)+(location.y));
+				glEnd();
+		}
+	}
+
+	switch(gamestate)
+	{
+		case 3:
+			WinGameAnimation = (WinGameAnimation+.01)*1.01;
+			shipRender.x += WinGameAnimation*sin(location.angle*(180/M_PI)+(M_PI));
+			shipRender.y += WinGameAnimation*cos(location.angle*(180/M_PI)+(M_PI));
+	}
+
+	///Now we want to draw the ship. 
+	/*glBegin(GL_TRIANGLES);
+		for(int i = 0; i<temp.size(); i++)
+		{    
+			
+			glVertex2d(temp.at(i).a.x + location.x, temp.at(i).a.y + location.y);
+			glVertex2d(temp.at(i).b.x + location.x, temp.at(i).b.y + location.y);
+			glVertex2d(temp.at(i).c.x + location.x, temp.at(i).c.y + location.y);
+
+		}
+	glEnd();*/
+}
+void ship::render()
 {
 	// Create a temporary vector with the ship's Triangles
 	vector<triangle> temp = shptris;
