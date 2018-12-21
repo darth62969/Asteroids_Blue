@@ -29,6 +29,7 @@ class asteroid : public object
 		asteroid(triangle a, point location, point offset, int num, float Orotation);
 
 		point getCenter();
+		std::vector<point> getBounds();
 		std::vector<point> getPoints();
 		std::vector<point> getRealPoints();
 		std::vector<triangle> getTess();

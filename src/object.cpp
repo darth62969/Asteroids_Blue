@@ -199,6 +199,53 @@ void object::tessellate(layer* lyr)
 	}
 }
 
+bool object::collides(object* other)
+{
+	if(!lyrs.empty())
+	{
+		point a = other->getLocation();
+
+		switch(((int)a.x-(int)location.x)/50)
+		{
+			case 0:
+			{
+				std::vector<point> a_pnt= getBounds();
+				std::vector<point> b_pnt= other->getBounds();
+				for (int i = 0; i < a_pnt.size(); i++)
+				{
+					for (int j = 0; j < b_pnt.size(); j++)
+					{
+						if(intersect(a_pnt[i], a_pnt[(i+1)%a_pnt.size()], 
+							b_pnt[j], b_pnt[(j+1)%b_pnt.size()]))
+							{
+								return true;
+							}
+					}
+				}
+			}	
+				break;
+			default: 
+				return false;
+		}
+
+		/*if ((a.x-location.x) < 50 && (a.y-location.y)<50)
+		{
+			std::vector<point> a_pnt= getBounds();
+			std::vector<point> b_pnt= other->getBounds();
+			for (int i = 0; i < a_pnt.size(); i++)
+			{
+
+			}
+		}
+		else
+		{
+			return false;
+		}*/
+	
+	}
+	return false;
+}
+
 /*
  * Getters and setters, for security and other reasons. 
  * Most of this stuff shouldn't be public.
@@ -228,7 +275,9 @@ void object::setRotation(double rot)
 {
 	location.angle = rot;
 }
+/*
 void getBounds()
 {
 	return lyrs[0].pnts;
 }
+*/

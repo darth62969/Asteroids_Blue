@@ -740,26 +740,28 @@ void asteroid::sortPoints()
 	// Sorts astPnts in CCW order.
 	// Declare a vector sortedPoints of points.
 	vector<point> sortedPoints;
+	
 
 	// Calculate the centroid of the polygon formed by astPnts.
 	float xsum = 0.0;
 	float ysum = 0.0;
-	for(int i=0; i<astPnts.size(); i++)
+	for(int i=0; i<lyrs[0].pnts.size(); i++)
 	{
-		xsum += astPnts.at(i).x;
-		ysum += astPnts.at(i).y;
+		xsum += lyrs[0].pnts.at(i).x;
+		ysum += lyrs[0].pnts.at(i).y;
 	}
-	float midx = xsum / astPnts.size();
-	float midy = ysum / astPnts.size();
+	float midx = xsum / lyrs[0].pnts.size();
+	float midy = ysum / lyrs[0].pnts.size();
 
 	// Declare an array of floats to hold the angles.
-	float angles[astPnts.size()];
+	const int angl_s = lyrs[0].pnts.size();
+	float angles[angl_s];
 
 	// For each point in astPnts, calculate its angle by comparing it to the centroid of the polygon formed by astPnts.
-	for(int i=0; i<astPnts.size(); i++)
+	for(int i=0; i<lyrs[0].pnts.size(); i++)
 	{
-		angles[i] = atan2(astPnts.at(i).y - midy, astPnts.at(i).x - midx);
-		astPnts.at(i).angle = angles[i];
+		angles[i] = atan2(lyrs[0].pnts.at(i).y - midy, lyrs[0].pnts.at(i).x - midx);
+		lyrs[0].pnts.at(i).angle = angles[i];
 	}
 
 	// Sort angles in ascending order.
@@ -774,6 +776,17 @@ void asteroid::sortPoints()
 	// Transfer sortedPoints to astPnts.
 	astPnts = sortedPoints;
 }
+vector<point> asteroid::getBounds()
+{
+	std::vector<point> t = lyrs[0].pnts;
+	for (int i = 0; i < t.size(); i++)
+	{
+		double x = t[i].x+location.x;
+		double y = t[i].y+location.y;
+		t[i] = {x, y, t[i].z};
+	}
+	
+}
 
 vector<point> asteroid::getPoints()
 {
@@ -786,7 +799,7 @@ vector<triangle> asteroid::getTess()
 }
 vector<triangle> asteroid::getTess2()
 {
-	vector<triangle> temp = astTris;
+	vector<triangle> temp = lyrs[0].tris;
 	for (int i =0; i < temp.size(); i++)
 	{
 		point a[3] = {temp[i].a, temp[i].b, temp[i].c};
@@ -807,9 +820,9 @@ vector<point> asteroid::getRealPoints(){
 
 	vector<point> v;
 
-	for(int i = 0; i < astPnts.size(); i++){
+	for(int i = 0; i < lyrs[0].pnts.size(); i++){
 
-		point p = {astPnts[i].x + location.x,astPnts[i].y + location.y, 0, 1};
+		point p = {lyrs[0].pnts[i].x + location.x, lyrs[0].pnts[i].y + location.y, 0, 1};
 		/*asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 		asteroidLogger << "real points are: " << p.x << " " << p.y << "\n";
 		asteroidLogger.close();	*/

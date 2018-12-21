@@ -33,11 +33,11 @@
 #include <sstream>
 #include <random>
 #include <chrono>
-
-#ifdef SHIPTEST
 #include "ship.h"
 #include "bullet.h"
-#endif
+#include "object.h"
+#include "enterprise.h"
+#include "fighter.h"
 
 //#include "detectcollision.cpp"
 

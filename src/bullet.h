@@ -3,31 +3,25 @@
 
 #include <vector>
 #include "structs.h"
+#include "object.h"
 
-class bullet
+class bullet : public object
 {
 	public:
 		explicit bullet();
 		explicit bullet(std::vector<point> pnts, int dmg, double vel);
-		bullet createBullet(int x, int y, double rot);
-		void increment();
-		void drawBullet();
+		void doAction();
+		void render();
+		bullet* fireBullet(double x, double y, double angle);
 		
+		vector<point> getBounds();
 		int getDamage();
 		point getLocation();
 
-
-
 	private:
 		int damage;
-		
 		point location;
-
-		std::vector<point> bltPnts;
-		std::vector<triangle> bltTris;
-
-		void tesselate();
-
+		object* clone() const {return new bullet(*this);};
 };
 
 #endif

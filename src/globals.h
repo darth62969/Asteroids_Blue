@@ -22,7 +22,7 @@
 #include "headers.h"
 
 // The Ship
-extern ship enterprise;
+extern enterprise player;
 
 // other stuff
 extern vector<point> octogon;// defines octogon in ccw order

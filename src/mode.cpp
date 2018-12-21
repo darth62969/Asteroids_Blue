@@ -1,61 +1,40 @@
 #include "mode.h"
 #include <iostream>
 
-
-mode::mode(std::string path)
+mode::mode()
 {
-	file = fileHandler(path);
-
-	value a = file.findValue("MaxLevel");
-	switch(a.type)
-	{
-		case 1:
-			maxlevel = a._int;
-			std::cout << "Value: type = " << a.type << " name = "
-				<< a.name << " _int = " << a._int << std::endl;
-			break;
-		default:
-			std::cout << "Error: Return Type Not Int\n";
-			std::cout << "Value: type = " << a.type << " name = "
-				<< a.name << " _int = " << a._int << std::endl;
-			break;
-	}
-	
-	file.setAfterValue("MaxLevel");
-
-	a = file.findValue("Object");
-	
-	switch(a.type)
-	{
-		case 0:
-			if (string("Asteroid").compare(a.name))
-			{
-				objects = objects | 1;
-			}
-			break;
-		default:
-			std::cout << "Error: Return Type Not String\n";
-			break;
-	}
-
-
+	maxLevel=1;
 }
+
+int mode::step()
+{
+	for (int i = 0; i<onScreen.size(); i++)
+	{
+		
+	}
+
+	return 0;
+}
+
 void mode::generateLevel()
 {
-
+	for (int i=0; i<50; i++)
+	{
+		onScreen.push_back(new asteroid());
+	}
 }
 
-void mode::generateObjects()
+void mode::init()
 {
 
 }
 
-bool mode::checkWinConditions()
+std::vector<object*> mode::getOnScreen()
 {
-	/* 
-	 * 
-	 * getState(what, )
-	 * 
-	 * 
-	 */
+	return onScreen;
+}
+
+void mode::addToOnScreen(object * obj)
+{
+	onScreen.push_back(obj);
 }

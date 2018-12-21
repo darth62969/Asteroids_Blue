@@ -25,6 +25,7 @@
 #include <string.h>
 #include "FileHandler.h"
 #include "mode.h"
+#include "enterprise.h"
 
 #ifdef WINDOWS
 #include "mingw.thread.h"
@@ -35,13 +36,8 @@
 //Global Variables
 
 //The Ship
-#ifndef SHIPTEST
-ship enterprise = createShip();
-#endif
 
-#ifdef SHIPTEST
-ship enterprise = ship(0);
-#endif
+enterprise player = enterprise();
 
 vector<point> octogon; bool noOctogon = 1;
 vector<point> clipPts;
@@ -176,24 +172,24 @@ void setGameMode(int i)
 	bulletsFired=0;
 	paused=true;
 	gameOver = false;
-	enterprise.setHealth(100);
+	player.setHealth(100);
 	fileHandler normal = fileHandler("Normal.mode");
-	mode endless = mode("Endless.mode");
+	//mode endless = mode("Endless.mode");
 	switch (i)
 	{
 		
 		case 0:
 			GameMode=0;
-			normal.executeNext();
-			enterprise.setLocation(0,0);
+			//normal.executeNext();
+			player.setLocation(0,0);
 			break;
 		case 1:
 			GameMode=i;
 			initiateAsteroids();
-			enterprise.setLocation(0,0);
+			player.setLocation(0,0);
 				
 			#ifdef SHIPTEST
-				enterprise.setRotation(0);
+				player.setRotation(0);
 			#endif
 
 			break;
@@ -201,8 +197,8 @@ void setGameMode(int i)
 			GameMode=2;
 
 			#ifdef SHIPTEST
-				enterprise.setLocation(0, bottomFifth);
-				enterprise.setRotation(M_PI_2);
+				player.setLocation(0, bottomFifth);
+				player.setRotation(M_PI_2);
 				generateShips();
 			#endif
 			break;
@@ -304,7 +300,7 @@ void DisplayPause()
 						items.push_back("S = Start Game");
 						items.push_back("P = Pause Game");
 						items.push_back("Space = Fire Misiles");
-						items.push_back("Arrow Keys = Rotate Enterprise");
+						items.push_back("Arrow Keys = Rotate player");
 						items.push_back("R = Restart Game");
 						items.push_back("F = Filled Asteroids");
 						items.push_back("M = Toggle between endless and normal");
@@ -388,7 +384,7 @@ void displayScore(void)
 	sprintf(astsOnScr2, "Screen: %3d", (int)asteroidBelt.size()); 
 	sprintf(astsHit, "Asteroids Hit: %4d", bulletsHit);
 	sprintf(hrStr, "Hit Ratio:  %5.2f %%", hitRatio);
-	sprintf(health, "Health: %%%d", enterprise.getHealth() );
+	sprintf(health, "Health: %%%d", player.getHealth() );
 
 	//Set color to green.
 	glColor3f(0.2, 0.5, 0.0);
@@ -649,24 +645,16 @@ void gameView()
 			
 		}
 		// Draw the ship
-
-		#ifndef SHIPTEST
-			drawShip(enterprise);		
-		#endif
-
-		#ifdef SHIPTEST
-			enterprise.renderShip();
-			switch(GameMode)
-			{
-				case 2:
-					for (int i = 0; i < enemies.size(); i++)
-					{
-						enemies[i].renderShip();
-					}
-					break;
-			}
-
-		#endif
+		player.render();
+		switch(GameMode)
+		{
+			case 2:
+				for (int i = 0; i < enemies.size(); i++)
+				{
+					enemies[i].renderShip();
+				}
+				break;
+		}
 		// Draw the bullets.
 		glColor3f(1.0, 1.0, 0.0);
 		for(int i = 0; i < bullets.size(); i++)
@@ -876,15 +864,15 @@ void gameLoop()
 
 				for (int i = 0; i < bullets.size(); i++)
 				{
-					switch((int)(abs(enterprise.getLocation().x-bullets[i].getLocation().x)/50)
-							-(int)(abs(enterprise.getLocation().y-bullets[i].getLocation().y)/50))
+					switch((int)(abs(player.getLocation().x-bullets[i].getLocation().x)/50)
+							-(int)(abs(player.getLocation().y-bullets[i].getLocation().y)/50))
 					{
 						case 0:
-							switch(detectCollision(enterprise, bullets[i]))
+							switch(detectCollision(player, bullets[i]))
 							{
 								case 0:
 									bullets.erase(bullets.begin()+i);
-									if (enterprise.damageHealth(bullets[i].getDamage())<=0)
+									if (player.damageHealth(bullets[i].getDamage())<=0)
 										gamestate=2;
 									break;
 							}
@@ -1105,13 +1093,13 @@ void keyboard(unsigned char key, int x, int y)
 			gameOver = false;
 
 			#ifndef SHIPTEST
-				enterprise.rotation=0;		
+				player.rotation=0;		
 				resetShip();
 			#endif
 
 			#ifdef SHIPTEST
-				enterprise.setRotation(0);
-				enterprise.resetShip();
+				player.setRotation(0);
+				player.resetShip();
 			#endif
 
 			bulletsHit = 0;	
@@ -1163,10 +1151,10 @@ void keyboard(unsigned char key, int x, int y)
 			bulletsFired=0;
 			paused=true;
 			gameOver = false;
-			enterprise.setHealth(100);
+			player.setHealth(100);
 
 			#ifndef SHIPTEST
-				enterprise.rotation=0;		
+				player.rotation=0;		
 			#endif
 
 			int x, y;
@@ -1179,7 +1167,7 @@ void keyboard(unsigned char key, int x, int y)
 					initiateAsteroids();
 				
 					#ifdef SHIPTEST
-						enterprise.setRotation(0);
+						player.setRotation(0);
 					#endif
 					
 					break;
@@ -1187,8 +1175,8 @@ void keyboard(unsigned char key, int x, int y)
 					GameMode=2;
 
 					#ifdef SHIPTEST
-						enterprise.setLocation(WORLD_COORDINATE_MAX_X/2, WORLD_COORDINATE_MAX_Y/5);
-						enterprise.setRotation(M_PI_2);
+						player.setLocation(WORLD_COORDINATE_MAX_X/2, WORLD_COORDINATE_MAX_Y/5);
+						player.setRotation(M_PI_2);
 						generateShips();
 					#endif
 					
@@ -1198,7 +1186,7 @@ void keyboard(unsigned char key, int x, int y)
 					initiateAsteroids();
 					
 					#ifdef SHIPTEST
-						enterprise.setRotation(0);
+						player.setRotation(0);
 					#endif
 
 					break;
@@ -1315,15 +1303,7 @@ void mouse(int button, int state, int x, int y)
 			switch(gamestate)
 			{
 				case 1:
-#ifndef SHIPTEST
-					spacePressed = true;
-					bullet shot = createBullet();
-					bullets.push_back(shot);
-					bulletsFired++;
-#endif
-#ifdef SHIPTEST
-					enterprise.fire();
-#endif
+					player.fire();
 					break;
 			}          
         }
@@ -1336,27 +1316,21 @@ void passiveMouse(int x, int y)
 	point temp ={x, y, 0, 1};
 	point pnt;
 	double bearing;
-	#ifndef SHIPTEST
-		double bearing =-1( atan2f(enterprise.aLocation.y-y2, enterprise.aLocation.x-x2)); //* (180 / M_PI))+180;
-		enterprise.rotation=bearing;
-	#endif
 
-	#ifdef SHIPTEST
 	switch(GameMode)
 	{
 		case 0:
 		case 1:
-			pnt = enterprise.getAtkPnts()[0];
+			pnt = player.getAtkPnts()[0];
 			bearing =(atan2f(pnt.y-y2, pnt.x-x2));
-			enterprise.setRotation(bearing);
+			player.setRotation(bearing);
 			break;
 
 		case 2:
-			enterprise.setLocation(-1*x2, WORLD_COORDINATE_MIN_Y+((WORLD_COORDINATE_MAX_Y-WORLD_COORDINATE_MIN_Y)/5));
+			player.setLocation(-1*x2, WORLD_COORDINATE_MIN_Y+((WORLD_COORDINATE_MAX_Y-WORLD_COORDINATE_MIN_Y)/5));
 			break;
 	}
 
-	#endif
 }
 
 int main(int argc, char** argv)

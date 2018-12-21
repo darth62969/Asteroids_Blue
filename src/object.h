@@ -21,13 +21,15 @@ class object
 		virtual void doAction();
 		void tessellate(layer* lyr);
 
+		virtual bool collides(object* other);
+
 		//get / set
 		point getLocation();
 		void setLocation(double x, double y);
 		void setLocation(point loc);
 		double getRotation();
 		void setRotation( double rot );
-		virtual std::vector<point> getBounds();
+		virtual std::vector<point> getBounds()=0;
 		
 	protected:
 		point location;

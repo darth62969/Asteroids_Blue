@@ -29,6 +29,11 @@ point shipRender;
 
 int type;
 
+ship::ship()
+{
+
+}
+
 
 ship::ship(int tp, std::vector<point> pnts)
 {
@@ -40,17 +45,17 @@ ship::ship(int tp, std::vector<point> pnts)
 			location = {WORLD_COORDINATE_MAX_X/2, WORLD_COORDINATE_MAX_Y/2, 0, 1, 0};
 			
 			//Generate the Enterprise
-			shppnts.push_back(point{0, 5, 0, 1});
-			shppnts.push_back(point{-1, 2, 0, 1});
-			shppnts.push_back(point{-3, 2, 0, 1});
-			shppnts.push_back(point{-3, -5, 0, 1});
-			shppnts.push_back(point{-1, -5, 0, 1});
-			shppnts.push_back(point{-1, -1, 0, 1});
-			shppnts.push_back(point{1, -1, 0, 1});
-			shppnts.push_back(point{1, -5, 0, 1});
-			shppnts.push_back(point{3, -5, 0, 1});
-			shppnts.push_back(point{3, 2, 0, 1});
-			shppnts.push_back(point{1, 2, 0, 1});
+			lyrs[0].pnts.push_back(point{0, 5, 0, 1});
+			lyrs[0].pnts.push_back(point{-1, 2, 0, 1});
+			lyrs[0].pnts.push_back(point{-3, 2, 0, 1});
+			lyrs[0].pnts.push_back(point{-3, -5, 0, 1});
+			lyrs[0].pnts.push_back(point{-1, -5, 0, 1});
+			lyrs[0].pnts.push_back(point{-1, -1, 0, 1});
+			lyrs[0].pnts.push_back(point{1, -1, 0, 1});
+			lyrs[0].pnts.push_back(point{1, -5, 0, 1});
+			lyrs[0].pnts.push_back(point{3, -5, 0, 1});
+			lyrs[0].pnts.push_back(point{3, 2, 0, 1});
+			lyrs[0].pnts.push_back(point{1, 2, 0, 1});
 			
 			//Generate Trangles
 			cout << "teslating ship" << endl;
@@ -65,7 +70,7 @@ ship::ship(int tp, std::vector<point> pnts)
 
 			break;
 		case 5:
-			shppnts=pnts;
+			lyrs[0].pnts=pnts;
 			break;
 	}
 
@@ -76,6 +81,7 @@ ship::ship(int tp)
 	//set the type.
 	type=tp;
 	vector<point> temp;
+	layer lyr;
 	//based on the type generate the ship.
 	switch(type)
 	{
@@ -84,20 +90,22 @@ ship::ship(int tp)
 			location = {0, 0, 0, 1, 0};
 			
 			//Generate the Enterprise
-			shppnts.push_back(point{ 5,  0, 0, 1});
-			shppnts.push_back(point{ 2,  1, 0, 1});
-			shppnts.push_back(point{ 2,  3, 0, 1});
-			shppnts.push_back(point{-5,  3, 0, 1});
-			shppnts.push_back(point{-5,  1, 0, 1});
-			shppnts.push_back(point{ 0,  1, 0, 1});
-			shppnts.push_back(point{ 0, -1, 0, 1});
-			shppnts.push_back(point{-5, -1, 0, 1});
-			shppnts.push_back(point{-5, -3, 0, 1});
-			shppnts.push_back(point{ 2, -3, 0, 1});
-			shppnts.push_back(point{ 2, -1, 0, 1});
+			lyr.pnts.push_back(point{ 5,  0, 0, 1});
+			lyr.pnts.push_back(point{ 2,  1, 0, 1});
+			lyr.pnts.push_back(point{ 2,  3, 0, 1});
+			lyr.pnts.push_back(point{-5,  3, 0, 1});
+			lyr.pnts.push_back(point{-5,  1, 0, 1});
+			lyr.pnts.push_back(point{ 0,  1, 0, 1});
+			lyr.pnts.push_back(point{ 0, -1, 0, 1});
+			lyr.pnts.push_back(point{-5, -1, 0, 1});
+			lyr.pnts.push_back(point{-5, -3, 0, 1});
+			lyr.pnts.push_back(point{ 2, -3, 0, 1});
+			lyr.pnts.push_back(point{ 2, -1, 0, 1});
 
 			//Generate Trangles
-			tessilateShip();
+			tessellate(&lyr);
+
+			lyrs.push_back(lyr);
 
 			//set attack points (i.e. where it shoots from)
 			atkpnts.push_back(point{ 5,  0, 0, 1});
@@ -119,23 +127,25 @@ ship::ship(int tp)
 
 			break;
 		case 1:
-			shppnts.push_back(point{ 3,  0, 0, 1});
-			shppnts.push_back(point{ 1,  1, 0, 1});
-			shppnts.push_back(point{ 0,  1, 0, 1});
-			shppnts.push_back(point{-1,  2, 0, 1});
-			shppnts.push_back(point{-1,  3, 0, 1});
-			shppnts.push_back(point{-3,  3, 0, 1});
-			shppnts.push_back(point{-3,  1, 0, 1});
-			shppnts.push_back(point{-2,  1, 0, 1});
-			shppnts.push_back(point{-2, -1, 0, 1});
-			shppnts.push_back(point{-3, -1, 0, 1});
-			shppnts.push_back(point{-3, -3, 0, 1});
-			shppnts.push_back(point{-1, -3, 0, 1});
-			shppnts.push_back(point{-1, -2, 0, 1});
-			shppnts.push_back(point{ 0, -1, 0, 1});
-			shppnts.push_back(point{ 1, -1, 0, 1});
+			lyr.pnts.push_back(point{ 3,  0, 0, 1});
+			lyr.pnts.push_back(point{ 1,  1, 0, 1});
+			lyr.pnts.push_back(point{ 0,  1, 0, 1});
+			lyr.pnts.push_back(point{-1,  2, 0, 1});
+			lyr.pnts.push_back(point{-1,  3, 0, 1});
+			lyr.pnts.push_back(point{-3,  3, 0, 1});
+			lyr.pnts.push_back(point{-3,  1, 0, 1});
+			lyr.pnts.push_back(point{-2,  1, 0, 1});
+			lyr.pnts.push_back(point{-2, -1, 0, 1});
+			lyr.pnts.push_back(point{-3, -1, 0, 1});
+			lyr.pnts.push_back(point{-3, -3, 0, 1});
+			lyr.pnts.push_back(point{-1, -3, 0, 1});
+			lyr.pnts.push_back(point{-1, -2, 0, 1});
+			lyr.pnts.push_back(point{ 0, -1, 0, 1});
+			lyr.pnts.push_back(point{ 1, -1, 0, 1});
 			
-			tessilateShip();
+			tessellate(&lyr);
+			
+			lyrs.push_back(lyr);
 
 			atkpnts.push_back(point{ 3,  0, 0, 1});
 
@@ -155,13 +165,15 @@ ship::ship(int tp)
 			break;
 
 		case 2:
-			shppnts.push_back(point{ 3,  0, 0 ,1});
-			shppnts.push_back(point{ 0,  1, 0 ,1});
-			shppnts.push_back(point{-2,  3, 0 ,1});
-			shppnts.push_back(point{-2, -3, 0 ,1});
-			shppnts.push_back(point{ 0, -1, 0 ,1});
+			lyr.pnts.push_back(point{ 3,  0, 0 ,1});
+			lyr.pnts.push_back(point{ 0,  1, 0 ,1});
+			lyr.pnts.push_back(point{-2,  3, 0 ,1});
+			lyr.pnts.push_back(point{-2, -3, 0 ,1});
+			lyr.pnts.push_back(point{ 0, -1, 0 ,1});
 			
-			tessilateShip();
+			tessellate(&lyr);
+			
+			lyrs.push_back(lyr);
 
 			atkpnts.push_back(point{ 3,  0, 0, 1});
 
@@ -181,14 +193,33 @@ ship::ship(int tp)
 			break;
 		
 		case 3:
-			shppnts.push_back(point { 1, 3});
+			lyr.pnts.push_back(point { 1, 3});
 
 			
 	}
 }
+std::vector<point> ship::getBounds()
+{
+ 	vector<point> temp = lyrs[0].pnts;
+	for (int i =0; i < temp.size(); i++)
+	{
+			scalePoint(temp[i], 5);
+
+			point tempp;
+
+			tempp.x= temp[i].x*cos(location.angle)-temp[i].y*sin(location.angle);
+			tempp.y= temp[i].x*sin(location.angle)+temp[i].y*cos(location.angle);
+			
+			temp[i] = tempp;
+			temp[i].x += location.x;
+			temp[i].y += location.y;
+	}
+
+	return temp;		
+}
 std::vector<point> ship::getPoints()
 {
-	vector<point> temp = shppnts;
+	vector<point> temp = lyrs[0].pnts;
 	for (int i =0; i < temp.size(); i++)
 	{
 			scalePoint(temp[i], 5);
@@ -208,7 +239,7 @@ std::vector<point> ship::getPoints()
 
 std::vector<triangle> ship::getTriangles()
 {
-	vector<triangle> temp = shptris;
+	vector<triangle> temp = lyrs[0].tris;
 	for (int i =0; i < temp.size(); i++)
 	{
 		point a[3] = {temp[i].a, temp[i].b, temp[i].c};
@@ -261,7 +292,7 @@ void ship::setHealth(int dmg)
 }
 
 
-void ship::fire()
+void ship::fire(mode* md)
 {
 	vector<point> temp=getAtkPnts();
 	for (int i = 0; i < temp.size(); i++)
@@ -269,10 +300,10 @@ void ship::fire()
 		//cout << temp[i].x << " " << temp[i].y << endl;
 		temp[i].x+=sin(location.angle);
 		temp[i].y+=cos(location.angle);
-		bullet shot = blt.createBullet(temp[i].x, temp[i].y, location.angle);
+		bullet * shot = blt.fireBullet(temp[i].x, temp[i].y, location.angle);
 	//	shot.location= temp[i];
 	//	shot.theta = location.angle;
-		bullets.push_back(shot);
+		md->addToOnScreen(shot);
 	}
 }
 
@@ -312,7 +343,7 @@ void ship::iterateAction()
 		case 2:
 			cycle++;
 
-			point pnt = enterprise.getAtkPnts()[0];
+			point pnt = player.getAtkPnts()[0];
 			double bearing =(atan2f(pnt.y-this->getAtkPnts()[0].y, pnt.x-this->getAtkPnts()[0].x));
 			this->setRotation(bearing);
 
@@ -378,7 +409,7 @@ void ship::resetShip()
 void ship::renderShip()
 {
 	// Create a temporary vector with the ship's Triangles
-	vector<triangle> temp = shptris;
+	vector<triangle> temp = lyrs[0].tris;
 
 	//scale the points
 	for (int i = 0; i < temp.size(); i++)
@@ -413,7 +444,7 @@ void ship::renderShip()
 		temp[i].b=b[1];
 		temp[i].c=b[2];
 	}
-		
+	glColor3d(lyrs[0].clr.red, lyrs[0].clr.green, lyrs[0].clr.blue);
 	for(int i = 0; i<temp.size(); i++)
 	{    
 		switch (filled)
@@ -461,7 +492,7 @@ void ship::renderShip()
 void ship::render()
 {
 	// Create a temporary vector with the ship's Triangles
-	vector<triangle> temp = shptris;
+	vector<triangle> temp = lyrs[0].tris;
 
 	//scale the points
 	for (int i = 0; i < temp.size(); i++)
@@ -543,7 +574,7 @@ void ship::render()
 }
 void ship::tessilateShip()
 {
-	vector<point> temp = shppnts;
+	vector<point> temp = lyrs[0].pnts;
 	point A = temp[0];
 	point B = temp[1];
 	point C = temp[2];
@@ -560,24 +591,24 @@ void ship::tessilateShip()
 		//cout << intersect (temp[0], temp[1], A, B) << endl;
 
 		bool insect = false;
-		for (int i1  = 0; i1 < shppnts.size(); i1++)
+		for (int i1  = 0; i1 < lyrs[0].pnts.size(); i1++)
 		{
 			switch (i1)
 			{
 				case 0:
-					if(intersect(shppnts[i1], shppnts[shppnts.size()-1], A, B))
+					if(intersect(lyrs[0].pnts[i1], lyrs[0].pnts[lyrs[0].pnts.size()-1], A, B))
 						insect=true;
-					if(intersect(shppnts[i1], shppnts[shppnts.size()-1], B, C))
+					if(intersect(lyrs[0].pnts[i1], lyrs[0].pnts[lyrs[0].pnts.size()-1], B, C))
 						insect = true;
-					if(intersect(shppnts[i1], shppnts[shppnts.size()-1], C, A))
+					if(intersect(lyrs[0].pnts[i1], lyrs[0].pnts[lyrs[0].pnts.size()-1], C, A))
 						insect = true;
 					break;
 				default:
-					if (intersect(shppnts[i1], shppnts[i1-1], A, B))
+					if (intersect(lyrs[0].pnts[i1], lyrs[0].pnts[i1-1], A, B))
 						insect = true;
-					if (intersect(shppnts[i1], shppnts[i1-1], B, C))
+					if (intersect(lyrs[0].pnts[i1], lyrs[0].pnts[i1-1], B, C))
 						insect = true;
-					if (intersect(shppnts[i1], shppnts[i1-1], C, A))
+					if (intersect(lyrs[0].pnts[i1], lyrs[0].pnts[i1-1], C, A))
 						insect = true;
 					break;
 			}
@@ -587,9 +618,9 @@ void ship::tessilateShip()
 			}
 		}
 
-		for (int i1  = 0; i1 < shptris.size(); i1++)
+		for (int i1  = 0; i1 < lyrs[0].tris.size(); i1++)
 		{
-			point temp1[3] = {shptris[i1].a, shptris[i1].b, shptris[i1].c};
+			point temp1[3] = {lyrs[0].tris[i1].a, lyrs[0].tris[i1].b, lyrs[0].tris[i1].c};
 			for (int j1=0; j1<3; j1++)
 			{
 				switch (j1)
@@ -677,7 +708,7 @@ void ship::tessilateShip()
 				tri.a = A;
 				tri.b = B;
 				tri.c = C;
-				shptris.push_back(tri);
+				lyrs[0].tris.push_back(tri);
 
 				Bi=Ci;
 				B=temp[Bi];
@@ -721,12 +752,12 @@ void ship::tessilateShip()
 		}
 	}
 
-	for (int i = 0; i < shptris.size(); i++)
+	for (int i = 0; i < lyrs[0].tris.size(); i++)
 	{
 		cout << "Triangle " << i << endl;
-		cout << "A ( " << shptris[i].a.x << " , " << shptris[i].a.y << " )" << endl;
-		cout << "B ( " << shptris[i].b.x << " , " << shptris[i].b.y << " )" << endl;
-		cout << "C ( " << shptris[i].c.x << " , " << shptris[i].c.y << " )" << endl;
+		cout << "A ( " << lyrs[0].tris[i].a.x << " , " << lyrs[0].tris[i].a.y << " )" << endl;
+		cout << "B ( " << lyrs[0].tris[i].b.x << " , " << lyrs[0].tris[i].b.y << " )" << endl;
+		cout << "C ( " << lyrs[0].tris[i].c.x << " , " << lyrs[0].tris[i].c.y << " )" << endl;
 		cout << endl;
 	}
 }

@@ -4,6 +4,7 @@
 #include "structs.h"
 #include "bullet.h"
 #include "object.h"
+#include "mode.h"
 #include <vector>
 #include <random>
 
@@ -16,6 +17,7 @@ class ship : public object
         ship(int tp);
 
         //getters
+		std::vector<point> getBounds();
         std::vector<point> getPoints();
         std::vector<triangle> getTriangles();
         std::vector<point> getAtkPnts();
@@ -31,18 +33,27 @@ class ship : public object
 
 
         //actions
-        virtual void fire();                    // fire weapon
+
+        virtual void fire(mode * md);                    // fire weapon
+		virtual void resetShip();
+
         void iterateAction();           // move / fire weapon
+
+		int addHealth(int dmg);
+		int damageHealth(int dmg);
+
+
 //        void activatePowerUp(PowerUp pwr);        // change weapon type
 //        void activatePowerUp(int pwr);
 
-        int damageHealth(int dmg);
-		int addHealth(int dmg);
-        void resetShip();
+
+
 
         //render functions
-        void renderShip();              // draw the ship
-		void render();
+		virtual void render();
+        
+		/*depreciated*/
+		void renderShip();              // draw the ship
         void tessilateShip();           // Tesslate the ship
         
     
