@@ -15,34 +15,47 @@
  * Mercer Univercity  
  */
 
-#include "structs.h"
-#include "globals.h"
-#include "prototypes.h"
-#include "bullet.h"
 
-bullet::bullet(vector<point> pnts, int dmg, double vel)
+#include "bullet.h"
+#include "globals.h"
+
+
+bullet::bullet(std::vector<point> pnts, int dmg, double vel)
 {
 	layer lyr;
 	lyr.pnts = pnts;
 	tessellate(&lyr);
 	lyr.clr = color{1.0,1.0,0.0,0};
 	damage = dmg;
-	location.w = vel;
+	location.w = vel; 
+	lyrs.push_back(lyr);
 }
 bullet::bullet()
 {
-	
+	layer lyr;
+	lyr.pnts.push_back(point { 3, -1, 0, 1});
+	lyr.pnts.push_back(point { 3,  1, 0, 1});
+	lyr.pnts.push_back(point { 1,  2, 0, 1});
+	lyr.pnts.push_back(point {-3,  2, 0, 1});
+	lyr.pnts.push_back(point {-3, -2, 0, 1});
+	lyr.pnts.push_back(point { 1, -2, 0, 1});
+	tessellate(&lyr);
+	lyr.clr = color{1.0,1.0,0.0,0};
+	damage=5;
+	location.w = 2;
+	lyrs.push_back(lyr);
 }
 
-bullet* bullet::fireBullet(double x, double y, double angle)
+bullet * bullet::fireBullet(double x, double y, double angle)
 {
+	//std::cout << angle << std::endl;
 	point t_pnt =point{x, y, 0, location.w, angle};
-	bullet* temp = new bullet(*this);
+	bullet * temp = new bullet();
 	temp->setLocation(t_pnt);
 	return temp;
 }
 
-void bullet::doAction()
+void bullet::doAction(mode * md)
 {
 	location.x+=location.w*cos(location.angle);
 	location.y+=location.w*sin(location.angle);
@@ -51,7 +64,7 @@ void bullet::doAction()
 void bullet::render()
 {
 
-	vector<triangle> temp = lyrs[0].tris;
+	std::vector<triangle> temp = lyrs[0].tris;
 	for (int i = 0; i < temp.size(); i++)
 	{
 		point b[3];
@@ -98,9 +111,9 @@ void bullet::render()
 	}
 }
 
-std::vector<point> ship::getBounds()
+std::vector<point> bullet::getBounds()
 {
- 	vector<point> temp = lyrs[0].pnts;
+ 	std::vector<point> temp = lyrs[0].pnts;
 	for (int i =0; i < temp.size(); i++)
 	{
 			scalePoint(temp[i], 5);

@@ -15,8 +15,6 @@
  * Mercer University  
  */
 
-#include "prototypes.h"
-#include "globals.h"
 #include "headers.h"
 
 //checks proximity of asteroids
@@ -67,7 +65,7 @@ bool shipProximity(asteroid ast1, vector<point> b2)
 	else
 		return false; 
 }
-
+/*
 bool intersect(point v1, point v2, point v3, point v4)
 {
 	float ua_num = ((v3.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v3.y - v1.y));
@@ -88,7 +86,7 @@ bool intersect(point v1, point v2, point v3, point v4)
 	}
 
 	return false;
-}
+}*/
 
 void detectCollision(int index) 
 {

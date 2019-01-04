@@ -15,12 +15,15 @@
  * Mercer Univercity  
  */
 
-#ifndef __ASTEROID_H_INCLUDED__
-#define __ASTEROID_H_INCLUDED__
+#ifndef __ASTEROID_H__
+#define __ASTEROID_H__
 
-#include "structs.h"
-#include <vector>
+#include "headers.h"
 #include "object.h"
+#include "prototypes.h"
+#include "globals.h"
+#include "windowProperties.h"
+
 
 class asteroid : public object
 {
@@ -31,15 +34,15 @@ class asteroid : public object
 		point getCenter();
 		std::vector<point> getBounds();
 		std::vector<point> getPoints();
-		std::vector<point> getRealPoints();
-		std::vector<triangle> getTess();
+		//std::vector<point> getRealPoints();
+		//std::vector<triangle> getTess();
 		std::vector<triangle> getTess2();
 		float getRotation();
 
-		std::vector<asteroid> breakupAsteroid();
-		void incrementLocation();
+		std::vector<object *> breakupAsteroid();
+		//void incrementLocation(mode * );
 		void render() override;
-		void doAction() override;
+		void doAction(mode * md) override;
 		
 
 	private:
@@ -50,7 +53,7 @@ class asteroid : public object
 	    	std::vector<triangle> astTris;
 	    	bool clipped;
 		int numsides;
-		std::vector<asteroid> getInfluencers();
+		std::vector<asteroid *> getInfluencers(mode * md);
 		float getVectorLength(point a, point b);
 		float getVectorLength(asteroid b);
 		void createAsteroid(triangle a, point center, point offset, int num);

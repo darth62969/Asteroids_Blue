@@ -1,27 +1,29 @@
-#ifndef __BULLETS__
-#define __BULLETS__
+#ifndef __BULLET_H__
+#define __BULLET_H__
 
-#include <vector>
-#include "structs.h"
+#include "headers.h"
 #include "object.h"
+#include "structs.h"
 
 class bullet : public object
 {
 	public:
 		explicit bullet();
 		explicit bullet(std::vector<point> pnts, int dmg, double vel);
-		void doAction();
+		void doAction(mode * md);
 		void render();
 		bullet* fireBullet(double x, double y, double angle);
 		
-		vector<point> getBounds();
+		std::vector<point> getBounds();
 		int getDamage();
 		point getLocation();
+		bullet* clone() const {return new bullet(*this);};
 
 	private:
 		int damage;
-		point location;
-		object* clone() const {return new bullet(*this);};
+	//	point location;
+	//	double velocity;
+		
 };
 
 #endif

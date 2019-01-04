@@ -4,14 +4,14 @@
 #include "object.h"
 #include "prototypes.h"
 
-void object::doAction()
+void object::doAction(mode * md)
 {
 	return;
 }
 
 void object::tessellate(layer* lyr)
 {
-	vector<point> temp = lyr->pnts;
+	std::vector<point> temp = lyr->pnts;
 	point A = temp[0];
 	point B = temp[1];
 	point C = temp[2];
@@ -125,11 +125,6 @@ void object::tessellate(layer* lyr)
 
 			z = l1.x*l2.y - l2.x*l1.y;
 
-			//cout << " Index " << Ai << " A  ( "  << A.x << " , " << A.y << " )" << endl;
-			//cout << " Index " << Bi << " B  ( "  << B.x << " , " << B.y << " )" << endl;
-			//cout << " Index " << Ci << " C  ( "  << C.x << " , " << C.y << " )" << endl;
-			//cout << " z = " << z << endl;
-
 			bool within = false;
 			for (int i =0; i < temp.size(); i ++)
 			{
@@ -139,9 +134,6 @@ void object::tessellate(layer* lyr)
 
 			if (z<0 && !within)
 			{
-				cout << " Index " << Ai << " A  ( "  << A.x << " , " << A.y << " )" << endl;
-				cout << " Index " << Bi << " B  ( "  << B.x << " , " << B.y << " )" << endl;
-				cout << " Index " << Ci << " C  ( "  << C.x << " , " << C.y << " )" << endl;
 				tri.a = A;
 				tri.b = B;
 				tri.c = C;
@@ -168,10 +160,6 @@ void object::tessellate(layer* lyr)
 						A=temp[Ai];
 						B=temp[Bi];
 						C=temp[Ci];
-
-						cout << " Index " << Ai << " A  ( "  << A.x << " , " << A.y << " )" << endl;
-				cout << " Index " << Bi << " B  ( "  << B.x << " , " << B.y << " )" << endl;
-				cout << " Index " << Ci << " C  ( "  << C.x << " , " << C.y << " )" << endl;
 					}
 					else
 					{
@@ -191,42 +179,28 @@ void object::tessellate(layer* lyr)
 
 	for (int i = 0; i < lyr->tris.size(); i++)
 	{
-		cout << "Triangle " << i << endl;
-		cout << "A ( " << lyr->tris[i].a.x << " , " << lyr->tris[i].a.y << " )" << endl;
-		cout << "B ( " << lyr->tris[i].b.x << " , " << lyr->tris[i].b.y << " )" << endl;
-		cout << "C ( " << lyr->tris[i].c.x << " , " << lyr->tris[i].c.y << " )" << endl;
-		cout << endl;
 	}
 }
 
-bool object::collides(object* other)
+bool object::collides(object * other)
 {
-	if(!lyrs.empty())
-	{
-		point a = other->getLocation();
+	point a = other->getLocation();
+	if (getVectorLength(other)>100)
+		return false;
 
-		switch(((int)a.x-(int)location.x)/50)
+	std::vector<point> a_pnt= getBounds();
+	std::vector<point> b_pnt= other->getBounds();
+	for (int i = 0; i < a_pnt.size(); i++)
+	{
+		for (int j = 0; j < b_pnt.size(); j++)
 		{
-			case 0:
-			{
-				std::vector<point> a_pnt= getBounds();
-				std::vector<point> b_pnt= other->getBounds();
-				for (int i = 0; i < a_pnt.size(); i++)
+			if(intersect(a_pnt[i], a_pnt[(i+1)%a_pnt.size()], 
+				b_pnt[j], b_pnt[(j+1)%b_pnt.size()]))
 				{
-					for (int j = 0; j < b_pnt.size(); j++)
-					{
-						if(intersect(a_pnt[i], a_pnt[(i+1)%a_pnt.size()], 
-							b_pnt[j], b_pnt[(j+1)%b_pnt.size()]))
-							{
-								return true;
-							}
-					}
+					return true;
 				}
-			}	
-				break;
-			default: 
-				return false;
 		}
+	}
 
 		/*if ((a.x-location.x) < 50 && (a.y-location.y)<50)
 		{
@@ -242,7 +216,7 @@ bool object::collides(object* other)
 			return false;
 		}*/
 	
-	}
+	
 	return false;
 }
 
@@ -250,6 +224,8 @@ bool object::collides(object* other)
  * Getters and setters, for security and other reasons. 
  * Most of this stuff shouldn't be public.
  */
+
+
 
 point object::getLocation()
 {
@@ -275,9 +251,13 @@ void object::setRotation(double rot)
 {
 	location.angle = rot;
 }
-/*
-void getBounds()
+
+std::vector<point> object::getBounds()
 {
 	return lyrs[0].pnts;
 }
-*/
+
+float object::getVectorLength(object * other)
+{
+	return sqrt(pow(abs(location.x-other->getLocation().x),2)+pow(abs(location.y-other->getLocation().y),2));
+}

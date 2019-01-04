@@ -7,8 +7,8 @@ class fighter : public ship
 {
 	public:
 		fighter();
-		void fire();
-		void doAction();
+		void fire(mode * md);
+		void doAction(mode * md);
 
 	private:
 		int cycle = 0;

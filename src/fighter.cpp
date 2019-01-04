@@ -32,19 +32,19 @@ fighter::fighter()
 	cycle = 25;
 }
 
-void fighter::fire()
+void fighter::fire(mode * md)
 {
-	vector<point> temp=getAtkPnts();
+	std::vector<point> temp=getAtkPnts();
 	for (int i = 0; i < temp.size(); i++)
 	{	
 		temp[i].x+=sin(location.angle);
 		temp[i].y+=cos(location.angle);
-		bullet shot = blt.createBullet(temp[i].x, temp[i].y, location.angle);
-		bullets.push_back(shot);
+		bullet * shot = blt.fireBullet(temp[i].x, temp[i].y, location.angle);
+		md->addToOnScreen(shot);
 	}
 }
 
-void fighter::doAction()
+void fighter::doAction(mode * md)
 {
 	cycle++;
 
@@ -75,7 +75,7 @@ void fighter::doAction()
 	switch(rand()%70)
 	{
 		case 0: 
-		fire();
+		fire(md);
 		break;
 	}
 }

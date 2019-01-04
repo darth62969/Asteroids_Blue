@@ -1,9 +1,7 @@
-#include "headers.h"
-#include "structs.h"
-#include "globals.h"
-#include "enterprise.h"
-#include "prototypes.h"
+#define _USE_MATH_DEFINES
 
+#include "enterprise.h"
+#include "globals.h"
 
 enterprise::enterprise()
 {
@@ -24,6 +22,10 @@ enterprise::enterprise()
 
 	//Generate Trangles
 	tessellate(&lyr);
+
+	lyr.clr = {0.95, 0.34, 0.67};
+
+	lyrs.push_back(lyr);
 
 	//set attack points (i.e. where it shoots from)
 	atkpnts.push_back(point{ 5,  0, 0, 1});
@@ -47,18 +49,21 @@ enterprise::enterprise()
 
 }
 
-void enterprise::fire()
+void enterprise::fire(mode * md)
 {
+	//std::cout << "getting attack point" << std::endl;
 	std::vector<point> temp=getAtkPnts();
 	for (int i = 0; i < temp.size(); i++)
 	{
-		//cout << temp[i].x << " " << temp[i].y << endl;
-		temp[i].x+=sin(location.angle);
-		temp[i].y+=cos(location.angle);
-		bullet shot = blt.createBullet(temp[i].x, temp[i].y, location.angle);
+	//	std::cout << "firing bullet" << std::endl;
+		//temp[i].x+=sin(location.angle);
+		//temp[i].y+=cos(location.angle);
+		
+		bullet * shot = blt.fireBullet(temp[i].x, temp[i].y, location.angle);
 	//	shot.location= temp[i];
 	//	shot.theta = location.angle;
-		bullets.push_back(shot);
+		md->addToOnScreen(shot);
+		bulletsFired++;
 	}
 }
 void enterprise::resetShip()
@@ -70,7 +75,8 @@ void enterprise::resetShip()
 void enterprise::render()
 {
 	// Create a temporary vector with the ship's Triangles
-	vector<triangle> temp = lyrs[0].tris;
+	//std::cout << "Trying to Render the Enterprise" << std::endl;
+	std::vector<triangle> temp = lyrs[0].tris;
 
 	//scale the points
 	for (int i = 0; i < temp.size(); i++)

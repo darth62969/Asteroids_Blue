@@ -6,3 +6,4 @@ Asteroids*
 *.json
 gmon.out
 .vs/*
+lib/*

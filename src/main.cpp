@@ -15,17 +15,12 @@
  * Mercer Univercity  
  */
 
+#define _USE_MATH_DEFINES
+
 #include "headers.h"
-#include "structs.h"
-#include "globals.h"
-#include "prototypes.h"
-#include <thread>
-#include <chrono>
-#include <unistd.h>
-#include <string.h>
-#include "FileHandler.h"
 #include "mode.h"
-#include "enterprise.h"
+#include "structs.h"
+#include "windowProperties.h"
 
 #ifdef WINDOWS
 #include "mingw.thread.h"
@@ -33,35 +28,26 @@
 
 #define SPACEBAR 32
 
+// User Modes
+std::vector<mode *> usrModes;
+mode * curMode;
+
 //Global Variables
 
 //The Ship
 
-enterprise player = enterprise();
+//enterprise player = enterprise();
 
-vector<point> octogon; bool noOctogon = 1;
-vector<point> clipPts;
+//std::vector<point> octogon; 
+bool noOctogon = 1;
+std::vector<point> clipPts;
 
-//Log Writers
-ofstream asteroidLogger;		// Asteroid loggger, records information about the asteroids into the asteroid log file.
-ofstream shipLogger;			// Ship logger, records information about the ship into the ship log.
-ofstream collisionLogger;		// Collision logger, records information about colitions into the collision log.
-ofstream bulletLogger;			// Bullet Logger, records information about bullets into the bullet log.
-ofstream transformationLogger;		// Transfomration logger, records information about transforms into tranformmation log.
-ofstream generalLogger;
 
-// Log paths
-char* ASTEROID_LOG_PATH = "logs/asteroid_log.txt";
-char* SHIP_LOG_PATH = "logs/ship_log.txt";
-char* COLLISION_LOG_PATH = "logs/collision_log.txt";
-char* BULLET_LOG_PATH = "logs/bullet_log.txt";
-char* TRANSFORMATION_LOG_PATH = "logs/transformation_log.txt";
-char* GENERAL_LOG_PATH = "logs/general_log.txt";
 
 //Runtime Variables
-vector<asteroid> asteroidBelt; 	// Holds all asteroids
-vector<bullet> bullets; 	// Holds all bullets
-vector<ship> enemies;
+//std::vector<asteroid> asteroidBelt; 	// Holds all asteroids
+//std::vector<bullet> bullets; 	// Holds all bullets
+//std::vector<ship> enemies;
 
 float deltaRot = 1.0; 		// For use in the accelleration of ship rotation 
 
@@ -104,19 +90,9 @@ int bottomFifth = WORLD_COORDINATE_MIN_Y+((WORLD_COORDINATE_MAX_Y-WORLD_COORDINA
 int menuLevel = 0;
 int menuSelection = 0;
 int menuOptions = 0;
-vector<int> selections;
-
-/*std::binomial_distribution<int> numsidesdist(ASTEROID_MIN_SIZE, ASTEROID_MAX_SIZE);
-std::uniform_real_distribution<double> dirdist(0, 2*M_PI);
-std::uniform_real_distribution<double> xlocdist(WORLD_COORDINATE_MIN_X, WORLD_COORDINATE_MAX_X);
-std::uniform_real_distribution<double> ylocdist(WORLD_COORDINATE_MIN_Y, WORLD_COORDINATE_MAX_Y);
-std::uniform_real_distribution<double> spddist(ASTEROID_MIN_SPEED, ASTEROID_MAX_SPEED);
-std::uniform_int_distribution<int> sizedist(ASTEROID_MIN_SIZE, ASTEROID_MAX_SIZE);*/
+std::vector<int> selections;
 
 
-//double EndGameAnimation =2;
-
-void *currentfont;				// Bit map font pointer.
 
 void initiateOctogon();			// Function to construct the Octagonal game screen.
 void drawOctogon(void);			// Function to draw the octogon.
@@ -125,12 +101,14 @@ void generateShips();
 
 // Function to set up draw strings on screen at a particular x and y. 
 
-void drawString(GLuint x, GLuint y, const char* string); //THIS IS NOT DRAW A FUCKING SHIP!! YOU MORON!!!
+void drawString(GLuint x, GLuint y, const char* string); 
 
 // Function to set the font to a specific font
 void setFont(void *font)
 {
+	/*
 	currentfont = font;
+	*/
 }
 
 void WindowResizeHandler(int windowWidth, int windowHeight)
@@ -166,14 +144,19 @@ void WindowResizeHandler(int windowWidth, int windowHeight)
 
 void setGameMode(int i)
 {
-	asteroidBelt.clear();
-	enemies.clear();
-	bullets.clear();
+	if (i < usrModes.size())
+	{
+		curMode=usrModes[i];
+	}
+	/*
+	//asteroidBelt.clear();
+	//enemies.clear();
+	//bullets.clear();
 	bulletsFired=0;
 	paused=true;
 	gameOver = false;
 	player.setHealth(100);
-	fileHandler normal = fileHandler("Normal.mode");
+	//fileHandler normal = fileHandler("Normal.mode");
 	//mode endless = mode("Endless.mode");
 	switch (i)
 	{
@@ -203,14 +186,14 @@ void setGameMode(int i)
 			#endif
 			break;
 	}
-	paused = false;
+	paused = false;*/
 }
 
 void DisplayPause()
 {
 	// set up the charstrings.
-	string pausedString = "ASTEROIDS: Return of Meteor";
-	vector<string> items;
+	std::string pausedString = "ASTEROIDS: Return of Meteor";
+	std::vector<std::string> items;
 	char ToggleGameMode[50];
 	char menu[50];
 	sprintf(menu, "Menu level = %d and menuSelection = %d",  menuLevel, menuSelection);
@@ -333,8 +316,9 @@ void DisplayPause()
 }
 
 // Function to display the score.
-void displayScore(void)
+void displayScore(mode * md)
 {
+	/*
 	// We calculate the hit ratio (I spot some optmization stuff!!)
 	double hitRatio;
 	
@@ -401,7 +385,7 @@ void displayScore(void)
 	
 	drawString(-280, 265, health);
 	drawString(-280, 250, lvlstr);
-	
+	*/
 }
 
 // Function to print game over on screen.
@@ -435,7 +419,7 @@ void printYouWin(void)
 //Function to draw strings.
 void drawString(GLuint x, GLuint y, const char* string)
 {
-	
+/*	
 	// create a pointer to the character
 	const char *c;
 
@@ -445,12 +429,11 @@ void drawString(GLuint x, GLuint y, const char* string)
 
 	// Print each letter using the font pointer and the character pointer.
 	for(c=string; *c!='\0'; c++)
-		glutBitmapCharacter(currentfont, *c);	
+		glutBitmapCharacter(currentfont, *c);	*/
 }
 
-#ifdef SHIPTEST
 void generateShips()
-{ 
+{ /*
 	point world;
 	world.x = WORLD_COORDINATE_MAX_X-WORLD_COORDINATE_MIN_X;
 	world.y = WORLD_COORDINATE_MAX_Y-WORLD_COORDINATE_MIN_Y;
@@ -485,9 +468,9 @@ void generateShips()
 				enemies[i].setRotation(3*M_PI_2);
 			}
 			break;
-	}
+	}*/
 }
-#endif
+
 // Here we calculate the FPS of the game. (Technically the FrameTime)
 void calculateFPS()
 {
@@ -509,44 +492,7 @@ void calculateFPS()
 
 
 // Fucntion to display debug information like frame time
-void debugDisplay()
-{
-	//prep frame time charstrings
-	char FPSStr[50];
-	char avgFPSStr[50];
 
-	sprintf(FPSStr, "FPS : %4.3f", FPS);
-	sprintf(avgFPSStr, "avgFPS : %4.3f", avgFPS);
-
-	// Draw frame time strings.
-	drawString(20, WORLD_COORDINATE_MAX_Y-20, FPSStr);
-	drawString(20, WORLD_COORDINATE_MAX_Y-35, avgFPSStr);
-
-#ifdef LOGGING
-/*	generalLogger.open( GENERAL_LOG_PATH, ofstream::out|ofstream::app);
-	generalLogger << FPSStr << endl;
-	generalLogger << avgFPSStr << endl;*/
-#endif 
-
-	// Count Asteroid Triangles
-	int triCount = 0;
-
-	char triCountStr[50];
-
-	for (int i = 0; i < asteroidBelt.size(); i++)
-	{
-		triCount += asteroidBelt[i].getTess().size();
-	}
-
-	//Display Triangle Count
-	sprintf(triCountStr, "Triangles On Screen : %3d", triCount);
-	drawString(20, WORLD_COORDINATE_MAX_Y-50, triCountStr);
-
-#ifdef LOGGING
-/*	generalLogger << triCountStr << endl;
-	generalLogger.close();*/
-#endif
-}
 
 /*
  * Main Display Fucntion
@@ -568,21 +514,21 @@ void gameView()
 		case 1:
 		//output game to window
 
-		drawOctogon();					// Draw the Octogon on Screen 
-		clipMeDaddy();					//Draw the asteroids, Why is this "clipMeDaddy?"
+		//drawOctogon();					// Draw the Octogon on Screen 
+		//clipMeDaddy();					//Draw the asteroids, Why is this "clipMeDaddy?"
 
 		// Print you win if asteroid belt is empty.
 		
 		// Print Game over if "gameOver" has been set
 
-		
-
-		for(asteroid a : asteroidBelt)
+		curMode->drawAll();
+/*
+		for(object* o : curMode->getOnscreen)
 		{
 			a.render();
-		}
+		}*/
 		// This is where we decide if we need to draw asteroids one way or the other.	
-		switch(filled)
+/*		switch(filled)
 		{
 		// If not filled
 			case 0:
@@ -600,7 +546,7 @@ void gameView()
 				for (int i = 0; i < (asteroidBelt.size()); i++)
     			{
 				// Get the tesslated Triangles for the Asteroid.
-					vector<triangle> a = asteroidBelt.at(i).getTess();
+					std::vector<triangle> a = asteroidBelt.at(i).getTess();
 
 				// Get the center
 					point b = asteroidBelt.at(i).getLocation();
@@ -621,7 +567,7 @@ void gameView()
 				for (int i = 0; i < (asteroidBelt.size()); i++)
     			{
 					// Get the pre formated triangles.
-					vector<triangle> a = asteroidBelt.at(i).getTess();
+					std::vector<triangle> a = asteroidBelt.at(i).getTess();
 
 					// get the center point
 					point b = asteroidBelt.at(i).getLocation();
@@ -639,14 +585,14 @@ void gameView()
 						glEnd();
 					}
 				}
-		}
+		}*/
 		if (paused)
 		{
 			
 		}
 		// Draw the ship
-		player.render();
-		switch(GameMode)
+		//player.render();
+		/*switch(GameMode)
 		{
 			case 2:
 				for (int i = 0; i < enemies.size(); i++)
@@ -654,24 +600,21 @@ void gameView()
 					enemies[i].renderShip();
 				}
 				break;
-		}
+		}*/
 		// Draw the bullets.
 		glColor3f(1.0, 1.0, 0.0);
-		for(int i = 0; i < bullets.size(); i++)
+		/*for(int i = 0; i < bullets.size(); i++)
 		{
-			#ifndef SHIPTEST
-				drawBullet(bullets[i]);
+/*			#ifdef SHIPTEST
+				bullets[i].render();
 			#endif
-			#ifdef SHIPTEST
-				bullets[i].drawBullet();
-			#endif
-		}
+		}*/
 	
 		switch (GameMode)
 		{
 			case 0:
 			case 1:
-				clipMeDaddy(); // Why is this "clip me daddy... i will have to fix this..."
+				//clipMeDaddy(); // Why is this "clip me daddy... i will have to fix this..."
 
 			// draw the octogon
 				drawOctogon();
@@ -683,7 +626,7 @@ void gameView()
 	
 	//display the score;
 
-		displayScore();
+		displayScore(nullptr);
 		break;
 
 	case 0:
@@ -708,21 +651,23 @@ void gameView()
 
 void gameLoop()
 {
+
 	switch (gamestate)
 	{
 		case 1:
+			curMode->step();
 			switch(GameMode)
 			{
 				case 0:
-					if (asteroidBelt.size()==0)
-						gamestate=3;
+					/*if (asteroidBelt.size()==0)
+						gamestate=3;*/
 					break;
 				case 2:
-					if (enemies.size()==0)
+					/*if (enemies.size()==0)
 					{
 						Level++;
 						generateShips();
-					}
+					}*/
 
 					break;
 			}
@@ -777,7 +722,7 @@ void gameLoop()
 			switch (GameMode)
 			{	
 				case 1:
-					if (asteroidBelt.size() == 0)
+					/*if (asteroidBelt.size() == 0)
 					{
 						Level++;
 						for (int i = 0; i < Level; i++)
@@ -785,17 +730,17 @@ void gameLoop()
 							asteroid a = asteroid();
 							asteroidBelt.push_back(a);
 						}
-					}
+					}*/
 					break;
-				case 2:
+				case 2:/*
 					switch(gametick)
 					{
 						case 0:
-							for (int i =0; i < enemies.size(); i++)
+						/*	for (int i =0; i < enemies.size(); i++)
 							{
 								enemies[i].iterateAction();
 							}
-							gametick++;
+							gametick++;*
 							break;
 						case 5:
 							gametick=0;
@@ -803,17 +748,18 @@ void gameLoop()
 						default:
 							gametick++;
 							break;
-					}
+					}*/
+					break;
 			}
 
 		// detect colitions with each asteroid in the belt.
 		switch(GameMode)
 		{
 			case 0:
-			case 1:
+			case 1:/*
 				for (int i = 0; i < asteroidBelt.size(); i++)
 				{
-					detectCollision(i);
+					//detectCollision(i);
 					for (int j = 0; j<bullets.size(); j++)
 					{
 						switch((int)(abs(asteroidBelt[i].getLocation().x-bullets[j].getLocation().x)/30)
@@ -823,7 +769,7 @@ void gameLoop()
 								switch(detectCollision(asteroidBelt[i], bullets[j]))
 								{
 									case 0:
-										vector<asteroid> tmp = asteroidBelt[i].breakupAsteroid();
+										std::vector<asteroid> tmp = asteroidBelt[i].breakupAsteroid();
 									asteroidBelt.erase(asteroidBelt.begin()+i);
 
 									for (asteroid a : tmp)
@@ -837,11 +783,11 @@ void gameLoop()
 						}
 
 					}
-				}
+				}*/
 				break;
 				
 			case 2:
-				for (int i = 0; i < enemies.size(); i++)
+				/*for (int i = 0; i < enemies.size(); i++)
 				{
 					for (int j =0;  j < bullets.size(); j++ )
 					{
@@ -877,38 +823,39 @@ void gameLoop()
 									break;
 							}
 					}
-				}
+				}*/
+				break;
 		
 		}
 	
 		// Iterate through and Increment each bullet's location
-			for (int i=0; i < bullets.size(); i++)
+			/*for (int i=0; i < bullets.size(); i++)
 			{
 			// We use sine and cosine because we need to tesslate them 
 			// along the direction they need to be going or the direction
 			// they were shot. We are moving them by 2 each time.
-				//bullets.at(i).location.x += 2.0 * cos(bullets.at(i).theta)/**(60/FPS)*/; 
-				//bullets.at(i).location.y += 2.0 * sin(bullets.at(i).theta)/**(60/FPS)*/;
-				bullets[i].increment();
+				//bullets.at(i).location.x += 2.0 * cos(bullets.at(i).theta)/**(60/FPS); 
+				//bullets.at(i).location.y += 2.0 * sin(bullets.at(i).theta)/**(60/FPS);
+				bullets[i].doAction();
 				if(!insideOctogon(bullets[i].getLocation()) && bullets.size() > 1 && i <bullets.size())
 					bullets.erase(bullets.begin() + i);
-			}
+			}*/
 
 		// Iterate through and Increment each asteroid's location
-			for (int i=0; i < asteroidBelt.size(); i++)
+			/*for (int i=0; i < asteroidBelt.size(); i++)
 			{
 			// We use use a function here be cause asteroids are objects
 			// and their center, or the location of their left bottom corner
 			// is protected. see this function in asteroids.cpp for more information 
 				asteroidBelt.at(i).incrementLocation();
-			}	
+			}	*/
 		// get the time since thing started.
 			timeP2 = glutGet(GLUT_ELAPSED_TIME);
 		
 		//sleep thread for for a time.
 			if(timeP2-timeC2>0)
 			{
-				std::this_thread::sleep_for(chrono::milliseconds(18-(timeP2-timeC2)));
+				std::this_thread::sleep_for(std::chrono::milliseconds(18-(timeP2-timeC2)));
 			}
 	}
 
@@ -934,7 +881,7 @@ void initiateAsteroids()
 	// Open log file, record number of asteroids we are going to gnerate, then close to 
 	// save changes.
 	//Generate Asteroids
-	switch (GameMode)
+	/*switch (GameMode)
 	{
 		case 0:
 			for (int i =0; i < NUMBER_OF_ASTEROIDS; i++)
@@ -948,7 +895,7 @@ void initiateAsteroids()
 			asteroid a = asteroid();
 			asteroidBelt.push_back(a);
 			break;
-	}
+	}*/
 
 	// Open log file, record that we have generated asteroidBelt.size() asteroids,
 	// then close to save changes.
@@ -983,19 +930,19 @@ void initiateGL(void)
  * We draw the octogon here.
  */
 void initiateOctogon(void)
-{
+{/*
 	// Clear the buffer
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	// create a vector to hold the points.
-	vector<point> pts; 
+	// create a std::vector to hold the points.
+	std::vector<point> pts; 
 
-	// Set the first point, rotate it then push it to the vector of points.
+	// Set the first point, rotate it then push it to the std::vector of points.
 	point p = { WORLD_COORDINATE_MIN_X , 0, 0, 1};
 	point c = {-WORLD_COORDINATE_MAX_X , 0, 0, 1};	
 
 	point tempp;
-	tempp.x = p.x*cos(M_PI_4/2)-p.y*sin(M_PI_4/2);
+	tempp.x = p.x*cos(M_PI_4)-p.y*sin(M_PI_4/2);
 	tempp.y = p.x*sin(M_PI_4/2)+p.y*cos(M_PI_4/2);
 	p = tempp;
 	
@@ -1020,12 +967,34 @@ void initiateOctogon(void)
 		octogon.push_back(p);
 		clipPts.push_back(c);
 	}
-	noOctogon = 0;
+	noOctogon = 0;*/
 }
+bool intersect(point v1, point v2, point v3, point v4)
+{
+	float ua_num = ((v3.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v3.y - v1.y));
+	float den = ((v2.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v2.y - v1.y));
+
+	float ub_num = ((v2.x - v1.x) * (v3.y - v1.y)) - ((v3.x - v1.x) * (v2.y - v1.y));
+
+	float ua = ua_num / den;
+	float ub = ub_num / den;
+
+	point v;
+	v.x = -100;
+	v.y = -100;
+
+	if((ua > 0.0) && (ua < 1.0) && (ub > 0.0) && (ub < 1.0))
+	{
+		return true;
+	}
+
+	return false;
+}
+
 
 void drawOctogon(void)
 {
-	
+/*	
 	glColor3f(0.1,0.5,0.0);
 	
 	glBegin(GL_LINE_LOOP);
@@ -1033,13 +1002,13 @@ void drawOctogon(void)
 		{
 			glVertex2f(octogon[i].x, octogon[i].y);
 		}
-	glEnd();
+	glEnd();*/
 }
 
 void debugMe(int x, int y)
 {
 	point p = {x, y, 0, 1};
-	std::cout << insideOctogon(p);
+	//std::cout << insideOctogon(p);
 }
 
 /*
@@ -1085,21 +1054,16 @@ void keyboard(unsigned char key, int x, int y)
 		case 'R':
 			Level=1;
 			gamestate=0;
-			asteroidBelt.clear();
-			bullets.clear();
+			//asteroidBelt.clear();
+			//bullets.clear();
 			initiateAsteroids();
 			bulletsFired=0;
 			paused=true;
 			gameOver = false;
 
-			#ifndef SHIPTEST
-				player.rotation=0;		
-				resetShip();
-			#endif
-
 			#ifdef SHIPTEST
-				player.setRotation(0);
-				player.resetShip();
+				//player.setRotation(0);
+				//player.resetShip();
 			#endif
 
 			bulletsHit = 0;	
@@ -1146,16 +1110,12 @@ void keyboard(unsigned char key, int x, int y)
 		case 'm':
 		case 'M':
 			gamestate=0;
-			asteroidBelt.clear();
-			bullets.clear();
+			//asteroidBelt.clear();
+			//bullets.clear();
 			bulletsFired=0;
 			paused=true;
 			gameOver = false;
-			player.setHealth(100);
-
-			#ifndef SHIPTEST
-				player.rotation=0;		
-			#endif
+			//player.setHealth(100);
 
 			int x, y;
 
@@ -1167,7 +1127,7 @@ void keyboard(unsigned char key, int x, int y)
 					initiateAsteroids();
 				
 					#ifdef SHIPTEST
-						player.setRotation(0);
+//						player.setRotation(0);
 					#endif
 					
 					break;
@@ -1175,8 +1135,8 @@ void keyboard(unsigned char key, int x, int y)
 					GameMode=2;
 
 					#ifdef SHIPTEST
-						player.setLocation(WORLD_COORDINATE_MAX_X/2, WORLD_COORDINATE_MAX_Y/5);
-						player.setRotation(M_PI_2);
+//						player.setLocation(WORLD_COORDINATE_MAX_X/2, WORLD_COORDINATE_MAX_Y/5);
+//						player.setRotation(M_PI_2);
 						generateShips();
 					#endif
 					
@@ -1186,7 +1146,7 @@ void keyboard(unsigned char key, int x, int y)
 					initiateAsteroids();
 					
 					#ifdef SHIPTEST
-						player.setRotation(0);
+//						player.setRotation(0);
 					#endif
 
 					break;
@@ -1215,7 +1175,7 @@ void keyboard(unsigned char key, int x, int y)
 	#ifdef DEBUG	
 	if(key == 'b')
 	{
-		vector<asteroid> temp = asteroidBelt.at(0).breakupAsteroid();
+		std::vector<asteroid> temp = asteroidBelt.at(0).breakupAsteroid();
 		for (int i = 0; i < temp.size(); i++)
 		{
 			asteroidBelt.push_back(temp.at(i));
@@ -1295,18 +1255,20 @@ void specialKeyReleased(int key, int x, int y)
 		
 void mouse(int button, int state, int x, int y)
 {
-        if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
+	curMode->mouseFunc(button, state, x, y);
+	/*
+    if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
+	{
+    }
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+	{
+		switch(gamestate)
 		{
-        }
-        if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
-		{
-			switch(gamestate)
-			{
-				case 1:
-					player.fire();
-					break;
-			}          
-        }
+			case 1:
+				//player.fire();
+				break;
+		}          
+    }*/
 }
 void passiveMouse(int x, int y)
 {
@@ -1316,51 +1278,47 @@ void passiveMouse(int x, int y)
 	point temp ={x, y, 0, 1};
 	point pnt;
 	double bearing;
-
+	curMode -> passiveMouseFunc(x2, y2);
 	switch(GameMode)
 	{
 		case 0:
 		case 1:
-			pnt = player.getAtkPnts()[0];
-			bearing =(atan2f(pnt.y-y2, pnt.x-x2));
-			player.setRotation(bearing);
+			//pnt = player.getAtkPnts()[0];
+			//bearing =(atan2f(pnt.y-y2, pnt.x-x2));
+			//player.setRotation(bearing);
 			break;
 
 		case 2:
-			player.setLocation(-1*x2, WORLD_COORDINATE_MIN_Y+((WORLD_COORDINATE_MAX_Y-WORLD_COORDINATE_MIN_Y)/5));
+			//player.setLocation(-1*x2, WORLD_COORDINATE_MIN_Y+((WORLD_COORDINATE_MAX_Y-WORLD_COORDINATE_MIN_Y)/5));
 			break;
 	}
 
 }
+void initModes()
+{
+	mode * temp = new mode();
+	usrModes.push_back(temp);
+	curMode = temp;
+}
 
 int main(int argc, char** argv)
 {
-	cout << "Starting Game\n";
-#ifdef LOGGING
-	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::trunc);
-	asteroidLogger << "Asteroid Logging Started" << endl;
-	asteroidLogger.close();
-	shipLogger.open(SHIP_LOG_PATH, ofstream::out|ofstream::trunc);
-	shipLogger << "Ship Logger Started" << endl;
-	shipLogger.close();
-	generalLogger.open(GENERAL_LOG_PATH, ofstream::out|ofstream::trunc);
-	generalLogger << "General Logging Started " << endl;
-	generalLogger.close();
-	collisionLogger.open(COLLISION_LOG_PATH, ofstream::out|ofstream::trunc);
-	collisionLogger << "Collision Logging Started " << endl;
-	collisionLogger.close();
-#endif
-	cout << "Seeding Generator\n";
-	chrono::high_resolution_clock::time_point s = chrono::high_resolution_clock::now();
-	chrono::high_resolution_clock::duration d = chrono::high_resolution_clock::now()-s;
+	std::cout << "Starting Game\n";
+	std::cout << "Seeding Generator\n";
+	std::chrono::high_resolution_clock::time_point s = 
+		std::chrono::high_resolution_clock::now();
+	std::chrono::high_resolution_clock::duration d = 
+		std::chrono::high_resolution_clock::now()-s;
 	unsigned s2 = d.count();
 	generator.seed(s2);
-	cout << "initiating window\n";
+	std::cout << "initiating window\n";
+
+
 	initiateWindow(argc, argv); 				/* Set up Window 					*/
 	initiateGL();								/* Initiate GL   					*/
-	initiateOctogon();							/* Initiate The Game View 			*/
-	initiateAsteroids();						/* Generate Asteroids				*/
-	initiateGameDisplay();						/* Does nothing 					*/
+	//initiateOctogon();							/* Initiate The Game View 			*/
+	//initiateAsteroids();						/* Generate Asteroids				*/
+	//initiateGameDisplay();						/* Does nothing 					*/
 	glutReshapeFunc(WindowResizeHandler);
 	glutSetKeyRepeat(GLUT_KEY_REPEAT_ON);		/* Set Key Repeat on 				*/
 	glutMouseFunc(mouse);						/* Set a Mouse funtion				*/
@@ -1369,13 +1327,11 @@ int main(int argc, char** argv)
 	glutKeyboardUpFunc(keyReleased);			
 	glutSpecialFunc(specialKeys); 
 	glutSpecialUpFunc(specialKeyReleased);
-#ifdef MULTIT
-	thread Render (glutDisplayFunc, gameView);
-	thread Idle (glutIdleFunc, gameLoop);
-#endif
-#ifndef MULTIT
+
 	glutDisplayFunc(gameView);					/* Set loop for The game rendering	*/
 	glutIdleFunc(gameLoop);						/* Set loop for the game processing	*/
-#endif
+
+	initModes();
+	
 	glutMainLoop();								/* Start the main loop				*/
 }

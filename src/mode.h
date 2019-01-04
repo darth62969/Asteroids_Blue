@@ -1,12 +1,11 @@
-#ifndef _MODE_H_
-#define _MODE_H_
+#ifndef __MODE_H__
+#define __MODE_H__
 
 #include "headers.h"
-#include "globals.h"
-#include "object.h"
-#include "asteroid.h"
-#include "ship.h"
-#include <vector>
+
+
+typedef class object;
+
 
 class mode
 {
@@ -17,15 +16,32 @@ class mode
 		virtual void generateLevel();	// Generates objects and places them onScreen;
 		virtual void init();			// 
 
-		virtual std::vector<object*> getOnScreen(); 
-		void addToOnScreen(object* obj);
+		virtual std::vector<object *> getOnScreen(); 
+		void addToOnScreen(object * obj);
 
+		virtual void drawLevel();
+		virtual void drawObjects();
+		virtual void drawScore();
+		virtual void drawAll();
+
+		std::string getName();
+
+		virtual void mouseFunc(int button, int state, int x, int y);
+		virtual void passiveMouseFunc(int x, int y);
+
+		object * player;
 
 	protected:
-		std::vector<object*> onScreen;	// collection of objects for the mode that are displayed onScreen;
+		std::vector<object *> onScreen;	// collection of objects for the mode that are displayed onScreen;
 		int level = 1;					// current level, default 1;
 		int stp = 0;					// current step, used to keep track of frames;
 		int maxLevel;					// Maximum level posible in mode, SET THIS!!;
+		int bulletsHit = 0;
+		std::string name;
+
+	private:
+//		int bulletsHit = 0;
+		int numAsteroids;
 
 
 				

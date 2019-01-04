@@ -15,13 +15,8 @@
  * Mercer Univercity  
  */
 
-#include "headers.h"
-#include "structs.h"
+#include "ship.h"
 #include "globals.h"
-#include "prototypes.h"
-#include "bullet.h"
-#include <random>
-#include <chrono>
 
 double EndGameAnimation=7;
 double WinGameAnimation=0;
@@ -58,7 +53,7 @@ ship::ship(int tp, std::vector<point> pnts)
 			lyrs[0].pnts.push_back(point{1, 2, 0, 1});
 			
 			//Generate Trangles
-			cout << "teslating ship" << endl;
+			std::cout << "teslating ship" << std::endl;
 			tessilateShip();
 
 			//set attack points (i.e. where it shoots from)
@@ -80,7 +75,7 @@ ship::ship(int tp)
 {
 	//set the type.
 	type=tp;
-	vector<point> temp;
+	std::vector<point> temp;
 	layer lyr;
 	//based on the type generate the ship.
 	switch(type)
@@ -200,7 +195,7 @@ ship::ship(int tp)
 }
 std::vector<point> ship::getBounds()
 {
- 	vector<point> temp = lyrs[0].pnts;
+ 	std::vector<point> temp = lyrs[0].pnts;
 	for (int i =0; i < temp.size(); i++)
 	{
 			scalePoint(temp[i], 5);
@@ -219,7 +214,7 @@ std::vector<point> ship::getBounds()
 }
 std::vector<point> ship::getPoints()
 {
-	vector<point> temp = lyrs[0].pnts;
+	std::vector<point> temp = lyrs[0].pnts;
 	for (int i =0; i < temp.size(); i++)
 	{
 			scalePoint(temp[i], 5);
@@ -239,7 +234,7 @@ std::vector<point> ship::getPoints()
 
 std::vector<triangle> ship::getTriangles()
 {
-	vector<triangle> temp = lyrs[0].tris;
+	std::vector<triangle> temp = lyrs[0].tris;
 	for (int i =0; i < temp.size(); i++)
 	{
 		point a[3] = {temp[i].a, temp[i].b, temp[i].c};
@@ -264,7 +259,7 @@ std::vector<triangle> ship::getTriangles()
 }
 std::vector<point> ship::getAtkPnts()
 {
-	vector<point> temp = atkpnts;
+	std::vector<point> temp = atkpnts;
 	for (int i =0; i < temp.size(); i++)
 	{
 			scalePoint(temp[i], 5);
@@ -294,10 +289,10 @@ void ship::setHealth(int dmg)
 
 void ship::fire(mode* md)
 {
-	vector<point> temp=getAtkPnts();
+	std::vector<point> temp=getAtkPnts();
 	for (int i = 0; i < temp.size(); i++)
 	{
-		//cout << temp[i].x << " " << temp[i].y << endl;
+		std::cout << "ship fire method" << std::endl;
 		temp[i].x+=sin(location.angle);
 		temp[i].y+=cos(location.angle);
 		bullet * shot = blt.fireBullet(temp[i].x, temp[i].y, location.angle);
@@ -336,14 +331,14 @@ void ship::iterateAction()
 			switch(rand()%70)
 			{
 				case 0: 
-					fire();
+					//fire();
 					break;
 			}
 			break;
 		case 2:
 			cycle++;
 
-			point pnt = player.getAtkPnts()[0];
+			/*point pnt = player.getAtkPnts()[0];
 			double bearing =(atan2f(pnt.y-this->getAtkPnts()[0].y, pnt.x-this->getAtkPnts()[0].x));
 			this->setRotation(bearing);
 
@@ -372,7 +367,7 @@ void ship::iterateAction()
 				case 0: 
 					fire();
 					break;
-			}
+			}*/
 			break;
 
 	}		
@@ -408,8 +403,8 @@ void ship::resetShip()
 
 void ship::renderShip()
 {
-	// Create a temporary vector with the ship's Triangles
-	vector<triangle> temp = lyrs[0].tris;
+	// Create a temporary std::vector with the ship's Triangles
+	std::vector<triangle> temp = lyrs[0].tris;
 
 	//scale the points
 	for (int i = 0; i < temp.size(); i++)
@@ -491,8 +486,8 @@ void ship::renderShip()
 }
 void ship::render()
 {
-	// Create a temporary vector with the ship's Triangles
-	vector<triangle> temp = lyrs[0].tris;
+	// Create a temporary std::vector with the ship's Triangles
+	std::vector<triangle> temp = lyrs[0].tris;
 
 	//scale the points
 	for (int i = 0; i < temp.size(); i++)
@@ -574,7 +569,7 @@ void ship::render()
 }
 void ship::tessilateShip()
 {
-	vector<point> temp = lyrs[0].pnts;
+	std::vector<point> temp = lyrs[0].pnts;
 	point A = temp[0];
 	point B = temp[1];
 	point C = temp[2];
@@ -588,7 +583,7 @@ void ship::tessilateShip()
 	// While there are more than three vertices left in points, run the following code.
 	while(temp.size() >= 3)
 	{
-		//cout << intersect (temp[0], temp[1], A, B) << endl;
+		//cout << intersect (temp[0], temp[1], A, B) << std::endl;
 
 		bool insect = false;
 		for (int i1  = 0; i1 < lyrs[0].pnts.size(); i1++)
@@ -688,11 +683,6 @@ void ship::tessilateShip()
 
 			z = l1.x*l2.y - l2.x*l1.y;
 
-			//cout << " Index " << Ai << " A  ( "  << A.x << " , " << A.y << " )" << endl;
-			//cout << " Index " << Bi << " B  ( "  << B.x << " , " << B.y << " )" << endl;
-			//cout << " Index " << Ci << " C  ( "  << C.x << " , " << C.y << " )" << endl;
-			//cout << " z = " << z << endl;
-
 			bool within = false;
 			for (int i =0; i < temp.size(); i ++)
 			{
@@ -702,9 +692,6 @@ void ship::tessilateShip()
 
 			if (z<0 && !within)
 			{
-				cout << " Index " << Ai << " A  ( "  << A.x << " , " << A.y << " )" << endl;
-				cout << " Index " << Bi << " B  ( "  << B.x << " , " << B.y << " )" << endl;
-				cout << " Index " << Ci << " C  ( "  << C.x << " , " << C.y << " )" << endl;
 				tri.a = A;
 				tri.b = B;
 				tri.c = C;
@@ -731,10 +718,6 @@ void ship::tessilateShip()
 						A=temp[Ai];
 						B=temp[Bi];
 						C=temp[Ci];
-
-						cout << " Index " << Ai << " A  ( "  << A.x << " , " << A.y << " )" << endl;
-				cout << " Index " << Bi << " B  ( "  << B.x << " , " << B.y << " )" << endl;
-				cout << " Index " << Ci << " C  ( "  << C.x << " , " << C.y << " )" << endl;
 					}
 					else
 					{
@@ -754,11 +737,6 @@ void ship::tessilateShip()
 
 	for (int i = 0; i < lyrs[0].tris.size(); i++)
 	{
-		cout << "Triangle " << i << endl;
-		cout << "A ( " << lyrs[0].tris[i].a.x << " , " << lyrs[0].tris[i].a.y << " )" << endl;
-		cout << "B ( " << lyrs[0].tris[i].b.x << " , " << lyrs[0].tris[i].b.y << " )" << endl;
-		cout << "C ( " << lyrs[0].tris[i].c.x << " , " << lyrs[0].tris[i].c.y << " )" << endl;
-		cout << endl;
 	}
 }
 

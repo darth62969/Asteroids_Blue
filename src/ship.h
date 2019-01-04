@@ -1,14 +1,12 @@
-#ifndef __SHIP_H_INCLUDED__
-#define __SHIP_H_INCLUDED__
+#ifndef __SHIP_H__
+#define __SHIP_H__
 
-#include "structs.h"
-#include "bullet.h"
+#include "headers.h"
 #include "object.h"
-#include "mode.h"
-#include <vector>
-#include <random>
+#include "bullet.h"
 
-class ship : public object
+
+class ship : public object 
 {
     public:
         //constructors
@@ -17,10 +15,10 @@ class ship : public object
         ship(int tp);
 
         //getters
-		std::vector<point> getBounds();
-        std::vector<point> getPoints();
-        std::vector<triangle> getTriangles();
-        std::vector<point> getAtkPnts();
+		virtual std::vector<point> getBounds();
+        virtual std::vector<point> getPoints();
+        virtual std::vector<triangle> getTriangles();
+        virtual std::vector<point> getAtkPnts();
         
         //setters
 	

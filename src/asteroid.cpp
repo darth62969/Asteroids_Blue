@@ -15,26 +15,21 @@
  * Mercer Univercity  
  */
 
-#include "headers.h"
-#include "structs.h"
-#include "globals.h"
-#include "prototypes.h"
-#include <random>
-#include <chrono>
+#include "asteroid.h"
 
 
 point location;
 float rotation;
 point translation;
-vector<point> astPnts;
-vector<triangle> astTris;
+//std::vector<point> lyrs[0].pnts;
+//std::vector<triangle> lyrs[0].tris;
 bool clipped;
 int numsides = 0;
 
 std::uniform_int_distribution<int> numsidesdist(ASTEROID_MIN_SIZE, ASTEROID_MAX_SIZE);
 std::uniform_real_distribution<double> dirdist(0, 2*M_PI);
-std::uniform_real_distribution<double> xlocdist(WORLD_COORDINATE_MIN_X, WORLD_COORDINATE_MAX_X);
-std::uniform_real_distribution<double> ylocdist(WORLD_COORDINATE_MIN_Y, WORLD_COORDINATE_MAX_Y);
+//std::uniform_real_distribution<double> xlocdist(WORLD_COORDINATE_MIN_X, WORLD_COORDINATE_MAX_X);
+//std::uniform_real_distribution<double> ylocdist(WORLD_COORDINATE_MIN_Y, WORLD_COORDINATE_MAX_Y);
 std::uniform_real_distribution<double> spddist(ASTEROID_MIN_SPEED, ASTEROID_MAX_SPEED);
 std::uniform_int_distribution<int> sizedist(ASTEROID_MIN_AVG, ASTEROID_MAX_AVG);
 
@@ -72,17 +67,12 @@ asteroid::asteroid()
 // Logging for debug information, this tells us what the the program is doing. 
 // The number of sides it is going to generate
 
-#ifdef LOGGING	 
-	//asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-	//asteroidLogger << "Number of sides to generate : " << numsides << endl;
-#endif
-
 //Setting the location (x,y) to (0,0)
-	location.x = INT32_MAX;
-	location.y = INT32_MAX;
+/*	location.x = INT32_MAX;
+	location.y = INT32_MAX;*/
 	
 // While the location is not wihtin the octogon, generate random positions
-	while(!insideOctogon(location))
+/*	while(!insideOctogon(location))
 	{
 		// Keep generateing points till the asteroid is not withing range of the ship
 		do
@@ -104,11 +94,11 @@ asteroid::asteroid()
 				location.y = INT32_MAX;
 			}
 		}
-	}
+	}*/
 	// Generate a random "translation.angle" or directional vector, in radians.
-	translation.angle = dirdist(generator);
+	location.angle = dirdist(generator);
 	//cout << translation.angle << endl;
-	translation.w = spddist(generator);
+	location.w = spddist(generator);
 
 
 	// This logging protocal lets us know where the location of the asteroid is. 
@@ -203,29 +193,29 @@ float asteroid::getVectorLength(asteroid b)
 	return sqrt(pow(abs(location.x-b.getLocation().x),2)+pow(abs(location.y-b.getLocation().y),2));
 }
 
-vector<asteroid> asteroid::getInfluencers()
+std::vector<asteroid *> asteroid::getInfluencers(mode * md)
 {
-	vector<asteroid> infl;
-	for (int i=0; i < asteroidBelt.size()-1; i++)
+	std::vector<asteroid *> infl;
+	for (int i=0; i < md->getOnScreen().size()-1; i++)
 	{
-		if (0 < getVectorLength(asteroidBelt[i]) && getVectorLength(asteroidBelt[i]) <= 100 )
+		if(dynamic_cast<asteroid *>(md->getOnScreen()[i]))
 		{
-			infl.push_back(asteroidBelt[i]);
+			int j = getVectorLength(*dynamic_cast<asteroid *>(md->getOnScreen()[i]));
+			if (0 < j && j <= 100 )
+			{
+				infl.push_back(dynamic_cast<asteroid *>(md->getOnScreen()[i]));
+			}
 		}
 	}
 	return infl;
 }
 
-void asteroid::incrementLocation()
+/*void asteroid::incrementLocation(mode * md)
 {
-	// If Paused, return. this is to ensure the program does not continue if the game is paused. (depreciated)
-	if(paused)
-		return;
+	//This is a std::vector for the asteroid's gravity influence effect.
+	std::vector<asteroid> infl = getInfluencers(mode * md);
 
-	//This is a vector for the asteroid's gravity influence effect.
-	vector<asteroid> infl = getInfluencers();
-
-	//This takes the vector returned by getInfluencers and calculates the new direction of the current asteroid.
+	//This takes the std::vector returned by getInfluencers and calculates the new direction of the current asteroid.
 	for(int i =0; i< infl.size(); i++)
 	{
 		// This is where we calculate  the bearing of the asteroid to the current influencer.
@@ -269,14 +259,14 @@ void asteroid::incrementLocation()
 
 	// After we calculate the positions of the asteroids, we need to move them. so we move the location by use of trig.
 	location.x += cos(translation.angle)*translation.w/**(60/FPS)*/;
-	location.y += sin(translation.angle)*translation.w/**(60/FPS)*/;
+/*	location.y += sin(translation.angle)*translation.w/**(60/FPS)*/;
 	
-	//this checks to see if it is still in the octogon them moves it to where it to the other side.
+/*	//this checks to see if it is still in the octogon them moves it to where it to the other side.
 	if(!insideOctogon(location)){
 		location.x*=-1;
 		location.y*=-1;
 	}
-}
+}*/
 
 void asteroid::render() 
 {
@@ -322,20 +312,20 @@ void asteroid::render()
 			}
 		}
 }
-void asteroid::doAction()
+void asteroid::doAction(mode * md)
 {
 	// If Paused, return. this is to ensure the program does not continue if the game is paused. (depreciated)
 	if(paused)
 		return;
 
 	//This is a vector for the asteroid's gravity influence effect.
-	vector<asteroid> infl = getInfluencers();
+	std::vector<asteroid *> infl = getInfluencers(md);
 
 	//This takes the vector returned by getInfluencers and calculates the new direction of the current asteroid.
 	for(int i =0; i< infl.size(); i++)
 	{
 		// This is where we calculate  the bearing of the asteroid to the current influencer.
-		double bearing = atan2f(location.y-infl[i].getLocation().y, location.x-infl[i].getLocation().x);		
+		double bearing = atan2f(location.y-infl[i]->getLocation().y, location.x-infl[i]->getLocation().x);		
 		
 		// This ensures this value is above 0.
 		if(bearing < 0 )
@@ -355,7 +345,7 @@ void asteroid::doAction()
 
 		// We need to calculate the gravity potential for the asteroids. this is the amount of "force" that is going to be aplied in the
 		// direction of the influncer.
-		double magnatude = GRAVITY_POTENTIAL*((2*ASTEROID_MASS)/getVectorLength(infl[i]));
+		double magnatude = GRAVITY_POTENTIAL*((2*ASTEROID_MASS)/getVectorLength(*infl[i]));
 
 		// Here we are calculating variables that were half phased out... cause debug issues.
 		double Uvelocity = pow(translation.w,2)+pow(magnatude,2);
@@ -378,16 +368,16 @@ void asteroid::doAction()
 	location.y += sin(translation.angle)*translation.w/**(60/FPS)*/;
 	
 	//this checks to see if it is still in the octogon them moves it to where it to the other side.
-	if(!insideOctogon(location)){
+/*	if(!insideOctogon(location)){
 		location.x*=-1;
 		location.y*=-1;
-	}
+	}*/
 }
 
 void asteroid::clear()
 {
-	astPnts.clear();
-	astTris.clear();
+	lyrs[0].pnts.clear();
+	lyrs[0].tris.clear();
 }
 
 void asteroid::createAsteroid(triangle a, point location, point offset, int num)
@@ -397,12 +387,12 @@ void asteroid::createAsteroid(triangle a, point location, point offset, int num)
 	//asteroidLogger << "Creating Simple Asteroid #" << num << endl;
 	//asteroidLogger.close();
 #endif
-	astPnts.clear();
-	astPnts.push_back(a.a);
-	astPnts.push_back(a.b);
-	astPnts.push_back(a.c);
-	astTris.clear();	
-	astTris.push_back(a);
+	lyrs[0].pnts.clear();
+	lyrs[0].pnts.push_back(a.a);
+	lyrs[0].pnts.push_back(a.b);
+	lyrs[0].pnts.push_back(a.c);
+	lyrs[0].tris.clear();	
+	lyrs[0].tris.push_back(a);
 
 	int j = rand();
 	srand (static_cast <unsigned> (time(0))*(num*(j+67)/10));	
@@ -420,7 +410,7 @@ void asteroid::createAsteroid(triangle a, point location, point offset, int num)
 #endif
 }
 
-vector<asteroid> asteroid::breakupAsteroid()
+std::vector<object *> asteroid::breakupAsteroid()
 {
 /*
  *	todo:
@@ -428,30 +418,20 @@ vector<asteroid> asteroid::breakupAsteroid()
  *	createAsteroid(traingle a)
  * 	repeat through last triangle pointer.
  */
-#ifdef LOGGING
-	//asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-	//asteroidLogger << "Breaking up asteroid into " << astTris.size() << " asteroids.\n";
-	//asteroidLogger.close();
-#endif
 
-	vector<asteroid> breakup;
-	for(int i = 0; i < astTris.size(); i++)
+	std::vector<object *> breakup;
+	for(int i = 0; i < lyrs[0].tris.size(); i++)
 	{
-		if (astTris.size()==1)
+		if (lyrs[0].tris.size()==1)
 			break;
 
-		triangle tmpt = astTris.at(i);
+		triangle tmpt = lyrs[0].tris.at(i);
 		point tmpp;
 
 		if (tmpt.a.x > tmpt.b.x)
 		{
 			if (tmpt.b.x > tmpt.c.x)
 			{
-#ifdef LOGGING
-//				asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-//				asteroidLogger << tmpt.b.x << ">" << tmpt.c.x << endl; 
-//				asteroidLogger.close();
-#endif
 				tmpp.x=tmpt.c.x;
 				tmpt.a.x-=tmpp.x;
 				tmpt.b.x-=tmpp.x;
@@ -459,11 +439,6 @@ vector<asteroid> asteroid::breakupAsteroid()
 			}
 			else
 			{
-#ifdef LOGGING				
-//				asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-//				asteroidLogger << tmpt.c.x << ">" << tmpt.b.x << endl;
-//				asteroidLogger.close();
-#endif
 				tmpp.x=tmpt.b.x;
 				tmpt.a.x-=tmpp.x;
 				tmpt.b.x-=tmpp.x;
@@ -474,11 +449,6 @@ vector<asteroid> asteroid::breakupAsteroid()
 		{
 			if (tmpt.a.x > tmpt.c.x)
 			{
-#ifdef LOGGING
-//				asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-//				asteroidLogger << tmpt.a.x << ">" << tmpt.c.x << endl;
-//				asteroidLogger.close();
-#endif
 				tmpp.x=tmpt.c.x;
 				tmpt.a.x-=tmpp.x;
 				tmpt.b.x-=tmpp.x;
@@ -486,11 +456,6 @@ vector<asteroid> asteroid::breakupAsteroid()
 			}
 			else
 			{
-#ifdef LOGGING
-//				asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-//				asteroidLogger << tmpt.c.x << ">" << tmpt.a.x << endl;
-//				asteroidLogger.close();
-#endif
 				tmpp.x=tmpt.a.x;
 				tmpt.a.x-=tmpp.x;
 				tmpt.b.x-=tmpp.x;
@@ -532,20 +497,10 @@ vector<asteroid> asteroid::breakupAsteroid()
 				tmpt.c.y-=tmpp.y;
 			}
 		}
-		
-		//translation.angle MUST BE A RANDOM FLOAT
-		//srand (static_cast <unsigned> (time(0))*((asteroidBelt.size()+67)/10));
 		float rotate = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-		asteroid a(tmpt, location, tmpp, i, rotate);
-		//a.createAsteroid(tmpt, location, tmpp, i);
+		object * a = new asteroid(tmpt, location, tmpp, i, rotate);
 		breakup.push_back(a);
 	}
-#ifdef LOGGING
-//	asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-//	asteroidLogger << "Breaking up asteroid into " << astTris.size() << " asteroids.\n";
-//	asteroidLogger.close();
-#endif
-
 	return breakup;
 }
 
@@ -553,10 +508,10 @@ vector<asteroid> asteroid::breakupAsteroid()
 void asteroid::tessellateAsteriod()
 {
 /* 	todo:
- * 	Organize points in astPnts in counterclockwise direction
- *	Create Triangles from astPnts and save them in to astTris
+ * 	Organize points in lyrs[0].pnts in counterclockwise direction
+ *	Create Triangles from lyrs[0].pnts and save them in to lyrs[0].tris
  */
-	std::vector<point> temp = astPnts;
+	std::vector<point> temp = lyrs[0].pnts;
 	point A = temp[0];
 	point B = temp[1];
 	point C = temp[2];
@@ -573,30 +528,24 @@ void asteroid::tessellateAsteriod()
 		//cout << intersect (temp[0], temp[1], A, B) << std::endl;
 
 		bool insect = false;
-		for (int i1  = 0; i1 < astPnts.size(); i1++)
+		for (int i1  = 0; i1 < lyrs[0].pnts.size(); i1++)
 		{
-			if(intersect(astPnts[i1], astPnts[(i1+1)%astPnts.size()], A, B))
+			if(intersect(lyrs[0].pnts[i1], lyrs[0].pnts[(i1+1)%lyrs[0].pnts.size()], A, B))
 				insect=true;
-			if(intersect(astPnts[i1], astPnts[(i1+1)%astPnts.size()], B, C))
+			if(intersect(lyrs[0].pnts[i1], lyrs[0].pnts[(i1+1)%lyrs[0].pnts.size()], B, C))
 				insect = true;
-			if(intersect(astPnts[i1], astPnts[(i1+1)%astPnts.size()], C, A))
+			if(intersect(lyrs[0].pnts[i1], lyrs[0].pnts[(i1+1)%lyrs[0].pnts.size()], C, A))
 				insect = true;
 
 			if(insect)
-			{	/*
-				std::cout << std::endl << "INTERSECT!!" << std::endl;
-				std::cout << "A = ( " << A.x << " , " << A.y << " ) " << std::endl;
-				std::cout << "B = ( " << B.x << " , " << B.y << " ) " << std::endl;
-				std::cout << "C = ( " << C.x << " , " << C.y << " ) " << std::endl;
-				std::cout << "astPnts 1 = ( " << astPnts[i1].x << " , " << astPnts[i1].y << " ) " << std::endl;
-				std::cout << "astPnts 1 = ( " << astPnts[i1%astPnts.size()].x << " , " << astPnts[i1%astPnts.size()].y << " ) " << std::endl;*/
+			{	
 				break;
 			}
 		}
 
-		for (int i1  = 0; i1 < astTris.size(); i1++)
+		for (int i1  = 0; i1 < lyrs[0].tris.size(); i1++)
 		{
-			point temp1[3] = {astTris[i1].a, astTris[i1].b, astTris[i1].c};
+			point temp1[3] = {lyrs[0].tris[i1].a, lyrs[0].tris[i1].b, lyrs[0].tris[i1].c};
 			for (int j1=0; j1<3; j1++)
 			{
 				if(intersect(temp1[j1], temp1[(j1+1)%3], A, B))
@@ -607,15 +556,7 @@ void asteroid::tessellateAsteriod()
 					insect = true;
 			}
 			if(insect)
-			{	/*
-				std::cout << std::endl << "INTERSECT!!" << std::endl;
-				std::cout << "A = ( " << A.x << " , " << A.y << " ) " << std::endl;
-				std::cout << "B = ( " << B.x << " , " << B.y << " ) " << std::endl;
-				std::cout << "C = ( " << C.x << " , " << C.y << " ) " << std::endl;
-				std::cout << "Triangle 1 = ( " << temp[0].x << " , " << temp1[0].y << " ) " << std::endl;
-				std::cout << "Triangle 2 = ( " << temp[1].x << " , " << temp1[1].y << " ) " << std::endl;
-				std::cout << "Triangle 3 = ( " << temp[2].x << " , " << temp1[2].y << " ) " << std::endl;
-				*/
+			{	
 				break;
 			}
 		}
@@ -665,12 +606,7 @@ void asteroid::tessellateAsteriod()
 			for (int i =0; i < temp.size(); i ++)
 			{
 				if(PointInTriangle(temp[i], A, B, C) && Ai!=i && Bi!=i && Ci!=i)
-				{/*
-					std::cout << std::endl << "WITHIN!!" << std::endl;
-					std::cout << "A = ( " << A.x << " , " << A.y << " ) " << std::endl;
-					std::cout << "B = ( " << B.x << " , " << B.y << " ) " << std::endl;
-					std::cout << "C = ( " << C.x << " , " << C.y << " ) " << std::endl;
-					std::cout << "Point = ( " << temp[i].x << " , " << temp[i].y << " ) " << std::endl;*/
+				{
 					within = true;
 				}
 			}
@@ -680,7 +616,7 @@ void asteroid::tessellateAsteriod()
 				tri.a = A;
 				tri.b = B;
 				tri.c = C;
-				astTris.push_back(tri);
+				lyrs[0].tris.push_back(tri);
 
 				Bi++;
 				if(Bi>=temp.size()-1)
@@ -700,11 +636,7 @@ void asteroid::tessellateAsteriod()
 				}
 			}
 			else
-			{/*
-				std::cout << std::endl << "NOT CONCAVE!!" << std::endl;
-				std::cout << "A = ( " << A.x << " , " << A.y << " ) " << std::endl;
-				std::cout << "B = ( " << B.x << " , " << B.y << " ) " << std::endl;
-				std::cout << "C = ( " << C.x << " , " << C.y << " ) " << std::endl;*/
+			{
 				Ci++;
 				if(Ci>=temp.size())
 				{
@@ -737,12 +669,12 @@ void asteroid::tessellateAsteriod()
 
 void asteroid::sortPoints()
 {
-	// Sorts astPnts in CCW order.
+	// Sorts lyrs[0].pnts in CCW order.
 	// Declare a vector sortedPoints of points.
-	vector<point> sortedPoints;
+	std::vector<point> sortedPoints;
 	
 
-	// Calculate the centroid of the polygon formed by astPnts.
+	// Calculate the centroid of the polygon formed by lyrs[0].pnts.
 	float xsum = 0.0;
 	float ysum = 0.0;
 	for(int i=0; i<lyrs[0].pnts.size(); i++)
@@ -757,7 +689,7 @@ void asteroid::sortPoints()
 	const int angl_s = lyrs[0].pnts.size();
 	float angles[angl_s];
 
-	// For each point in astPnts, calculate its angle by comparing it to the centroid of the polygon formed by astPnts.
+	// For each point in lyrs[0].pnts, calculate its angle by comparing it to the centroid of the polygon formed by lyrs[0].pnts.
 	for(int i=0; i<lyrs[0].pnts.size(); i++)
 	{
 		angles[i] = atan2(lyrs[0].pnts.at(i).y - midy, lyrs[0].pnts.at(i).x - midx);
@@ -765,18 +697,18 @@ void asteroid::sortPoints()
 	}
 
 	// Sort angles in ascending order.
-	sort(angles, angles+astPnts.size(), less<float>());
+	sort(angles, angles+lyrs[0].pnts.size(), std::less<float>());
 
 	// Transfer the sorted points to sortedPoints.
-	for(int j=0; j<astPnts.size(); j++)
-		for(int k=0; k<astPnts.size(); k++)
-			if(angles[j] == astPnts.at(k).angle)
-				sortedPoints.push_back(astPnts.at(k));
+	for(int j=0; j<lyrs[0].pnts.size(); j++)
+		for(int k=0; k<lyrs[0].pnts.size(); k++)
+			if(angles[j] == lyrs[0].pnts.at(k).angle)
+				sortedPoints.push_back(lyrs[0].pnts.at(k));
 
-	// Transfer sortedPoints to astPnts.
-	astPnts = sortedPoints;
+	// Transfer sortedPoints to lyrs[0].pnts.
+	lyrs[0].pnts = sortedPoints;
 }
-vector<point> asteroid::getBounds()
+std::vector<point> asteroid::getBounds()
 {
 	std::vector<point> t = lyrs[0].pnts;
 	for (int i = 0; i < t.size(); i++)
@@ -788,18 +720,18 @@ vector<point> asteroid::getBounds()
 	
 }
 
-vector<point> asteroid::getPoints()
+std::vector<point> asteroid::getPoints()
 {
 	return lyrs[0].pnts;
 }
-
-vector<triangle> asteroid::getTess()
+/*
+std::vector<triangle> asteroid::getTess()
 {
 	return lyrs[0].tris;
-}
-vector<triangle> asteroid::getTess2()
+}*/
+std::vector<triangle> asteroid::getTess2()
 {
-	vector<triangle> temp = lyrs[0].tris;
+	std::vector<triangle> temp = lyrs[0].tris;
 	for (int i =0; i < temp.size(); i++)
 	{
 		point a[3] = {temp[i].a, temp[i].b, temp[i].c};
@@ -815,18 +747,18 @@ vector<triangle> asteroid::getTess2()
 	return temp;
 }
 
+/*
+std::vector<point> asteroid::getRealPoints(){
 
-vector<point> asteroid::getRealPoints(){
-
-	vector<point> v;
+	std::vector<point> v;
 
 	for(int i = 0; i < lyrs[0].pnts.size(); i++){
 
 		point p = {lyrs[0].pnts[i].x + location.x, lyrs[0].pnts[i].y + location.y, 0, 1};
 		/*asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
 		asteroidLogger << "real points are: " << p.x << " " << p.y << "\n";
-		asteroidLogger.close();	*/
+		asteroidLogger.close();	
 		v.push_back(p);
 	}
 	return v;
-}
+}*/
