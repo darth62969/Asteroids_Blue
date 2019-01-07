@@ -31,12 +31,17 @@ int mode::step()
 			gamestate = 3;
 			break;
 	}
+
+	std::cout << "Checking for Collisions" << std::endl << std::endl;
+	
 	for (int i = 0; i<onScreen.size(); i++)
 	{
+		
 		object * o1 = onScreen[i];
 		for(int j = i+1; j<onScreen.size(); j++)
 		{
 			object * o2 = onScreen[j];
+			std::cout << "Checking collisions for objects " << i << " and " << j << std::endl;
 			if(o1->collides(o2))
 			{
 				std::cout << "somthing collided\n";

@@ -138,23 +138,10 @@ asteroid::asteroid()
 	tessellate(&lyr);
 	lyrs.push_back(lyr);
 
-
-	//sortPoints();
-	//tessellateAsteriod();
-	//translation.angle = drand48();
-#ifdef LOGGING	
-	//asteroidLogger << "translation.angle was set to : " << translation.angle << "\n\n";
-	//asteroidLogger.close();
-#endif
 }
 
 asteroid::asteroid(triangle a, point location, point offset, int num, float Orotation)
 {
-#ifdef LOGGING
-	//asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-	//asteroidLogger << "Creating Simple Asteroid #" << num << endl;
-	//asteroidLogger.close();
-#endif
 	layer lyr;
 	lyr.pnts.push_back(a.a);
 	lyr.pnts.push_back(a.b);
@@ -171,11 +158,6 @@ asteroid::asteroid(triangle a, point location, point offset, int num, float Orot
 
 	location.x = location.x + offset.x;
 	location.y = location.y + offset.y;
-#ifdef LOGGING
-	//asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-	//asteroidLogger << "Created Simple Asteroid\n\n";
-	//asteroidLogger.close();
-#endif
 }
 
 point asteroid::getCenter()
@@ -382,11 +364,6 @@ void asteroid::clear()
 
 void asteroid::createAsteroid(triangle a, point location, point offset, int num)
 {
-#ifdef LOGGING
-	//asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-	//asteroidLogger << "Creating Simple Asteroid #" << num << endl;
-	//asteroidLogger.close();
-#endif
 	lyrs[0].pnts.clear();
 	lyrs[0].pnts.push_back(a.a);
 	lyrs[0].pnts.push_back(a.b);
@@ -403,11 +380,6 @@ void asteroid::createAsteroid(triangle a, point location, point offset, int num)
 
 	location.x = location.x + offset.x;
 	location.y = location.y + offset.y;
-#ifdef LOGGING
-	//asteroidLogger.open(ASTEROID_LOG_PATH, ofstream::out|ofstream::app);
-	//asteroidLogger << "Created Simple Asteroid\n" << endl;
-	//asteroidLogger.close();
-#endif
 }
 
 std::vector<object *> asteroid::breakupAsteroid()
@@ -710,13 +682,15 @@ void asteroid::sortPoints()
 }
 std::vector<point> asteroid::getBounds()
 {
-	std::vector<point> t = lyrs[0].pnts;
+	std::vector<point> t;
+
 	for (int i = 0; i < t.size(); i++)
 	{
 		double x = t[i].x+location.x;
 		double y = t[i].y+location.y;
-		t[i] = {x, y, t[i].z};
+		t[i] = point{x, y, t[i].z};
 	}
+	return t;
 	
 }
 

@@ -185,20 +185,35 @@ void object::tessellate(layer* lyr)
 bool object::collides(object * other)
 {
 	point a = other->getLocation();
-	if (getVectorLength(other)>100)
-		return false;
+	if (getVectorLength(other)>100);
+		//return false;
 
 	std::vector<point> a_pnt= getBounds();
+	//std::vector<triangle> t_pnt = other->getTess();
 	std::vector<point> b_pnt= other->getBounds();
 	for (int i = 0; i < a_pnt.size(); i++)
 	{
 		for (int j = 0; j < b_pnt.size(); j++)
 		{
-			if(intersect(a_pnt[i], a_pnt[(i+1)%a_pnt.size()], 
+			point v1 = a_pnt[i];
+			point v2 = a_pnt[(i+1)%a_pnt.size()];
+			point v3 = b_pnt[j];
+			point v4 = b_pnt[(i+1)%b_pnt.size()];
+			double num_1 = ((v3.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v3.y - v1.y));
+			double num_2 = ((v2.x - v1.x) * (v3.y - v1.y)) - ((v3.x - v1.x) * (v2.y - v1.y));
+			double den =((v2.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v2.y - v1.y));
+
+			double frac_1 = num_1 / den;
+			double frac_2 = num_2 / den;
+
+			std::cout << (frac_1 > 0.0) << " " << (frac_1 < 1.0) << " " << (frac_2 > 0.0) << " " << (frac_2 < 1.0) << std::endl;
+
+			/*if(intersect(a_pnt[i], a_pnt[(i+1)%a_pnt.size()], 
 				b_pnt[j], b_pnt[(j+1)%b_pnt.size()]))
-				{
-					return true;
-				}
+			{
+				std::cout << "true" << std::endl;
+				return true;
+			}*/
 		}
 	}
 
@@ -255,6 +270,23 @@ void object::setRotation(double rot)
 std::vector<point> object::getBounds()
 {
 	return lyrs[0].pnts;
+}
+std::vector<triangle> object::getTess()
+{
+	std::vector<triangle> temp = lyrs[0].tris;
+	for (int i =0; i < temp.size(); i++)
+	{
+		point a[3] = {temp[i].a, temp[i].b, temp[i].c};
+		for (int j = 0; j < 3; j++ )
+		{
+			a[j].x += location.x;
+			a[j].y += location.y;
+		}
+		temp[i].a = a[0];
+		temp[i].b = a[1];
+		temp[i].c = a[2];
+	}
+	return temp;
 }
 
 float object::getVectorLength(object * other)

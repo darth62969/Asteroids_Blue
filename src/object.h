@@ -31,6 +31,7 @@ class object
 		double getRotation();
 		void setRotation( double rot );
 		virtual std::vector<point> getBounds();
+		virtual std::vector<triangle> getTess();
 		float getVectorLength(object * other);
 		
 	protected:

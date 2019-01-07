@@ -979,10 +979,6 @@ bool intersect(point v1, point v2, point v3, point v4)
 	float ua = ua_num / den;
 	float ub = ub_num / den;
 
-	point v;
-	v.x = -100;
-	v.y = -100;
-
 	if((ua > 0.0) && (ua < 1.0) && (ub > 0.0) && (ub < 1.0))
 	{
 		return true;
