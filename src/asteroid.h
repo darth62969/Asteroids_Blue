@@ -40,6 +40,7 @@ class asteroid : public object
 		float getRotation();
 
 		std::vector<object *> breakupAsteroid();
+		std::vector<std::shared_ptr<object>> breakupAsteroid2();
 		//void incrementLocation(mode * );
 		void render() override;
 		void doAction(mode * md) override;
@@ -54,8 +55,9 @@ class asteroid : public object
 	    	bool clipped;
 		int numsides;
 		std::vector<asteroid *> getInfluencers(mode * md);
-		float getVectorLength(point a, point b);
-		float getVectorLength(asteroid b);
+		std::vector<std::shared_ptr<asteroid>> getInfluencers2(mode * md);
+		//float getVectorLength(point a, point b);
+		//float getVectorLength(asteroid b);*/
 		void createAsteroid(triangle a, point center, point offset, int num);
 	   	void tessellateAsteriod();
 		void sortPoints();

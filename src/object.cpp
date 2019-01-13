@@ -181,16 +181,15 @@ void object::tessellate(layer* lyr)
 	{
 	}
 }
+void voidFunc(double frac_1, double frac_2)
+{
+	
+}
 
 bool object::collides(object * other)
 {
-	point a = other->getLocation();
-	if (getVectorLength(other)>100);
-		//return false;
-
-	std::vector<point> a_pnt= getBounds();
-	//std::vector<triangle> t_pnt = other->getTess();
-	std::vector<point> b_pnt= other->getBounds();
+	std::vector<point> a_pnt = getBounds();
+	std::vector<point> b_pnt = other->getBounds();
 	for (int i = 0; i < a_pnt.size(); i++)
 	{
 		for (int j = 0; j < b_pnt.size(); j++)
@@ -198,7 +197,8 @@ bool object::collides(object * other)
 			point v1 = a_pnt[i];
 			point v2 = a_pnt[(i+1)%a_pnt.size()];
 			point v3 = b_pnt[j];
-			point v4 = b_pnt[(i+1)%b_pnt.size()];
+			point v4 = b_pnt[(j+1)%b_pnt.size()];
+
 			double num_1 = ((v3.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v3.y - v1.y));
 			double num_2 = ((v2.x - v1.x) * (v3.y - v1.y)) - ((v3.x - v1.x) * (v2.y - v1.y));
 			double den =((v2.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v2.y - v1.y));
@@ -206,32 +206,52 @@ bool object::collides(object * other)
 			double frac_1 = num_1 / den;
 			double frac_2 = num_2 / den;
 
-			std::cout << (frac_1 > 0.0) << " " << (frac_1 < 1.0) << " " << (frac_2 > 0.0) << " " << (frac_2 < 1.0) << std::endl;
+			//std::cout << num_1 << "/" << den << "=" << frac_1 << std::endl;
+			//std::cout << num_2 << "/" << den << "=" << frac_2 << std::endl;
+			//std::cout << (frac_1 > 0.0) << " " << (frac_1 < 1.0) << " " << (frac_2 > 0.0) << " " << (frac_2 < 1.0) << std::endl;
+			//std::cout << std::endl;
+			
+			//std::string hahah;
+			//std::cin >> hahah;
 
-			/*if(intersect(a_pnt[i], a_pnt[(i+1)%a_pnt.size()], 
-				b_pnt[j], b_pnt[(j+1)%b_pnt.size()]))
-			{
-				std::cout << "true" << std::endl;
+			if((frac_1>0.0)&&(frac_1<1.0)&&(frac_2>0.0)&&(frac_2<1.0))
 				return true;
-			}*/
 		}
 	}
-
-		/*if ((a.x-location.x) < 50 && (a.y-location.y)<50)
+	return false;
+}
+bool object::collides(std::shared_ptr<object> other)
+{
+	std::vector<point> a_pnt = getBounds();
+	std::vector<point> b_pnt = other->getBounds();
+	for (int i = 0; i < a_pnt.size(); i++)
+	{
+		for (int j = 0; j < b_pnt.size(); j++)
 		{
-			std::vector<point> a_pnt= getBounds();
-			std::vector<point> b_pnt= other->getBounds();
-			for (int i = 0; i < a_pnt.size(); i++)
-			{
+			point v1 = a_pnt[i];
+			point v2 = a_pnt[(i+1)%a_pnt.size()];
+			point v3 = b_pnt[j];
+			point v4 = b_pnt[(j+1)%b_pnt.size()];
 
-			}
+			double num_1 = ((v3.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v3.y - v1.y));
+			double num_2 = ((v2.x - v1.x) * (v3.y - v1.y)) - ((v3.x - v1.x) * (v2.y - v1.y));
+			double den =((v2.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v2.y - v1.y));
+
+			double frac_1 = num_1 / den;
+			double frac_2 = num_2 / den;
+
+			//std::cout << num_1 << "/" << den << "=" << frac_1 << std::endl;
+			//std::cout << num_2 << "/" << den << "=" << frac_2 << std::endl;
+			//std::cout << (frac_1 > 0.0) << " " << (frac_1 < 1.0) << " " << (frac_2 > 0.0) << " " << (frac_2 < 1.0) << std::endl;
+			//std::cout << std::endl;
+			
+			//std::string hahah;
+			//std::cin >> hahah;
+
+			if((frac_1>0.0)&&(frac_1<1.0)&&(frac_2>0.0)&&(frac_2<1.0))
+				return true;
 		}
-		else
-		{
-			return false;
-		}*/
-	
-	
+	}
 	return false;
 }
 
@@ -290,6 +310,11 @@ std::vector<triangle> object::getTess()
 }
 
 float object::getVectorLength(object * other)
+{
+	return sqrt(pow(abs(location.x-other->getLocation().x),2)+pow(abs(location.y-other->getLocation().y),2));
+}
+
+float object::getVectorLength(std::shared_ptr<object> other)
 {
 	return sqrt(pow(abs(location.x-other->getLocation().x),2)+pow(abs(location.y-other->getLocation().y),2));
 }

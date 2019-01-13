@@ -30,6 +30,16 @@ bullet::bullet(std::vector<point> pnts, int dmg, double vel)
 	location.w = vel; 
 	lyrs.push_back(lyr);
 }
+
+bullet::bullet(const bullet& other, point loc) :
+	damage(other.damage)
+{
+	for (layer l : other.lyrs)
+	{
+		lyrs.push_back(l);
+	}
+	location = other.location;
+}
 bullet::bullet()
 {
 	layer lyr;
@@ -51,6 +61,14 @@ bullet * bullet::fireBullet(double x, double y, double angle)
 	//std::cout << angle << std::endl;
 	point t_pnt =point{x, y, 0, location.w, angle};
 	bullet * temp = new bullet();
+	temp->setLocation(t_pnt);
+	return temp;
+}
+std::shared_ptr<bullet> bullet::fireBullet2(double x, double y, double angle)
+{
+	//std::cout << angle << std::endl;
+	point t_pnt =point{x, y, 0, location.w, angle};
+	std::shared_ptr<bullet> temp = std::make_shared<bullet>(bullet(*this));
 	temp->setLocation(t_pnt);
 	return temp;
 }

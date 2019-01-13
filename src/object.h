@@ -22,6 +22,7 @@ class object
 		void tessellate(layer* lyr);
 
 		virtual bool collides(object* other);
+		virtual bool collides(std::shared_ptr<object> other);
 
 		//get / set
 		//virtual char* getType();
@@ -33,6 +34,7 @@ class object
 		virtual std::vector<point> getBounds();
 		virtual std::vector<triangle> getTess();
 		float getVectorLength(object * other);
+		float getVectorLength(std::shared_ptr<object> other);
 		
 	protected:
 		point location;

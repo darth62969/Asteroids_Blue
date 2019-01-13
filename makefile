@@ -12,11 +12,11 @@
 # License: IDGAF (I don't give a fork) do what ever with this specific file, if it helps you build a better
 # makefile then so be it. that's good news for us.
 
-# clipper.o detectcollision.o FileHandler.o render.o
+# clipper.o detectcollision.o FileHandler.o render.o -O3 
 
 CC = g++
 CFLAGS = -v -std=c++11
-COPTFLAGS = -O3 
+COPTFLAGS = -O3
 LIBFLAGS = -lglut -lGLU -lGL -lm
 HEADERS = src/headers.h src/structs.h src/globals.h src/prototypes.h
 OBJS = main.o asteroid.o ship.o bullet.o transformer.o 

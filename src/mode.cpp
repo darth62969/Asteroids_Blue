@@ -1,8 +1,10 @@
+#include <algorithm>
 #include "mode.h"
 #include "asteroid.h"
 #include "bullet.h"
 #include "enterprise.h"
 #include "render.h"
+
 
 std::uniform_real_distribution<double> xlocdist(WORLD_COORDINATE_MIN_X, WORLD_COORDINATE_MAX_X);
 std::uniform_real_distribution<double> ylocdist(WORLD_COORDINATE_MIN_Y, WORLD_COORDINATE_MAX_Y);
@@ -19,10 +21,10 @@ mode::mode()
 int mode::step()
 {
 	numAsteroids=0;
-	for (int i = 0; i<onScreen.size(); i++)
+	for (int i = 0; i<onScreen2.size(); i++)
 	{
-		onScreen[i]->doAction(this);
-		if(dynamic_cast<asteroid *>(onScreen[i]))
+		onScreen2[i]->doAction(this);
+		if(std::dynamic_pointer_cast<asteroid>(onScreen2[i]))
 			numAsteroids++;
 	}
 	switch(numAsteroids)
@@ -32,65 +34,103 @@ int mode::step()
 			break;
 	}
 
-	std::cout << "Checking for Collisions" << std::endl << std::endl;
-	
-	for (int i = 0; i<onScreen.size(); i++)
+	//std::cout << "Checking for Collisions" << std::endl << std::endl;
+	std::vector<int> t_int;
+	for (int i = 0; i<onScreen2.size(); i++)
 	{
 		
-		object * o1 = onScreen[i];
-		for(int j = i+1; j<onScreen.size(); j++)
+		std::shared_ptr<object> o1 = onScreen2[i];
+		for(int j = i+1; j<onScreen2.size(); j++)
 		{
-			object * o2 = onScreen[j];
-			std::cout << "Checking collisions for objects " << i << " and " << j << std::endl;
+			std::shared_ptr<object> o2 = onScreen2[j];
+			if(o1->getVectorLength(o2)<50){
+			
+				//std::cout << "Checking collisions for objects " << i << " and " << j << std::endl;
+			
 			if(o1->collides(o2))
 			{
-				std::cout << "somthing collided\n";
-				if(dynamic_cast<asteroid *>(o1))
+				t_int.push_back(i);
+				t_int.push_back(j);
+				
+				//std::cout << "somthing collided\n";
+				/*if(std::dynamic_pointer_cast<asteroid>(o1))
 				{
-					std::vector<object *> temp =
-						dynamic_cast<asteroid *>(o1)->breakupAsteroid();
-					for (object * o : temp)
-						onScreen.push_back(o);
+					std::cout << "breaking up asteroid " << i << std::endl;
+					std::vector<std::shared_ptr<object>> temp =
+						std::dynamic_pointer_cast<asteroid>(o1)->breakupAsteroid2();
+					for (std::shared_ptr<object> o : temp)
+						onScreen2.push_back(o);
 					//delete(static_cast<asteroid*>(onScreen[i]));
-					onScreen.erase(onScreen.begin()+i);
+					onScreen2.erase(onScreen2.begin()+i);
 				}
-				if(dynamic_cast<asteroid *>(o2))
+				if(std::dynamic_pointer_cast<asteroid>(o2))
 				{
-					std::vector<object *> temp =
-						dynamic_cast<asteroid *>(o2)->breakupAsteroid();
-					for (object * o : temp)
-						onScreen.push_back(o);
+					std::cout << "breaking up asteroid " << j << std::endl;
+					std::vector<std::shared_ptr<object>> temp =
+						std::dynamic_pointer_cast<asteroid>(o2)->breakupAsteroid2();
+					for (std::shared_ptr<object> o : temp)
+						onScreen2.push_back(o);
 					//delete(static_cast<asteroid*>(onScreen[j]));
-					onScreen.erase(onScreen.begin()+j);
+					onScreen2.erase(onScreen2.begin()+j);
 				}
-				if(dynamic_cast<bullet * >(o2))
+				if(std::dynamic_pointer_cast<bullet>(o2))
 				{
 					//delete (static_cast<bullet * >(onScreen[j]));
-					onScreen.erase(onScreen.begin()+j);
+					onScreen2.erase(onScreen2.begin()+j);
 					bulletsHit++;
 				}
-				if(dynamic_cast<bullet * >(o1))
+				if(std::dynamic_pointer_cast<bullet>(o1))
 				{
 					//delete (static_cast<bullet * >(onScreen[i]));
-					onScreen.erase(onScreen.begin()+i);
+					onScreen2.erase(onScreen2.begin()+i);
 					bulletsHit++;
-				}
+				}*/
+			}
 			}
 		}
 	}
-	for(int i = 0; i < onScreen.size(); i++)
+	
+	std::sort(t_int.begin(), t_int.end());
+	std::reverse(t_int.begin(), t_int.end());
+	std::vector<int>::iterator it;
+	it = std::unique(t_int.begin(), t_int.end());
+	t_int.resize(std::distance(t_int.begin(), it));
+
+	
+	for (int i : t_int)
 	{
-		object * o = onScreen[i];
+		if(std::dynamic_pointer_cast<asteroid>(onScreen2[i]))
+		{
+			//std::cout << "breaking up asteroid " << i << std::endl;
+			std::vector<std::shared_ptr<object>> temp =
+				std::dynamic_pointer_cast<asteroid>(onScreen2[i])->breakupAsteroid2();		
+			for (int j =0; j < temp.size(); j++)
+					onScreen2.push_back(temp.at(j));
+			//delete(static_cast<asteroid*>(onScreen[i]));
+			onScreen2.erase(onScreen2.begin()+(i));
+		}
+		if(std::dynamic_pointer_cast<bullet>(onScreen2[i]))
+		{
+			//delete (static_cast<bullet * >(onScreen[i]));
+			onScreen2.erase(onScreen2.begin()+(i));
+			bulletsHit++;
+		}
+	}
+	//std::cout << "got past breakUPalgorithem\n ";
+
+	for(int i = 0; i < onScreen2.size(); i++)
+	{
+		std::shared_ptr<object> o = onScreen2[i];
 		if (!render::insideOctogon(o->getLocation()))
 		{
-			if (dynamic_cast<bullet * > (o))
+			if (std::dynamic_pointer_cast<bullet> (o))
 			{
 				//delete(onScreen[i]);
-				onScreen.erase(onScreen.begin()+i);
+				onScreen2.erase(onScreen2.begin()+i);
 			}
-			if (dynamic_cast<bullet * > (o))
+			if (std::dynamic_pointer_cast<asteroid> (o))
 			{
-				o->setLocation(-(o->getLocation().x), -(o->getLocation().y));
+				o->setLocation(-1*(o->getLocation().x), -1*(o->getLocation().y));
 			}
 		}
 	}
@@ -98,6 +138,8 @@ int mode::step()
 
 	return 0;
 }
+
+
 
 void mode::generateLevel()
 {
@@ -110,7 +152,7 @@ void mode::generateLevel()
 
 	for (int i=0; i<50; i++)
 	{
-		onScreen.push_back(new asteroid());
+		onScreen2.push_back(std::make_shared<asteroid>(asteroid()));
 		point loc;
 		loc.x = INT32_MAX;
 		loc.y = INT32_MAX;
@@ -137,7 +179,7 @@ void mode::generateLevel()
 				}
 			}
 		}
-		onScreen.back()->setLocation(loc.x, loc.y);
+		onScreen2.back()->setLocation(loc.x, loc.y);
 	}
 }
 
@@ -151,9 +193,18 @@ std::vector<object*> mode::getOnScreen()
 	return onScreen;
 }
 
+std::vector<std::shared_ptr<object>> mode::getOnScreen2()
+{
+	return onScreen2;
+}
+
 void mode::addToOnScreen(object * obj)
 {
 	onScreen.push_back(obj);
+}
+void mode::addToOnScreen(std::shared_ptr<object> obj)
+{
+	onScreen2.push_back(obj);
 }
 
 void mode::drawLevel()
@@ -163,11 +214,21 @@ void mode::drawLevel()
 
 void mode::drawObjects()
 {
-	for(object * o : onScreen)
+	int i = 0;
+	for(std::weak_ptr<object> o : onScreen2)
 	{
-		o->render();
+		char a[10];
+		sprintf(a, "%d", i);
+		if(auto opt = o.lock())
+		{
+			opt->render();
+			i++;
+			render::drawString(opt->getLocation().x, opt->getLocation().y, a);
+		}
+
 	}
 	player->render();
+
 	
 }
 

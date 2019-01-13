@@ -17,7 +17,9 @@ class mode
 		virtual void init();			// 
 
 		virtual std::vector<object *> getOnScreen(); 
+		virtual std::vector<std::shared_ptr<object>> getOnScreen2(); 
 		void addToOnScreen(object * obj);
+		void addToOnScreen(std::shared_ptr<object> obj);
 
 		virtual void drawLevel();
 		virtual void drawObjects();
@@ -33,6 +35,7 @@ class mode
 
 	protected:
 		std::vector<object *> onScreen;	// collection of objects for the mode that are displayed onScreen;
+		std::vector<std::shared_ptr<object>> onScreen2;	// collection of objects for the mode that are displayed onScreen;
 		int level = 1;					// current level, default 1;
 		int stp = 0;					// current step, used to keep track of frames;
 		int maxLevel;					// Maximum level posible in mode, SET THIS!!;

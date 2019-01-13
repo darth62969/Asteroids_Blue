@@ -59,7 +59,8 @@ void enterprise::fire(mode * md)
 		//temp[i].x+=sin(location.angle);
 		//temp[i].y+=cos(location.angle);
 		
-		bullet * shot = blt.fireBullet(temp[i].x, temp[i].y, location.angle);
+	//	bullet * shot = blt.fireBullet(temp[i].x, temp[i].y, location.angle);
+		std::shared_ptr<bullet> shot = blt.fireBullet2(temp[i].x, temp[i].y, location.angle);
 	//	shot.location= temp[i];
 	//	shot.theta = location.angle;
 		md->addToOnScreen(shot);

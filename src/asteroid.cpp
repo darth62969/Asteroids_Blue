@@ -64,47 +64,10 @@ asteroid::asteroid()
 	std::uniform_real_distribution<double> irdist(irlower, irupper);
 	std::uniform_real_distribution<double> spkdist(splower, spupper);
 
-// Logging for debug information, this tells us what the the program is doing. 
-// The number of sides it is going to generate
-
-//Setting the location (x,y) to (0,0)
-/*	location.x = INT32_MAX;
-	location.y = INT32_MAX;*/
-	
-// While the location is not wihtin the octogon, generate random positions
-/*	while(!insideOctogon(location))
-	{
-		// Keep generateing points till the asteroid is not withing range of the ship
-		do
-		{
-			location.x = xlocdist(generator);
-			location.y = ylocdist(generator);
-		}
-		while(getVectorLength(location, point{0, 0, 0, 1})<100);
-
-		// Check the new asteroid for it's vecinity to other asteriods.
-		bool nv = false;
-		for (int i = 0; i < asteroidBelt.size(); i++)
-		{
-			// If it is withing range of an asteroid set location back to (0,0)
-			// This causes it to try again, till it finds a position that works.
-			if (abs(location.x - asteroidBelt[i].getLocation().x) <= 2*ASTEROID_MAX_AVG && abs(location.y - asteroidBelt[i].getLocation().y) <= 2*ASTEROID_MAX_AVG)
-			{
-				location.x = INT32_MAX;
-				location.y = INT32_MAX;
-			}
-		}
-	}*/
 	// Generate a random "translation.angle" or directional vector, in radians.
 	location.angle = dirdist(generator);
 	//cout << translation.angle << endl;
 	location.w = spddist(generator);
-
-
-	// This logging protocal lets us know where the location of the asteroid is. 
-#ifdef LOGGING
-	//asteroidLogger << "Bottom Left corner of asteroid at : " << location.x << " " << location.y << endl;
-#endif
 
 // Random number for seed.
 	layer lyr;
@@ -140,7 +103,7 @@ asteroid::asteroid()
 
 }
 
-asteroid::asteroid(triangle a, point location, point offset, int num, float Orotation)
+asteroid::asteroid(triangle a, point loc, point offset, int num, float Orotation)
 {
 	layer lyr;
 	lyr.pnts.push_back(a.a);
@@ -148,32 +111,35 @@ asteroid::asteroid(triangle a, point location, point offset, int num, float Orot
 	lyr.pnts.push_back(a.c);
 
 	lyr.tris.push_back(a);
+	lyr.clr = color{0.1,0.5,0.0};
+
+	lyrs.push_back(lyr);
 
 	int j = rand();
 	srand (static_cast <unsigned> (time(0))*(num*(j+67)/10));	
 	Orotation *= 180/M_PI;
-	translation.angle = Orotation+num*2;
-	translation.angle *= M_PI / 180.0;
-	translation.w = (rand()%16+1)/2.0;
+	location.angle = Orotation;
+	location.w = (rand()%16+1)/2.0;
 
-	location.x = location.x + offset.x;
-	location.y = location.y + offset.y;
+	location.x = loc.x + offset.x;
+	location.y = loc.y + offset.y;
 }
 
 point asteroid::getCenter()
 {
 	return location;
 }
+/*
 float asteroid::getVectorLength(point a, point b)
 {
 	return sqrt(pow(abs(a.x-b.x),2)+pow(abs(a.y-b.y),2));
-}
+}*/
 
 
-float asteroid::getVectorLength(asteroid b)
+/*float asteroid::getVectorLength(asteroid b)
 {
 	return sqrt(pow(abs(location.x-b.getLocation().x),2)+pow(abs(location.y-b.getLocation().y),2));
-}
+}*/
 
 std::vector<asteroid *> asteroid::getInfluencers(mode * md)
 {
@@ -182,12 +148,31 @@ std::vector<asteroid *> asteroid::getInfluencers(mode * md)
 	{
 		if(dynamic_cast<asteroid *>(md->getOnScreen()[i]))
 		{
-			int j = getVectorLength(*dynamic_cast<asteroid *>(md->getOnScreen()[i]));
+			int j = getVectorLength(md->getOnScreen()[i]);
 			if (0 < j && j <= 100 )
 			{
 				infl.push_back(dynamic_cast<asteroid *>(md->getOnScreen()[i]));
 			}
 		}
+
+	}
+	return infl;
+}
+
+std::vector<std::shared_ptr<asteroid>> asteroid::getInfluencers2(mode * md)
+{
+	std::vector<std::shared_ptr<asteroid>> infl;
+	for (int i=0; i < md->getOnScreen2().size()-1; i++)
+	{
+		if(std::dynamic_pointer_cast<asteroid>(md->getOnScreen2()[i]))
+		{
+			int j = getVectorLength(md->getOnScreen2()[i]);
+			if (0 < j && j <= 100 )
+			{
+				infl.push_back(std::dynamic_pointer_cast<asteroid>(md->getOnScreen2()[i]));
+			}
+		}
+
 	}
 	return infl;
 }
@@ -301,7 +286,8 @@ void asteroid::doAction(mode * md)
 		return;
 
 	//This is a vector for the asteroid's gravity influence effect.
-	std::vector<asteroid *> infl = getInfluencers(md);
+	//std::vector<asteroid *> infl = getInfluencers(md);
+	std::vector<std::shared_ptr<asteroid>> infl = getInfluencers2(md);
 
 	//This takes the vector returned by getInfluencers and calculates the new direction of the current asteroid.
 	for(int i =0; i< infl.size(); i++)
@@ -327,7 +313,7 @@ void asteroid::doAction(mode * md)
 
 		// We need to calculate the gravity potential for the asteroids. this is the amount of "force" that is going to be aplied in the
 		// direction of the influncer.
-		double magnatude = GRAVITY_POTENTIAL*((2*ASTEROID_MASS)/getVectorLength(*infl[i]));
+		double magnatude = GRAVITY_POTENTIAL*((2*ASTEROID_MASS)/getVectorLength(infl[i]));
 
 		// Here we are calculating variables that were half phased out... cause debug issues.
 		double Uvelocity = pow(translation.w,2)+pow(magnatude,2);
@@ -391,15 +377,39 @@ std::vector<object *> asteroid::breakupAsteroid()
  * 	repeat through last triangle pointer.
  */
 
+
+	
+
 	std::vector<object *> breakup;
+	if (lyrs[0].tris.size()==1)
+		return breakup;
+
+	double rotate = location.angle+(M_PI)/3;
 	for(int i = 0; i < lyrs[0].tris.size(); i++)
-	{
-		if (lyrs[0].tris.size()==1)
-			break;
-
+	{	
 		triangle tmpt = lyrs[0].tris.at(i);
-		point tmpp;
-
+		point tmpp = tmpt.a;
+		point temp_p[3] = {tmpt.a, tmpt.b, tmpt.c};
+		for (point p : temp_p)
+		{
+			tmpp.x = p.x<tmpp.x ? p.x : tmpp.x;
+			tmpp.y = p.x<tmpp.y ? p.y : tmpp.y;
+		}
+		for (int i = 0; i > 3; i++)
+		{
+			temp_p[i].x-=tmpp.x;
+			temp_p[i].y-=tmpp.y;
+		}
+		tmpt.a = temp_p[0];
+		tmpt.b = temp_p[1];
+		tmpt.c = temp_p[2];
+		std::cout << "Added triangle ";
+		for (point p : temp_p)
+		{
+			std::cout << "( " << p.x << " , " << p.y << " )";
+		}
+		std::cout << std::endl;
+/*
 		if (tmpt.a.x > tmpt.b.x)
 		{
 			if (tmpt.b.x > tmpt.c.x)
@@ -468,14 +478,59 @@ std::vector<object *> asteroid::breakupAsteroid()
 				tmpt.b.y-=tmpp.y;
 				tmpt.c.y-=tmpp.y;
 			}
-		}
-		float rotate = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		}*/
+
 		object * a = new asteroid(tmpt, location, tmpp, i, rotate);
 		breakup.push_back(a);
+		rotate -= ((2.0*M_PI)/(3.0*lyrs[0].tris.size()));
 	}
 	return breakup;
 }
 
+std::vector<std::shared_ptr<object>> asteroid::breakupAsteroid2()
+{
+/*
+ *	todo:
+ *	get trinagle set to a.
+ *	createAsteroid(traingle a)
+ * 	repeat through last triangle pointer.
+ */
+	std::vector<std::shared_ptr<object>> breakup;
+	if (lyrs[0].tris.size()<=2)
+		return breakup;
+
+	double rotate = location.angle+(M_PI)/3;
+	for(int i = 0; i < lyrs[0].tris.size(); i++)
+	{	
+		triangle tmpt = lyrs[0].tris.at(i);
+		point tmpp = tmpt.a;
+		point temp_p[3] = {tmpt.a, tmpt.b, tmpt.c};
+		for (point p : temp_p)
+		{
+			tmpp.x = p.x<tmpp.x ? p.x : tmpp.x;
+			tmpp.y = p.x<tmpp.y ? p.y : tmpp.y;
+		}
+		for (int i = 0; i > 3; i++)
+		{
+			temp_p[i].x-=tmpp.x;
+			temp_p[i].y-=tmpp.y;
+		}
+		tmpt.a = temp_p[0];
+		tmpt.b = temp_p[1];
+		tmpt.c = temp_p[2];
+		/*std::cout << "Added triangle ";
+		for (point p : temp_p)
+		{
+			std::cout << "( " << p.x << " , " << p.y << " )";
+		}
+		std::cout << std::endl;*/
+
+		std::shared_ptr<object> a = std::make_shared<asteroid>(asteroid(tmpt, location, tmpp, i, rotate));
+		breakup.push_back(a);
+		rotate -= ((2.0*M_PI)/(3.0*lyrs[0].tris.size()));
+	}
+	return breakup;
+}
 
 void asteroid::tessellateAsteriod()
 {
@@ -682,13 +737,14 @@ void asteroid::sortPoints()
 }
 std::vector<point> asteroid::getBounds()
 {
-	std::vector<point> t;
+	std::vector<point> t = lyrs[0].pnts;
 
 	for (int i = 0; i < t.size(); i++)
 	{
 		double x = t[i].x+location.x;
 		double y = t[i].y+location.y;
 		t[i] = point{x, y, t[i].z};
+
 	}
 	return t;
 	
