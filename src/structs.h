@@ -36,23 +36,4 @@ struct color
 	double alpha;
 };
 
-#ifndef SHIPTEST
-struct ship
-{
-    triangle body;
-    float rotation;
-    point aLocation;
-};
-
-
-struct bullet
-{
-    float theta;
-    point location;
-    point translation;
-    
-};
-
-
-#endif
 #endif

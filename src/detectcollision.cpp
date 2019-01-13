@@ -15,8 +15,6 @@
  * Mercer University  
  */
 
-#include "prototypes.h"
-#include "globals.h"
 #include "headers.h"
 
 //checks proximity of asteroids
@@ -67,7 +65,7 @@ bool shipProximity(asteroid ast1, vector<point> b2)
 	else
 		return false; 
 }
-
+/*
 bool intersect(point v1, point v2, point v3, point v4)
 {
 	float ua_num = ((v3.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v3.y - v1.y));
@@ -88,7 +86,7 @@ bool intersect(point v1, point v2, point v3, point v4)
 	}
 
 	return false;
-}
+}*/
 
 void detectCollision(int index) 
 {
@@ -126,7 +124,7 @@ void detectCollision(int index)
 	//gets points of ship
 	
 	vector<point> cmd;
-	cmd=enterprise.getPoints();
+	cmd=player.getPoints();
 
 	switch (GameMode)
 	{
@@ -153,8 +151,8 @@ void detectCollision(int index)
 							if (intersect(tempj, temp0, cmd[k], cmd[0]))
 							{
 								asteroidBelt.erase(asteroidBelt.begin()+index);
-								enterprise.damageHealth(10);
-								if (enterprise.getHealth()>=0)
+								player.damageHealth(10);
+								if (player.getHealth()>=0)
 								{
 									//gameover code
 									gamestate = 2;
@@ -174,8 +172,8 @@ void detectCollision(int index)
 							if (intersect(tempj, temp0, cmd[k], cmd[k+1]))
 							{	
 								asteroidBelt.erase(asteroidBelt.begin()+index);
-								enterprise.damageHealth(10);
-								if (enterprise.getHealth()<=0)
+								player.damageHealth(10);
+								if (player.getHealth()<=0)
 								{
 									//gameover code
 									gamestate = 2;
@@ -195,8 +193,8 @@ void detectCollision(int index)
 							if (intersect(tempj, tempj1, cmd[k], cmd[0]))
 							{
 								asteroidBelt.erase(asteroidBelt.begin()+index);
-								enterprise.damageHealth(10);
-								if (enterprise.getHealth()<=0)
+								player.damageHealth(10);
+								if (player.getHealth()<=0)
 								{
 									//gameover code
 									gamestate = 2;
@@ -216,8 +214,8 @@ void detectCollision(int index)
 							if (intersect(tempj, tempj1, cmd[k], cmd[k+1]))
 							{
 								asteroidBelt.erase(asteroidBelt.begin()+index);
-								enterprise.damageHealth(10);
-								if (enterprise.getHealth()<=0)
+								player.damageHealth(10);
+								if (player.getHealth()<=0)
 								{
 									//gameover code
 									gamestate = 2;

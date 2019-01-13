@@ -134,6 +134,11 @@ void translatePoint(point& p,double x, double y, double z)
 	mtop(p, B);
 }
 
+float getVectorLength(point a, point b)
+{
+	return sqrt(pow(abs(a.x-b.x),2)+pow(abs(a.y-b.y),2));
+}
+
 //Source: https://stackoverflow.com/questions/2049582/how-to-determine-if-a-point-is-in-a-2d-triangle
 double sign (point p1, point p2, point p3)
 {

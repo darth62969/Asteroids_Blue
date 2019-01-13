@@ -4,14 +4,14 @@
 #include "object.h"
 #include "prototypes.h"
 
-void object::doAction()
+void object::doAction(mode * md)
 {
 	return;
 }
 
 void object::tessellate(layer* lyr)
 {
-	vector<point> temp = lyr->pnts;
+	std::vector<point> temp = lyr->pnts;
 	point A = temp[0];
 	point B = temp[1];
 	point C = temp[2];
@@ -125,11 +125,6 @@ void object::tessellate(layer* lyr)
 
 			z = l1.x*l2.y - l2.x*l1.y;
 
-			//cout << " Index " << Ai << " A  ( "  << A.x << " , " << A.y << " )" << endl;
-			//cout << " Index " << Bi << " B  ( "  << B.x << " , " << B.y << " )" << endl;
-			//cout << " Index " << Ci << " C  ( "  << C.x << " , " << C.y << " )" << endl;
-			//cout << " z = " << z << endl;
-
 			bool within = false;
 			for (int i =0; i < temp.size(); i ++)
 			{
@@ -139,9 +134,6 @@ void object::tessellate(layer* lyr)
 
 			if (z<0 && !within)
 			{
-				cout << " Index " << Ai << " A  ( "  << A.x << " , " << A.y << " )" << endl;
-				cout << " Index " << Bi << " B  ( "  << B.x << " , " << B.y << " )" << endl;
-				cout << " Index " << Ci << " C  ( "  << C.x << " , " << C.y << " )" << endl;
 				tri.a = A;
 				tri.b = B;
 				tri.c = C;
@@ -168,10 +160,6 @@ void object::tessellate(layer* lyr)
 						A=temp[Ai];
 						B=temp[Bi];
 						C=temp[Ci];
-
-						cout << " Index " << Ai << " A  ( "  << A.x << " , " << A.y << " )" << endl;
-				cout << " Index " << Bi << " B  ( "  << B.x << " , " << B.y << " )" << endl;
-				cout << " Index " << Ci << " C  ( "  << C.x << " , " << C.y << " )" << endl;
 					}
 					else
 					{
@@ -191,18 +179,88 @@ void object::tessellate(layer* lyr)
 
 	for (int i = 0; i < lyr->tris.size(); i++)
 	{
-		cout << "Triangle " << i << endl;
-		cout << "A ( " << lyr->tris[i].a.x << " , " << lyr->tris[i].a.y << " )" << endl;
-		cout << "B ( " << lyr->tris[i].b.x << " , " << lyr->tris[i].b.y << " )" << endl;
-		cout << "C ( " << lyr->tris[i].c.x << " , " << lyr->tris[i].c.y << " )" << endl;
-		cout << endl;
 	}
+}
+void voidFunc(double frac_1, double frac_2)
+{
+	
+}
+
+bool object::collides(object * other)
+{
+	std::vector<point> a_pnt = getBounds();
+	std::vector<point> b_pnt = other->getBounds();
+	for (int i = 0; i < a_pnt.size(); i++)
+	{
+		for (int j = 0; j < b_pnt.size(); j++)
+		{
+			point v1 = a_pnt[i];
+			point v2 = a_pnt[(i+1)%a_pnt.size()];
+			point v3 = b_pnt[j];
+			point v4 = b_pnt[(j+1)%b_pnt.size()];
+
+			double num_1 = ((v3.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v3.y - v1.y));
+			double num_2 = ((v2.x - v1.x) * (v3.y - v1.y)) - ((v3.x - v1.x) * (v2.y - v1.y));
+			double den =((v2.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v2.y - v1.y));
+
+			double frac_1 = num_1 / den;
+			double frac_2 = num_2 / den;
+
+			//std::cout << num_1 << "/" << den << "=" << frac_1 << std::endl;
+			//std::cout << num_2 << "/" << den << "=" << frac_2 << std::endl;
+			//std::cout << (frac_1 > 0.0) << " " << (frac_1 < 1.0) << " " << (frac_2 > 0.0) << " " << (frac_2 < 1.0) << std::endl;
+			//std::cout << std::endl;
+			
+			//std::string hahah;
+			//std::cin >> hahah;
+
+			if((frac_1>0.0)&&(frac_1<1.0)&&(frac_2>0.0)&&(frac_2<1.0))
+				return true;
+		}
+	}
+	return false;
+}
+bool object::collides(std::shared_ptr<object> other)
+{
+	std::vector<point> a_pnt = getBounds();
+	std::vector<point> b_pnt = other->getBounds();
+	for (int i = 0; i < a_pnt.size(); i++)
+	{
+		for (int j = 0; j < b_pnt.size(); j++)
+		{
+			point v1 = a_pnt[i];
+			point v2 = a_pnt[(i+1)%a_pnt.size()];
+			point v3 = b_pnt[j];
+			point v4 = b_pnt[(j+1)%b_pnt.size()];
+
+			double num_1 = ((v3.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v3.y - v1.y));
+			double num_2 = ((v2.x - v1.x) * (v3.y - v1.y)) - ((v3.x - v1.x) * (v2.y - v1.y));
+			double den =((v2.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v2.y - v1.y));
+
+			double frac_1 = num_1 / den;
+			double frac_2 = num_2 / den;
+
+			//std::cout << num_1 << "/" << den << "=" << frac_1 << std::endl;
+			//std::cout << num_2 << "/" << den << "=" << frac_2 << std::endl;
+			//std::cout << (frac_1 > 0.0) << " " << (frac_1 < 1.0) << " " << (frac_2 > 0.0) << " " << (frac_2 < 1.0) << std::endl;
+			//std::cout << std::endl;
+			
+			//std::string hahah;
+			//std::cin >> hahah;
+
+			if((frac_1>0.0)&&(frac_1<1.0)&&(frac_2>0.0)&&(frac_2<1.0))
+				return true;
+		}
+	}
+	return false;
 }
 
 /*
  * Getters and setters, for security and other reasons. 
  * Most of this stuff shouldn't be public.
  */
+
+
 
 point object::getLocation()
 {
@@ -228,7 +286,35 @@ void object::setRotation(double rot)
 {
 	location.angle = rot;
 }
-void getBounds()
+
+std::vector<point> object::getBounds()
 {
 	return lyrs[0].pnts;
+}
+std::vector<triangle> object::getTess()
+{
+	std::vector<triangle> temp = lyrs[0].tris;
+	for (int i =0; i < temp.size(); i++)
+	{
+		point a[3] = {temp[i].a, temp[i].b, temp[i].c};
+		for (int j = 0; j < 3; j++ )
+		{
+			a[j].x += location.x;
+			a[j].y += location.y;
+		}
+		temp[i].a = a[0];
+		temp[i].b = a[1];
+		temp[i].c = a[2];
+	}
+	return temp;
+}
+
+float object::getVectorLength(object * other)
+{
+	return sqrt(pow(abs(location.x-other->getLocation().x),2)+pow(abs(location.y-other->getLocation().y),2));
+}
+
+float object::getVectorLength(std::shared_ptr<object> other)
+{
+	return sqrt(pow(abs(location.x-other->getLocation().x),2)+pow(abs(location.y-other->getLocation().y),2));
 }

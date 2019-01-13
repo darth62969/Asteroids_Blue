@@ -1,33 +1,26 @@
 # Makefile to build "Asteroids: RETURN OF METEOR"
-#
-# Origingally for use in Introgl Example 
-#
-# By:
-#
-# Andrew J. Pounds, Ph.D.
-# Departments of Chemistry and Computer Science
-# Mercer University
-# Fall 2016 
-#
-# Modified for use in: "Asteroids: RETURN OF METEOR" 
-# Modified by: Blue Squad
-# For the class: Introduction to Computer Graphics (CSC315)
-# At: Mercer University
-#
-# Blue Squad is:
+##
+# By: 
 # Jonathan Oakes
 # Braeden Brettin
 # Ted Dorfeuille 
 # Chris Le
 # Emily Herron
 #
+# Date Last Modified: 12/17/18
+#
+# License: IDGAF (I don't give a fork) do what ever with this specific file, if it helps you build a better
+# makefile then so be it. that's good news for us.
+
+# clipper.o detectcollision.o FileHandler.o render.o -O3 
 
 CC = g++
 CFLAGS = -v -std=c++11
-COPTFLAGS = -O3 
+COPTFLAGS = -O3
 LIBFLAGS = -lglut -lGLU -lGL -lm
 HEADERS = src/headers.h src/structs.h src/globals.h src/prototypes.h
-OBJS = main.o asteroid.o ship.o bullet.o transformer.o clipper.o detectcollision.o FileHandler.o mode.o object.o
+OBJS = main.o asteroid.o ship.o bullet.o transformer.o 
+OBJS += mode.o object.o enterprise.o 
 
 debug ?= n
 logging ?= n
@@ -90,6 +83,12 @@ mode.o : src/mode.cpp
 
 object.o : src/object.cpp
 	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/object.cpp
+
+enterprise.o : src/enterprise.cpp
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/enterprise.cpp
+
+render.o : src/render.cpp
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/render.cpp
 
 # Default Targets for Cleaning up the Environment
 

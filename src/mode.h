@@ -1,43 +1,53 @@
-#ifndef _MODE_H_
-#define _MODE_H_
+#ifndef __MODE_H__
+#define __MODE_H__
 
-#include <fstream>
-#include <string>
-#include <vector>
-#include <stack>
-#include <queue>
-#include <map>
-#include "asteroid.h"
-#include "ship.h"
-#include "bullet.h"
-#include "structs.h"
-#include "globals.h"
-#include "FileHandler.h"
+#include "headers.h"
 
-/* | r | r | S | A |
- * 
- */
+
+typedef class object;
+
 
 class mode
 {
 	public:
-		explicit mode(std::string path);
-		void generateLevel();
-		void generateObjects();
-		bool checkWinConditions();
-		
+		mode();							// Default Asteroids Mode;
+		virtual int step(); 			// Increments mode, runs checkes for level clear and moves objects if needed. 
+										// returns 1 if mode won 2 if lost;
+		virtual void generateLevel();	// Generates objects and places them onScreen;
+		virtual void init();			// 
 
-		
+		virtual std::vector<object *> getOnScreen(); 
+		virtual std::vector<std::shared_ptr<object>> getOnScreen2(); 
+		void addToOnScreen(object * obj);
+		void addToOnScreen(std::shared_ptr<object> obj);
+
+		virtual void drawLevel();
+		virtual void drawObjects();
+		virtual void drawScore();
+		virtual void drawAll();
+
+		std::string getName();
+
+		virtual void mouseFunc(int button, int state, int x, int y);
+		virtual void passiveMouseFunc(int x, int y);
+
+		object * player;
+
+	protected:
+		std::vector<object *> onScreen;	// collection of objects for the mode that are displayed onScreen;
+		std::vector<std::shared_ptr<object>> onScreen2;	// collection of objects for the mode that are displayed onScreen;
+		int level = 1;					// current level, default 1;
+		int stp = 0;					// current step, used to keep track of frames;
+		int maxLevel;					// Maximum level posible in mode, SET THIS!!;
+		int bulletsHit = 0;
+		std::string name;
 
 	private:
-		fileHandler file;
-		char* name;
-		map<std::string, value> constants;
-		int maxlevel;
-		int curLevel;
-		vector<condition> winConditions;
-		short objects;
+//		int bulletsHit = 0;
+		int numAsteroids;
 
+
+				
 
 };
 

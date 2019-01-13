@@ -18,32 +18,35 @@
 #ifndef GLOBALS
 #define GLOBALS
 
-#include "structs.h"
-#include "headers.h"
+#include <vector>
+#include "asteroid.h"
+#include "ship.h"
+#include "bullet.h"
 
 // The Ship
-extern ship enterprise;
+//extern enterprise player;
 
 // other stuff
-extern vector<point> octogon;// defines octogon in ccw order
-extern vector<point> clipPts;// contains points needed for clipping
+//extern std::vector<point> octogon;// defines octogon in ccw order
+extern std::vector<point> clipPts;// contains points needed for clipping
 extern double origin;//Center of the octagon 
 // i don't like the asteroidBelt being global. i will get an explanagion later.
-extern vector<bullet> bullets;
-extern vector<asteroid> asteroidBelt;
-extern vector<asteroid> allGood;
-extern vector<ship> enemies;
+//extern std::vector<bullet> bullets;
+//extern std::vector<asteroid> asteroidBelt;
+//extern std::vector<asteroid> allGood;
+//extern std::vector<ship> enemies;
 extern bool gameOver;
 extern int gamestate;
 extern int GameMode;
 extern int filled;
 
 // Log Writers
+/*
 extern ofstream asteroidLogger;
 extern ofstream shipLogger;
 extern ofstream collisionLogger;
 extern ofstream bulletLogger;
-extern ofstream transformationLogger;
+extern ofstream transformationLogger;*/
 extern char* ASTEROID_LOG_PATH;
 extern char* SHIP_LOG_PATH;
 extern char* COLLISION_LOG_PATH;

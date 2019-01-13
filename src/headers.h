@@ -19,39 +19,37 @@
 #define HEADERS
 #define _USE_MATH_DEFINES
 
+#include <algorithm>
+#include <chrono>
 #include <cmath>
-#include <GL/glut.h>
-//#include <gl/GL.h>
-//#include <gl/GLU.h>
+#include <fstream>
+#include <iostream>
+#include <memory>
+#include <random>
+#include <sstream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string>
+#include <thread>
 #include <vector>
-#include <iostream>
-#include <algorithm>
-#include <fstream>
+
+#include <GL/glut.h>
+
+/*
 #include "asteroid.h"
-#include <sstream>
-#include <random>
-#include <chrono>
-
-#ifdef SHIPTEST
-#include "ship.h"
 #include "bullet.h"
-#endif
+#include "enterprise.h"
+#include "fighter.h"
+#include "globals.h"
+#include "mode.h"
+#include "object.h"
+#include "render.h"
+#include "prototypes.h"
+#include "ship.h"
+#include "structs.h"
+#include "windowProperties.h"
+*/
 
-//#include "detectcollision.cpp"
-
-using namespace std;
-
-//Window Constants
-const int WINDOW_MAX_X = 600;
-const int WINDOW_MAX_Y = 600;
-const int WINDOW_POSITION_X = 100;
-const int WINDOW_POSITION_Y = 100;
-const int WORLD_COORDINATE_MIN_X = -300;
-const int WORLD_COORDINATE_MIN_Y = -300;
-const int WORLD_COORDINATE_MAX_X = 300;
-const int WORLD_COORDINATE_MAX_Y = 300;
 
 //Asteroid Contants
 const int ASTEROID_MAX_X = 20;
