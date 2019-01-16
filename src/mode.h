@@ -28,6 +28,7 @@ class mode
 
 		std::string getName();
 
+		virtual void keyboardFunc(char key, int x, int y);
 		virtual void mouseFunc(int button, int state, int x, int y);
 		virtual void passiveMouseFunc(int x, int y);
 

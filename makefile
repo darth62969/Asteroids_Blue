@@ -20,7 +20,7 @@ COPTFLAGS = -O3
 LIBFLAGS = -lglut -lGLU -lGL -lm
 HEADERS = src/headers.h src/structs.h src/globals.h src/prototypes.h
 OBJS = main.o asteroid.o ship.o bullet.o transformer.o 
-OBJS += mode.o object.o enterprise.o 
+OBJS += mode.o object.o enterprise.o render.o
 
 debug ?= n
 logging ?= n
@@ -72,14 +72,11 @@ transformer.o: src/transformer.cpp $(HEADERS)
 clipper.o: src/clipper.cpp $(HEADERS)
 	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/clipper.cpp
 
-detectcollision.o : src/detectcollision.cpp
-	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/detectcollision.cpp
-
-FileHandler.o : src/FileHandler.cpp
-	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/FileHandler.cpp
-
 mode.o : src/mode.cpp
 	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/mode.cpp
+
+render.o : src/render.cpp
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/render.cpp
 
 object.o : src/object.cpp
 	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/object.cpp
@@ -87,8 +84,7 @@ object.o : src/object.cpp
 enterprise.o : src/enterprise.cpp
 	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/enterprise.cpp
 
-render.o : src/render.cpp
-	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/render.cpp
+
 
 # Default Targets for Cleaning up the Environment
 

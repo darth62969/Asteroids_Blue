@@ -338,36 +338,6 @@ void ship::iterateAction()
 		case 2:
 			cycle++;
 
-			/*point pnt = player.getAtkPnts()[0];
-			double bearing =(atan2f(pnt.y-this->getAtkPnts()[0].y, pnt.x-this->getAtkPnts()[0].x));
-			this->setRotation(bearing);
-
-			switch(cycle/50)
-			{
-				case 0:
-					location.x++;
-					break;
-				case 1:
-					location.x--;
-					break;
-			}
-			switch(cycle%50)
-			{
-				case 0:
-					location.y-=10;
-					break;
-
-			}
-			if (cycle >= 100)
-			{
-				cycle = 0;
-			}
-			switch(rand()%70)
-			{
-				case 0: 
-					fire();
-					break;
-			}*/
 			break;
 
 	}		

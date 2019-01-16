@@ -21,6 +21,7 @@ void render::drawString(GLuint x, GLuint y, const char* string)
 	for(c=string; *c!='\0'; c++)
 		glutBitmapCharacter(currentfont, *c);	
 }
+
 void render::initOctogon()
 {
 	point p;
@@ -39,6 +40,7 @@ void render::initOctogon()
 		octogon.push_back(p);
 	}
 }
+
 int render::insideOctogon(point p)
 {
 	double slope, line;
@@ -68,6 +70,22 @@ int render::insideOctogon(point p)
 
 	return in;
 }
+
+int render::insidePlayArea(point P)
+{
+	int rtn;
+	for (int i = 0; i < playArea.size(); i++)
+	{
+		point a = playArea[i];
+		point b = playArea[(i+1)%playArea.size()];
+		switch (a.x-b.x)
+		{
+			case 0:
+				break;
+		}
+	}
+}
+
 void render::drawOctogon()
 {
 	glColor3f(0.1,0.5,0.0);
@@ -79,6 +97,7 @@ void render::drawOctogon()
 		}
 	glEnd();
 }
+
 void render::setFont(void * font)
 {
 	currentfont=font;

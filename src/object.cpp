@@ -206,14 +206,6 @@ bool object::collides(object * other)
 			double frac_1 = num_1 / den;
 			double frac_2 = num_2 / den;
 
-			//std::cout << num_1 << "/" << den << "=" << frac_1 << std::endl;
-			//std::cout << num_2 << "/" << den << "=" << frac_2 << std::endl;
-			//std::cout << (frac_1 > 0.0) << " " << (frac_1 < 1.0) << " " << (frac_2 > 0.0) << " " << (frac_2 < 1.0) << std::endl;
-			//std::cout << std::endl;
-			
-			//std::string hahah;
-			//std::cin >> hahah;
-
 			if((frac_1>0.0)&&(frac_1<1.0)&&(frac_2>0.0)&&(frac_2<1.0))
 				return true;
 		}
@@ -239,14 +231,6 @@ bool object::collides(std::shared_ptr<object> other)
 
 			double frac_1 = num_1 / den;
 			double frac_2 = num_2 / den;
-
-			//std::cout << num_1 << "/" << den << "=" << frac_1 << std::endl;
-			//std::cout << num_2 << "/" << den << "=" << frac_2 << std::endl;
-			//std::cout << (frac_1 > 0.0) << " " << (frac_1 < 1.0) << " " << (frac_2 > 0.0) << " " << (frac_2 < 1.0) << std::endl;
-			//std::cout << std::endl;
-			
-			//std::string hahah;
-			//std::cin >> hahah;
 
 			if((frac_1>0.0)&&(frac_1<1.0)&&(frac_2>0.0)&&(frac_2<1.0))
 				return true;

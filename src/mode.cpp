@@ -40,6 +40,11 @@ int mode::step()
 	{
 		
 		std::shared_ptr<object> o1 = onScreen2[i];
+		if (o1->collides(player))
+		{
+			dynamic_cast<enterprise*>(player)->damageHealth(10);
+			t_int.push_back(i);
+		}
 		for(int j = i+1; j<onScreen2.size(); j++)
 		{
 			std::shared_ptr<object> o2 = onScreen2[j];
@@ -47,45 +52,12 @@ int mode::step()
 			
 				//std::cout << "Checking collisions for objects " << i << " and " << j << std::endl;
 			
-			if(o1->collides(o2))
-			{
-				t_int.push_back(i);
-				t_int.push_back(j);
-				
-				//std::cout << "somthing collided\n";
-				/*if(std::dynamic_pointer_cast<asteroid>(o1))
+				if(o1->collides(o2) && !(std::dynamic_pointer_cast<bullet>(o1)
+					&&std::dynamic_pointer_cast<bullet>(o2)))
 				{
-					std::cout << "breaking up asteroid " << i << std::endl;
-					std::vector<std::shared_ptr<object>> temp =
-						std::dynamic_pointer_cast<asteroid>(o1)->breakupAsteroid2();
-					for (std::shared_ptr<object> o : temp)
-						onScreen2.push_back(o);
-					//delete(static_cast<asteroid*>(onScreen[i]));
-					onScreen2.erase(onScreen2.begin()+i);
+					t_int.push_back(i);
+					t_int.push_back(j);
 				}
-				if(std::dynamic_pointer_cast<asteroid>(o2))
-				{
-					std::cout << "breaking up asteroid " << j << std::endl;
-					std::vector<std::shared_ptr<object>> temp =
-						std::dynamic_pointer_cast<asteroid>(o2)->breakupAsteroid2();
-					for (std::shared_ptr<object> o : temp)
-						onScreen2.push_back(o);
-					//delete(static_cast<asteroid*>(onScreen[j]));
-					onScreen2.erase(onScreen2.begin()+j);
-				}
-				if(std::dynamic_pointer_cast<bullet>(o2))
-				{
-					//delete (static_cast<bullet * >(onScreen[j]));
-					onScreen2.erase(onScreen2.begin()+j);
-					bulletsHit++;
-				}
-				if(std::dynamic_pointer_cast<bullet>(o1))
-				{
-					//delete (static_cast<bullet * >(onScreen[i]));
-					onScreen2.erase(onScreen2.begin()+i);
-					bulletsHit++;
-				}*/
-			}
 			}
 		}
 	}
@@ -121,7 +93,7 @@ int mode::step()
 	for(int i = 0; i < onScreen2.size(); i++)
 	{
 		std::shared_ptr<object> o = onScreen2[i];
-		if (!render::insideOctogon(o->getLocation()))
+		if (!r->insideOctogon(o->getLocation()))
 		{
 			if (std::dynamic_pointer_cast<bullet> (o))
 			{
@@ -156,7 +128,7 @@ void mode::generateLevel()
 		point loc;
 		loc.x = INT32_MAX;
 		loc.y = INT32_MAX;
-		while(!render::insideOctogon(loc))
+		while(!r->insideOctogon(loc))
 		{
 		// Keep generateing points till the asteroid is not withing range of the ship
 			do
@@ -185,7 +157,7 @@ void mode::generateLevel()
 
 void mode::init()
 {
-	render::initOctogon();
+	r->initOctogon();
 }
 
 std::vector<object*> mode::getOnScreen()
@@ -209,7 +181,7 @@ void mode::addToOnScreen(std::shared_ptr<object> obj)
 
 void mode::drawLevel()
 {
-	render::drawOctogon();
+	r->drawOctogon();
 }
 
 void mode::drawObjects()
@@ -223,7 +195,7 @@ void mode::drawObjects()
 		{
 			opt->render();
 			i++;
-			render::drawString(opt->getLocation().x, opt->getLocation().y, a);
+			r->drawString(opt->getLocation().x, opt->getLocation().y, a);
 		}
 
 	}
@@ -234,7 +206,7 @@ void mode::drawObjects()
 
 void mode::drawScore()
 {
-	render::setFont(GLUT_BITMAP_HELVETICA_12);
+	r->setFont(GLUT_BITMAP_HELVETICA_12);
 
 	double hitRatio;
 	switch (bulletsHit)
@@ -262,15 +234,15 @@ void mode::drawScore()
 	glColor3f(0.2, 0.5, 0.0);
 	
 	//Draw the strings, left side
-	render::drawString(-280, -230, bulletsFiredStr);
-	render::drawString(-280, -270, astsOnScr1);
+	r->drawString(-280, -230, bulletsFiredStr);
+	r->drawString(-280, -270, astsOnScr1);
 	
 	// draw the strings, right side.
-	render::drawString(180, -230, astsHit);
-	render::drawString(180, -215, mode);
-	render::drawString(180, -270, hrStr);
+	r->drawString(180, -230, astsHit);
+	r->drawString(180, -215, mode);
+	r->drawString(180, -270, hrStr);
 	
-	render::drawString(-280, 265, health);
+	r->drawString(-280, 265, health);
 }
 
 void mode::drawAll()
@@ -283,6 +255,11 @@ void mode::drawAll()
 std::string mode::getName()
 {
 	return name;
+}
+
+void mode::keyboardFunc(char key, int x, int y)
+{
+
 }
 
 void mode::mouseFunc(int button, int state, int x, int y)

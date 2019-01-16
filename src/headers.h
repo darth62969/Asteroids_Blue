@@ -35,6 +35,8 @@
 
 #include <GL/glut.h>
 
+#include "render.h"
+
 /*
 #include "asteroid.h"
 #include "bullet.h"
@@ -74,5 +76,6 @@ const double GRAVITY_POTENTIAL = 1;
 const double ASTEROID_MASS = .4;
 
 extern std::mt19937_64 generator;
+extern render * r;
 #endif
 

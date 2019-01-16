@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef __RENDER_H__
 #define __RENDER_H__
 
@@ -12,18 +14,22 @@
 
 
 
-namespace render
+class render
 {
-	void drawString(GLuint x, GLuint y, const char* string); 
-	void initOctogon();
-	int insideOctogon(point p);
-	void drawOctogon();
-	void setFont(void * font);
+	public:
+		void drawString(GLuint x, GLuint y, const char* string); 
+		void initOctogon();
+		int insideOctogon(point p);
+		int insidePlayArea(point P);
+		void drawPlayArea();
+		void drawOctogon();
+		void setFont(void * font);
 
-	void *currentfont;				// Bit map font pointer.
-	std::vector<point> octogon;
-}
+		void *currentfont;				// Bit map font pointer.
+		std::vector<point> octogon;
+		std::vector<point> playArea;
+};
 
-#include "render.cpp"
+
 
 #endif

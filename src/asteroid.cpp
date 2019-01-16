@@ -281,10 +281,6 @@ void asteroid::render()
 }
 void asteroid::doAction(mode * md)
 {
-	// If Paused, return. this is to ensure the program does not continue if the game is paused. (depreciated)
-	if(paused)
-		return;
-
 	//This is a vector for the asteroid's gravity influence effect.
 	//std::vector<asteroid *> infl = getInfluencers(md);
 	std::vector<std::shared_ptr<asteroid>> infl = getInfluencers2(md);
