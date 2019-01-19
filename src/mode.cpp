@@ -106,6 +106,10 @@ int mode::step()
 			}
 		}
 	}
+	if(dynamic_cast<enterprise*>(player)->getHealth()<=0)
+	{
+		gamestate=2;
+	}
 
 
 	return 0;
