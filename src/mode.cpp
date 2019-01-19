@@ -40,7 +40,7 @@ int mode::step()
 	{
 		
 		std::shared_ptr<object> o1 = onScreen2[i];
-		if (o1->collides(player))
+		if (o1->collides(player)&&std::dynamic_pointer_cast<asteroid>(o1))
 		{
 			dynamic_cast<enterprise*>(player)->damageHealth(10);
 			t_int.push_back(i);
