@@ -78,11 +78,11 @@ int render::insidePlayArea(point P)
 	{
 		point a = playArea[i];
 		point b = playArea[(i+1)%playArea.size()];
-		switch (a.x-b.x)
+		/*switch (a.x-b.x)
 		{
 			case 0:
 				break;
-		}
+		}*/
 	}
 }
 
