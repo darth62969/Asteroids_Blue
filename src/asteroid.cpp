@@ -64,9 +64,9 @@ asteroid::asteroid()
 	std::uniform_real_distribution<double> irdist(irlower, irupper);
 	std::uniform_real_distribution<double> spkdist(splower, spupper);
 
-	// Generate a random "translation.angle" or directional vector, in radians.
+	// Generate a random "location.angle" or directional vector, in radians.
 	location.angle = dirdist(generator);
-	//cout << translation.angle << endl;
+	//cout << location.angle << endl;
 	location.w = spddist(generator);
 
 // Random number for seed.
@@ -89,6 +89,7 @@ asteroid::asteroid()
 		angleSteps[i]/=t;
 	}
 	double angle=irdist(generator);
+
 	for (int i=0; i < numsides; i++)
 	{
 			double length = spkdist(generator);
@@ -98,6 +99,7 @@ asteroid::asteroid()
 			lyr.pnts.push_back(tempp);
 			angle+=angleSteps[i];
 	}
+
 	tessellate(&lyr);
 	lyrs.push_back(lyr);
 
@@ -195,13 +197,13 @@ std::vector<std::shared_ptr<asteroid>> asteroid::getInfluencers2(mode * md)
 		// Here we are checking to see if the setting a value DBearing that is needed for later calculations.
 		// Dbearing is the difference in the angle between the direction the asteroid is going and the influencer.
 		double Dbearing;
-		if (bearing <= translation.angle)
+		if (bearing <= location.angle)
 		{
-		 	Dbearing = translation.angle - bearing;
+		 	Dbearing = location.angle - bearing;
 		}
-		if (bearing > translation.angle)
+		if (bearing > location.angle)
 		{
-			Dbearing = bearing - translation.angle;
+			Dbearing = bearing - location.angle;
 		}
 
 		// We need to calculate the gravity potential for the asteroids. this is the amount of "force" that is going to be aplied in the
@@ -209,24 +211,24 @@ std::vector<std::shared_ptr<asteroid>> asteroid::getInfluencers2(mode * md)
 		double magnatude = GRAVITY_POTENTIAL*((2*ASTEROID_MASS)/getVectorLength(infl[i]));
 
 		// Here we are calculating variables that were half phased out... cause debug issues.
-		double Uvelocity = pow(translation.w,2)+pow(magnatude,2);
+		double Uvelocity = pow(location.w,2)+pow(magnatude,2);
 		double Ubearing = cos(M_PI-(Dbearing));
 
 		// Here we are calculating the new speed. this takes the previous speed, and add the calculated values of the change in velocity and direction.
 		// Vector math is a pain in the behind. you don't want to know how long it took me to find the trig for these calcuations.
-		translation.w = pow(pow(translation.w,2)+pow(magnatude,2) - ((2 * magnatude * translation.w)*Ubearing), .5);
-		translation.angle += asinf((magnatude*sin((M_PI-Dbearing)))/translation.w);
+		location.w = pow(pow(location.w,2)+pow(magnatude,2) - ((2 * magnatude * location.w)*Ubearing), .5);
+		location.angle += asinf((magnatude*sin((M_PI-Dbearing)))/location.w);
 
 		// Here i'm setting a minimum and maximum speed for gameplay purposes.
-		if (translation.w >  1.5)
-			translation.w =  1.5;
-		if (translation.w < .2)
-			translation.w = .2;
+		if (location.w >  1.5)
+			location.w =  1.5;
+		if (location.w < .2)
+			location.w = .2;
 	}
 
 	// After we calculate the positions of the asteroids, we need to move them. so we move the location by use of trig.
-	location.x += cos(translation.angle)*translation.w/**(60/FPS)*/;
-/*	location.y += sin(translation.angle)*translation.w/**(60/FPS)*/;
+	location.x += cos(location.angle)*location.w/**(60/FPS)*/;
+/*	location.y += sin(location.angle)*location.w/**(60/FPS)*/;
 	
 /*	//this checks to see if it is still in the octogon them moves it to where it to the other side.
 	if(!insideOctogon(location)){
@@ -298,13 +300,13 @@ void asteroid::doAction(mode * md)
 		// Here we are checking to see if the setting a value DBearing that is needed for later calculations.
 		// Dbearing is the difference in the angle between the direction the asteroid is going and the influencer.
 		double Dbearing;
-		if (bearing <= translation.angle)
+		if (bearing <= location.angle)
 		{
-		 	Dbearing = translation.angle - bearing;
+		 	Dbearing = location.angle - bearing;
 		}
-		if (bearing > translation.angle)
+		if (bearing > location.angle)
 		{
-			Dbearing = bearing - translation.angle;
+			Dbearing = bearing - location.angle;
 		}
 
 		// We need to calculate the gravity potential for the asteroids. this is the amount of "force" that is going to be aplied in the
@@ -312,24 +314,24 @@ void asteroid::doAction(mode * md)
 		double magnatude = GRAVITY_POTENTIAL*((2*ASTEROID_MASS)/getVectorLength(infl[i]));
 
 		// Here we are calculating variables that were half phased out... cause debug issues.
-		double Uvelocity = pow(translation.w,2)+pow(magnatude,2);
+		double Uvelocity = pow(location.w,2)+pow(magnatude,2);
 		double Ubearing = cos(M_PI-(Dbearing));
 
 		// Here we are calculating the new speed. this takes the previous speed, and add the calculated values of the change in velocity and direction.
 		// Vector math is a pain in the behind. you don't want to know how long it took me to find the trig for these calcuations.
-		translation.w = pow(pow(translation.w,2)+pow(magnatude,2) - ((2 * magnatude * translation.w)*Ubearing), .5);
-		translation.angle += asinf((magnatude*sin((M_PI-Dbearing)))/translation.w);
+		location.w = pow(pow(location.w,2)+pow(magnatude,2) - ((2 * magnatude * location.w)*Ubearing), .5);
+		location.angle += asinf((magnatude*sin((M_PI-Dbearing)))/location.w);
 
 		// Here i'm setting a minimum and maximum speed for gameplay purposes.
-		if (translation.w >  1.5)
-			translation.w =  1.5;
-		if (translation.w < .2)
-			translation.w = .2;
+		if (location.w >  1.5)
+			location.w =  1.5;
+		if (location.w < .2)
+			location.w = .2;
 	}
 
 	// After we calculate the positions of the asteroids, we need to move them. so we move the location by use of trig.
-	location.x += cos(translation.angle)*translation.w/**(60/FPS)*/;
-	location.y += sin(translation.angle)*translation.w/**(60/FPS)*/;
+	location.x += cos(location.angle)*location.w/**(60/FPS)*/;
+	location.y += sin(location.angle)*location.w/**(60/FPS)*/;
 	
 	//this checks to see if it is still in the octogon them moves it to where it to the other side.
 /*	if(!insideOctogon(location)){
@@ -356,9 +358,9 @@ void asteroid::createAsteroid(triangle a, point location, point offset, int num)
 	int j = rand();
 	srand (static_cast <unsigned> (time(0))*(num*(j+67)/10));	
 
-	translation.angle = rand() % 360;
-	translation.angle *= M_PI / 180.0;
-	translation.w = ((rand()%16)+1)/4.0;
+	location.angle = rand() % 360;
+	location.angle *= M_PI / 180.0;
+	location.w = ((rand()%16)+1)/4.0;
 
 	location.x = location.x + offset.x;
 	location.y = location.y + offset.y;
