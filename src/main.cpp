@@ -17,6 +17,9 @@
 
 #define _USE_MATH_DEFINES
 
+
+#include <fstream>
+#include <dlfcn.h>
 #include "headers.h"
 #include "mode.h"
 #include "structs.h"
@@ -209,7 +212,7 @@ void DisplayPause()
 					case 0:
 						for(mode * m : usrModes)
 						{
-							items.push_back(m->getName());
+							//items.push_back(m->getName());
 						}
 						/*
 						items.push_back("Normal");
@@ -344,7 +347,10 @@ void gameView()
 
 	
 		case 1:
-			curMode->drawAll();
+			if(curMode)
+			{
+				curMode->drawAll();
+			}
 			break;
 
 		case 0:
@@ -369,7 +375,8 @@ void gameLoop()
 	switch (gamestate)
 	{
 		case 1:
-			curMode->step();
+			//curMode->step();
+			break;
 	
 	}
 	timeP2 = glutGet(GLUT_ELAPSED_TIME);
@@ -469,7 +476,10 @@ void debugMe(int x, int y)
  */
 void keyboard(unsigned char key, int x, int y)
 {	
-	curMode->keyboardFunc(key, x, y);
+	if(curMode)
+	{
+		curMode->keyboardFunc(key, x, y);
+	}
 	// start game
 	switch (key)
 	{
@@ -668,7 +678,10 @@ void specialKeyReleased(int key, int x, int y)
 		
 void mouse(int button, int state, int x, int y)
 {
-	curMode->mouseFunc(button, state, x, y);
+	if(curMode)
+	{
+		curMode->mouseFunc(button, state, x, y);
+	}
 }
 
 /* The Passive Mouse Function finds where in the world 
@@ -682,14 +695,63 @@ void passiveMouse(int x, int y)
 	point temp ={x, y, 0, 1};
 	point pnt;
 	double bearing;
-	curMode -> passiveMouseFunc(x2, y2);
+	if(curMode)
+	{
+		curMode -> passiveMouseFunc(x2, y2);
+	}
 }
 
+typedef mode* create_t();
+
 void initModes()
-{
+{/*
 	mode * temp = new mode();
 	usrModes.push_back(temp);
-	curMode = temp;
+	curMode = temp;*/
+	std::fstream in("libraries.txt", std::fstream::in);
+	while (in)
+	{
+		std::string str;
+		std::getline(in, str);
+		//in >> str;
+		std::cout << str << std::endl;
+		
+
+		//typedef mode * (create_t)();
+		//std::cout << "created function pointer\n";
+		//void *handle = dlopen(str.c_str(), RTLD_NOW);
+		void *handle = dlopen("./normal.mode", RTLD_NOW);
+		if(!handle)
+		{
+			std::cout << "ERROR " << dlerror() <<std::endl;
+		}
+		if (handle)
+		{
+			std::cout << "found library\n";
+		}
+
+		create_t* create = dlsym(handle,"create");
+
+		
+//		destroy_t* destroy=(destroy_t*)dlsym(handle,"destroy");
+		if (!create)
+		{
+			std::cout << "Error: %s" << dlerror() << std::endl;
+		}
+
+/*		if (!destroy)
+		{
+			std::cout << "Error: %s" << dlerror();
+		}*/
+
+		mode * temp = create();
+		temp -> init();
+		usrModes.push_back(temp);
+		curMode = temp;
+		//destroy(tst);
+		//return 0;
+
+	}
 }
 
 int main(int argc, char** argv)
@@ -703,9 +765,10 @@ int main(int argc, char** argv)
 	unsigned s2 = d.count();
 	generator.seed(s2);
 	std::cout << "initiating window\n";
-
-
 	initiateWindow(argc, argv); 				/* Set up Window 					*/
+	std::cout << "Initiating Modes\n";
+	initModes();
+
 	initiateGL();								/* Initiate GL   					*/
 	glutReshapeFunc(WindowResizeHandler);		/* Reshapes window					*/
 	glutSetKeyRepeat(GLUT_KEY_REPEAT_ON);		/* Set Key Repeat on 				*/
@@ -719,7 +782,7 @@ int main(int argc, char** argv)
 	glutDisplayFunc(gameView);					/* Set loop for The game rendering	*/
 	glutIdleFunc(gameLoop);						/* Set loop for the game processing	*/
 
-	initModes();
+	
 	
 	glutMainLoop();								/* Start the main loop				*/
 }

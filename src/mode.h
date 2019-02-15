@@ -10,29 +10,30 @@ typedef class object;
 class mode
 {
 	public:
-		mode();							// Default Asteroids Mode;
-		virtual int step(); 			// Increments mode, runs checkes for level clear and moves objects if needed. 
+		//mode();							// Default Asteroids Mode;
+		virtual int step()=0; 			// Increments mode, runs checkes for level clear and moves objects if needed. 
 										// returns 1 if mode won 2 if lost;
-		virtual void generateLevel();	// Generates objects and places them onScreen;
-		virtual void init();			// 
+		virtual void generateLevel()=0;	// Generates objects and places them onScreen;
+		virtual void init()=0;			// 
 
-		virtual std::vector<object *> getOnScreen(); 
-		virtual std::vector<std::shared_ptr<object>> getOnScreen2(); 
+		std::vector<object *> getOnScreen(); 
+		std::vector<std::shared_ptr<object>> getOnScreen2(); 
 		void addToOnScreen(object * obj);
 		void addToOnScreen(std::shared_ptr<object> obj);
 
-		virtual void drawLevel();
-		virtual void drawObjects();
-		virtual void drawScore();
-		virtual void drawAll();
+		virtual void drawLevel()=0;
+		virtual void drawObjects()=0;
+		virtual void drawScore()=0;
+		virtual void drawAll()=0;
 
 		std::string getName();
 
-		virtual void keyboardFunc(char key, int x, int y);
-		virtual void mouseFunc(int button, int state, int x, int y);
-		virtual void passiveMouseFunc(int x, int y);
+		virtual void keyboardFunc(char key, int x, int y)=0;
+		virtual void mouseFunc(int button, int state, int x, int y)=0;
+		virtual void passiveMouseFunc(int x, int y)=0;
 
 		object * player;
+		render * r2;
 
 	protected:
 		std::vector<object *> onScreen;	// collection of objects for the mode that are displayed onScreen;
@@ -45,7 +46,7 @@ class mode
 
 	private:
 //		int bulletsHit = 0;
-		int numAsteroids;
+//		int numAsteroids;
 
 
 				

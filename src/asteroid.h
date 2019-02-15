@@ -21,7 +21,7 @@
 #include "headers.h"
 #include "object.h"
 #include "prototypes.h"
-#include "globals.h"
+//#include "globals.h"
 #include "windowProperties.h"
 
 
