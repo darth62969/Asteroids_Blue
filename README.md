@@ -1,5 +1,6 @@
 # Asteroids_Blue
 Project From Computer Graphics (CSC315) @Mercer Univercity
+
 ![](https://img.shields.io/discord/289585903771451392.svg?logo=discord&style=flat)
 
 ## About:
