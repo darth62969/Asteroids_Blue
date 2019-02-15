@@ -1,6 +1,8 @@
 # Asteroids_Blue
 Was a Project From Computer Graphics (CSC315) @Mercer Univercity is now made anew for for personal and commertial reasons. 
 
+![](https://img.shields.io/discord/289585903771451392.svg?logo=discord&style=flat)
+
 ## About:
  A rebuild of the game Asteroids. Originally built as a group project for Computer Graphics @ Mercer University, it is now a Game Platform with Mod(plugin) Support with additional cool features. Build any mode you want and play though the Game engine for an easy and quick way to learn C++ and game development.
 
