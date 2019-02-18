@@ -19,7 +19,7 @@ CFLAGS = -v -std=c++11
 COPTFLAGS = -O3
 LIBFLAGS = -lglut -lGLU -lGL -lm
 HEADERS = src/headers.h src/structs.h src/globals.h src/prototypes.h
-OBJ1 = main.o transformer.o render.o
+OBJ1 = main.o transformer.o render.o mode.o 
 OBJ2 = mode.o object.o enterprise.o normal.o asteroid.o ship.o bullet.o render.o transformer.o
 SHARED = -shared -fPIC
 LINKS = -ldl

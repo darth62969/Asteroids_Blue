@@ -212,7 +212,7 @@ void DisplayPause()
 					case 0:
 						for(mode * m : usrModes)
 						{
-							//items.push_back(m->getName());
+							items.push_back(m->getName());
 						}
 						/*
 						items.push_back("Normal");
@@ -243,7 +243,7 @@ void DisplayPause()
 						menuOptions=0;
 						items.push_back("S = Start Game");
 						items.push_back("P = Pause Game");
-						items.push_back("Space = Fire Misiles");
+						items.push_back("Space = Fire Missiles");
 						items.push_back("Arrow Keys = Rotate player");
 						items.push_back("R = Restart Game");
 						items.push_back("F = Filled Asteroids");
@@ -375,7 +375,7 @@ void gameLoop()
 	switch (gamestate)
 	{
 		case 1:
-			//curMode->step();
+			curMode->step();
 			break;
 	
 	}

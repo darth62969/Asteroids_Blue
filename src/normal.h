@@ -37,13 +37,13 @@ class normal : public mode
 		std::mt19937_64 generator;
 
 	protected:
-		std::vector<object *> onScreen;	// collection of objects for the mode that are displayed onScreen;
-		std::vector<std::shared_ptr<object>> onScreen2;	// collection of objects for the mode that are displayed onScreen;
+		//std::vector<object *> onScreen;	// collection of objects for the mode that are displayed onScreen;
+		//std::vector<std::shared_ptr<object>> onScreen2;	// collection of objects for the mode that are displayed onScreen;
 		int level = 1;					// current level, default 1;
 		int stp = 0;					// current step, used to keep track of frames;
 		int maxLevel;					// Maximum level posible in mode, SET THIS!!;
 		int bulletsHit = 0;
-		std::string name;
+		//std::string name;
 
 	private:
 //		int bulletsHit = 0;

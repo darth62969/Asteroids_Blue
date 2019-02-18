@@ -173,7 +173,7 @@ std::vector<object*> mode::getOnScreen()
 
 std::vector<std::shared_ptr<object>> mode::getOnScreen2()
 {
-	return onScreen2;
+	return *onScreen2;
 }
 
 void mode::addToOnScreen(object * obj)
@@ -182,7 +182,7 @@ void mode::addToOnScreen(object * obj)
 }
 void mode::addToOnScreen(std::shared_ptr<object> obj)
 {
-	onScreen2.push_back(obj);
+	onScreen2->push_back(obj);
 }
 /*
 void mode::drawLevel()
@@ -260,6 +260,7 @@ void mode::drawAll()
 */
 std::string mode::getName()
 {
+	//std::cout << name << std::endl;
 	return name;
 }
 

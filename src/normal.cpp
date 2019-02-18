@@ -10,15 +10,17 @@ std::uniform_real_distribution<double> xlocdist(WORLD_COORDINATE_MIN_X, WORLD_CO
 std::uniform_real_distribution<double> ylocdist(WORLD_COORDINATE_MIN_Y, WORLD_COORDINATE_MAX_Y);
 //std::uniform_real_distribution<double> spddist(ASTEROID_MIN_SPEED, ASTEROID_MAX_SPEED);
 
-int gamestate=0;
+int gamestate=1;
 
 normal::normal()
 {
 	std::cout << "Loading Normal...\n";
 	maxLevel=1;
 	std::cout << "Initiating Octogon...\n";
-	//r2->initOctogon();
+	r2 = new render();
+	r2->initOctogon();
 	std::cout << "Generating Level...\n";
+	onScreen2 = new std::vector<std::shared_ptr<object>>;
 	generateLevel();
 	std::cout << "Establishing the Enterprise...\n";
 	player = new enterprise();
@@ -39,10 +41,10 @@ normal::normal()
 int normal::step()
 {
 	numAsteroids=0;
-	for (int i = 0; i<onScreen2.size(); i++)
+	for (int i = 0; i<onScreen2->size(); i++)
 	{
-		onScreen2[i]->doAction(this);
-		if(std::dynamic_pointer_cast<asteroid>(onScreen2[i]))
+		onScreen2->at(i)->doAction(this);
+		if(std::dynamic_pointer_cast<asteroid>(onScreen2->at(i)))
 			numAsteroids++;
 	}
 	switch(numAsteroids)
@@ -52,20 +54,20 @@ int normal::step()
 			break;
 	}
 
-	//std::cout << "Checking for Collisions" << std::endl << std::endl;
+	std::cout << "Checking for Collisions" << std::endl;
 	std::vector<int> t_int;
-	for (int i = 0; i<onScreen2.size(); i++)
+	for (int i = 0; i<onScreen2->size(); i++)
 	{
-		
-		std::shared_ptr<object> o1 = onScreen2[i];
+		std::cout << i << " " << onScreen2->size() << std::endl;
+		std::shared_ptr<object> o1 = onScreen2->at(i);
 		if (o1->collides(player)&&std::dynamic_pointer_cast<asteroid>(o1))
 		{
 			dynamic_cast<enterprise*>(player)->damageHealth(10);
 			t_int.push_back(i);
 		}
-		for(int j = i+1; j<onScreen2.size(); j++)
+		for(int j = i+1; j<onScreen2->size(); j++)
 		{
-			std::shared_ptr<object> o2 = onScreen2[j];
+			std::shared_ptr<object> o2 = onScreen2->at(j);
 			if(o1->getVectorLength(o2)<50){
 			
 				//std::cout << "Checking collisions for objects " << i << " and " << j << std::endl;
@@ -86,37 +88,38 @@ int normal::step()
 	it = std::unique(t_int.begin(), t_int.end());
 	t_int.resize(std::distance(t_int.begin(), it));
 
-	
+	std::cout << std::endl << "Cleaning Up onScreen:" << std::endl;
 	for (int i : t_int)
 	{
-		if(std::dynamic_pointer_cast<asteroid>(onScreen2[i]))
+		std::cout << i << " " << onScreen2->size() << std::endl;
+		if(std::dynamic_pointer_cast<asteroid>(onScreen2->at(i)))
 		{
-			//std::cout << "breaking up asteroid " << i << std::endl;
+		//std::cout << "breaking up asteroid " << i << std::endl;
 			std::vector<std::shared_ptr<object>> temp =
-				std::dynamic_pointer_cast<asteroid>(onScreen2[i])->breakupAsteroid2();		
+				std::dynamic_pointer_cast<asteroid>(onScreen2->at(i))->breakupAsteroid2();		
 			for (int j =0; j < temp.size(); j++)
-					onScreen2.push_back(temp.at(j));
+					onScreen2->push_back(temp.at(j));
 			//delete(static_cast<asteroid*>(onScreen[i]));
-			onScreen2.erase(onScreen2.begin()+(i));
+			onScreen2->erase(onScreen2->begin()+(i));
 		}
-		if(std::dynamic_pointer_cast<bullet>(onScreen2[i]))
+		if(std::dynamic_pointer_cast<bullet>(onScreen2->at(i)))
 		{
 			//delete (static_cast<bullet * >(onScreen[i]));
-			onScreen2.erase(onScreen2.begin()+(i));
+			onScreen2->erase(onScreen2->begin()+(i));
 			bulletsHit++;
 		}
 	}
 	//std::cout << "got past break UP Algorithem\n ";
 
-	for(int i = 0; i < onScreen2.size(); i++)
+	for(int i = 0; i < onScreen2->size(); i++)
 	{
-		std::shared_ptr<object> o = onScreen2[i];
+		std::shared_ptr<object> o = onScreen2->at(i);
 		if (!r2->insideOctogon(o->getLocation()))
 		{
 			if (std::dynamic_pointer_cast<bullet> (o))
 			{
 				//delete(onScreen[i]);
-				onScreen2.erase(onScreen2.begin()+i);
+				onScreen2->erase(onScreen2->begin()+i);
 			}
 			if (std::dynamic_pointer_cast<asteroid> (o))
 			{
@@ -146,7 +149,7 @@ void normal::generateLevel()
 
 	for (int i=0; i<50; i++)
 	{
-		onScreen2.push_back(std::make_shared<asteroid>(asteroid()));
+		onScreen2->push_back(std::make_shared<asteroid>(asteroid()));
 		point loc;
 		loc.x = INT32_MAX;
 		loc.y = INT32_MAX;
@@ -173,7 +176,7 @@ void normal::generateLevel()
 				}
 			}
 		}
-		onScreen2.back()->setLocation(loc.x, loc.y);
+		onScreen2->back()->setLocation(loc.x, loc.y);
 	}
 }
 
@@ -210,7 +213,7 @@ void normal::drawLevel()
 void normal::drawObjects()
 {
 	int i = 0;
-	for(std::weak_ptr<object> o : onScreen2)
+	for(std::weak_ptr<object> o : *onScreen2)
 	{
 		char a[10];
 		sprintf(a, "%d", i);
