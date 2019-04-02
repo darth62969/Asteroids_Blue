@@ -375,7 +375,7 @@ void gameLoop()
 	switch (gamestate)
 	{
 		case 1:
-			curMode->step();
+			gamestate = curMode->step();
 			break;
 	
 	}
@@ -720,14 +720,14 @@ void initModes()
 		//typedef mode * (create_t)();
 		//std::cout << "created function pointer\n";
 		//void *handle = dlopen(str.c_str(), RTLD_NOW);
-		void *handle = dlopen("./normal.mode", RTLD_NOW);
+		void *handle = dlopen(str.c_str(), RTLD_NOW);
 		if(!handle)
 		{
 			std::cout << "ERROR " << dlerror() <<std::endl;
 		}
 		if (handle)
 		{
-			std::cout << "found library\n";
+			std::cout << "Found Library\n";
 		}
 
 		create_t* create = dlsym(handle,"create");
@@ -736,7 +736,8 @@ void initModes()
 //		destroy_t* destroy=(destroy_t*)dlsym(handle,"destroy");
 		if (!create)
 		{
-			std::cout << "Error: %s" << dlerror() << std::endl;
+			std::cout << "Error: " << dlerror() << std::endl;
+			break;
 		}
 
 /*		if (!destroy)

@@ -6,4 +6,12 @@ Asteroids*
 *.json
 gmon.out
 .vs/*
+.vscode/*
 lib/*
+*.mode
+*.
+.qq
+normal.mode
+Debug/vc141.pdb
+bin/Endless.mode
+bin/Normal.mode

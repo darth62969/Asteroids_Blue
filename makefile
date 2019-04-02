@@ -21,6 +21,7 @@ LIBFLAGS = -lglut -lGLU -lGL -lm
 HEADERS = src/headers.h src/structs.h src/globals.h src/prototypes.h
 OBJ1 = main.o transformer.o render.o mode.o 
 OBJ2 = mode.o object.o enterprise.o normal.o asteroid.o ship.o bullet.o render.o transformer.o
+OBJ3 = mode.o object.o enterprise.o endless.o asteroid.o ship.o bullet.o render.o transformer.o
 SHARED = -shared -fPIC
 LINKS = -ldl
 
@@ -52,13 +53,16 @@ ifeq ($(windows), y)
 endif
 
 # Independent Targets - first is executable, second is object
-All : Asteroids normal.mode
+All : Asteroids normal.mode endless.mode
 
 Asteroids : $(OBJ1) $(HEADERS)
 	$(CC) -o bin/Asteroids $(OBJ1) $(CFLAGS) $(LIBFLAGS) $(LINKS)
 
 normal.mode : $(OBJ2) $(HEADERS)
-	$(CC) -o normal.mode $(OBJ2) $(CFLAGS) $(LIBFLAGS) $(SHARED)
+	$(CC) -o bin/normal.mode $(OBJ2) $(CFLAGS) $(LIBFLAGS) $(SHARED)
+
+endless.mode : $(OBJ3) $(HEADERS)
+	$(CC) -o bin/endless.mode $(OBJ3) $(CFLAGS) $(LIBFLAGS) $(SHARED)
 
 #I wish we could have figured out how to make it so that these files went into /bin and not the main folder.
 main.o : src/main.cpp $(HEADERS)
@@ -93,6 +97,9 @@ enterprise.o : src/enterprise.cpp
 
 normal.o : src/normal.cpp
 	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/normal.cpp $(SHARED)
+
+endless.o : src/endless.cpp
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/endless.cpp $(SHARED)
 
 
 

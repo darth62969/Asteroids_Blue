@@ -1,5 +1,5 @@
 #include <algorithm>
-#include "normal.h"
+#include "endless.h"
 #include "asteroid.h"
 #include "bullet.h"
 #include "enterprise.h"
@@ -12,9 +12,9 @@ std::uniform_real_distribution<double> ylocdist(WORLD_COORDINATE_MIN_Y, WORLD_CO
 
 int gamestate=1;
 
-normal::normal()
+endless::endless()
 {
-	std::cout << "Loading Normal...\n";
+	std::cout << "Loading Endless...\n";
 	maxLevel=1;
 	std::cout << "Initiating Octogon...\n";
 	r2 = new render();
@@ -24,8 +24,8 @@ normal::normal()
 	generateLevel();
 	std::cout << "Establishing the Enterprise...\n";
 	player = new enterprise();
-	std::cout << "Setting Name to Normal...\n";
-	name = "Normal";
+	std::cout << "Setting Name to endless...\n";
+	name = "endless";
 
 	std::cout << "Seeding RNG...\n";
 	std::chrono::high_resolution_clock::time_point s = 
@@ -35,10 +35,10 @@ normal::normal()
 	unsigned s2 = d.count();
 	generator.seed(s2);
 
-	std::cout << "Loaded Normal\n";
+	std::cout << "Loaded Endless\n";
 }
 
-int normal::step()
+int endless::step()
 {
 	numAsteroids=0;
 	for (int i = 0; i<onScreen2->size(); i++)
@@ -50,104 +50,106 @@ int normal::step()
 	switch(numAsteroids)
 	{
 		case 0:
-			gamestate = 3;
+			level++;
+			generateLevel();
 			break;
-	}
-
-	std::cout << "Checking for Collisions" << std::endl;
-	std::vector<int> t_int;
-	for (int i = 0; i<onScreen2->size(); i++)
-	{
-		std::cout << i << " " << onScreen2->size() << std::endl;
-		std::shared_ptr<object> o1 = onScreen2->at(i);
-		if (o1->collides(player)&&std::dynamic_pointer_cast<asteroid>(o1))
-		{
-			dynamic_cast<enterprise*>(player)->damageHealth(10);
-			t_int.push_back(i);
-		}
-		for(int j = i+1; j<onScreen2->size(); j++)
-		{
-			std::shared_ptr<object> o2 = onScreen2->at(j);
-			if(o1->getVectorLength(o2)<50){
-			
-				//std::cout << "Checking collisions for objects " << i << " and " << j << std::endl;
-			
-				if(o1->collides(o2) && !(std::dynamic_pointer_cast<bullet>(o1)
-					&&std::dynamic_pointer_cast<bullet>(o2)))
+	
+		default:
+			//std::cout << "Checking for Collisions" << std::endl;
+			std::vector<int> t_int;
+			for (int i = 0; i < onScreen2->size(); i++)
+			{
+				//std::cout << i << " " << onScreen2->size() << std::endl;
+				std::shared_ptr<object> o1 = onScreen2->at(i);
+				if (o1->collides(player) && std::dynamic_pointer_cast<asteroid>(o1))
 				{
+					dynamic_cast<enterprise *>(player)->damageHealth(10);
 					t_int.push_back(i);
-					t_int.push_back(j);
+				}
+				for (int j = i + 1; j < onScreen2->size(); j++)
+				{
+					std::shared_ptr<object> o2 = onScreen2->at(j);
+					if (o1->getVectorLength(o2) < 50)
+					{
+
+						//std::cout << "Checking collisions for objects " << i << " and " << j << std::endl;
+
+						if (o1->collides(o2) && !(std::dynamic_pointer_cast<bullet>(o1) && std::dynamic_pointer_cast<bullet>(o2)))
+						{
+							t_int.push_back(i);
+							t_int.push_back(j);
+						}
+					}
 				}
 			}
-		}
-	}
-	
-	std::sort(t_int.begin(), t_int.end());
-	std::reverse(t_int.begin(), t_int.end());
-	std::vector<int>::iterator it;
-	it = std::unique(t_int.begin(), t_int.end());
-	t_int.resize(std::distance(t_int.begin(), it));
 
-	std::cout << std::endl << "Cleaning Up onScreen:" << std::endl;
-	for (int i : t_int)
-	{
-		std::cout << i << " " << onScreen2->size() << std::endl;
-		if(std::dynamic_pointer_cast<asteroid>(onScreen2->at(i)))
-		{
-		//std::cout << "breaking up asteroid " << i << std::endl;
-			std::vector<std::shared_ptr<object>> temp =
-				std::dynamic_pointer_cast<asteroid>(onScreen2->at(i))->breakupAsteroid2();		
-			for (int j =0; j < temp.size(); j++)
-					onScreen2->push_back(temp.at(j));
-			//delete(static_cast<asteroid*>(onScreen[i]));
-			onScreen2->erase(onScreen2->begin()+(i));
-		}
-		else if(std::dynamic_pointer_cast<bullet>(onScreen2->at(i)))
-		{
-			//delete (static_cast<bullet * >(onScreen[i]));
-			onScreen2->erase(onScreen2->begin()+(i));
-			bulletsHit++;
-		}
-	}
-	//std::cout << "got past break UP Algorithem\n ";
+			std::sort(t_int.begin(), t_int.end());
+			std::reverse(t_int.begin(), t_int.end());
+			std::vector<int>::iterator it;
+			it = std::unique(t_int.begin(), t_int.end());
+			t_int.resize(std::distance(t_int.begin(), it));
 
-	for(int i = 0; i < onScreen2->size(); i++)
-	{
-		std::shared_ptr<object> o = onScreen2->at(i);
-		if (!r2->insideOctogon(o->getLocation()))
-		{
-			if (std::dynamic_pointer_cast<bullet> (o))
+			//std::cout << std::endl << "Cleaning Up onScreen:" << std::endl;
+			for (int i : t_int)
 			{
-				//delete(onScreen[i]);
-				onScreen2->erase(onScreen2->begin()+i);
+				//std::cout << i << " " << onScreen2->size() << std::endl;
+				if (std::dynamic_pointer_cast<asteroid>(onScreen2->at(i)))
+				{
+					//std::cout << "breaking up asteroid " << i << std::endl;
+					std::vector<std::shared_ptr<object>> temp =
+						std::dynamic_pointer_cast<asteroid>(onScreen2->at(i))->breakupAsteroid2();
+					for (int j = 0; j < temp.size(); j++)
+						onScreen2->push_back(temp.at(j));
+					//delete(static_cast<asteroid*>(onScreen[i]));
+					onScreen2->erase(onScreen2->begin() + (i));
+				}
+				else if (std::dynamic_pointer_cast<bullet>(onScreen2->at(i)))
+				{
+					//delete (static_cast<bullet * >(onScreen[i]));
+					onScreen2->erase(onScreen2->begin() + (i));
+					bulletsHit++;
+				}
 			}
-			if (std::dynamic_pointer_cast<asteroid> (o))
-			{
-				o->setLocation(-1*(o->getLocation().x), -1*(o->getLocation().y));
-			}
-		}
-	}
-	if(dynamic_cast<enterprise*>(player)->getHealth()<=0)
-	{
-		gamestate=2;
-	}
+			//std::cout << "got past break UP Algorithem\n ";
 
+			for (int i = 0; i < onScreen2->size(); i++)
+			{
+				std::shared_ptr<object> o = onScreen2->at(i);
+				if (!r2->insideOctogon(o->getLocation()))
+				{
+					if (std::dynamic_pointer_cast<bullet>(o))
+					{
+						//delete(onScreen[i]);
+						onScreen2->erase(onScreen2->begin() + i);
+					}
+					if (std::dynamic_pointer_cast<asteroid>(o))
+					{
+						o->setLocation(-1 * (o->getLocation().x), -1 * (o->getLocation().y));
+					}
+				}
+			}
+			if (dynamic_cast<enterprise *>(player)->getHealth() <= 0)
+			{
+				gamestate = 2;
+			}
+			break;
+	}
 
 	return gamestate;
 }
 
 
 
-void normal::generateLevel()
+void endless::generateLevel()
 {
 	for (object * o : onScreen)
 	{
 		delete(o);
 	}
 
-	onScreen2->clear();
+	onScreen.clear();
 
-	for (int i=0; i<50; i++)
+	for (int i=0; i<level; i++)
 	{
 		onScreen2->push_back(std::make_shared<asteroid>(asteroid()));
 		point loc;
@@ -180,37 +182,37 @@ void normal::generateLevel()
 	}
 }
 
-void normal::init()
+void endless::init()
 {
-	std::cout << "Normal Mode Loaded" << std::endl;
+	std::cout << "endless Mode Loaded" << std::endl;
 	//r2->initOctogon();
 }
 
-/*std::vector<object*> normal::getOnScreen()
+/*std::vector<object*> endless::getOnScreen()
 {
 	return onScreen;
 }
 
-std::vector<std::shared_ptr<object>> normal::getOnScreen2()
+std::vector<std::shared_ptr<object>> endless::getOnScreen2()
 {
 	return onScreen2;
 }
 
-void normal::addToOnScreen(object * obj)
+void endless::addToOnScreen(object * obj)
 {
 	onScreen.push_back(obj);
 }
-void normal::addToOnScreen(std::shared_ptr<object> obj)
+void endless::addToOnScreen(std::shared_ptr<object> obj)
 {
 	onScreen2.push_back(obj);
 }*/
 
-void normal::drawLevel()
+void endless::drawLevel()
 {
 	r2->drawOctogon();
 }
 
-void normal::drawObjects()
+void endless::drawObjects()
 {
 	int i = 0;
 	for(std::weak_ptr<object> o : *onScreen2)
@@ -230,7 +232,7 @@ void normal::drawObjects()
 	
 }
 
-void normal::drawScore()
+void endless::drawScore()
 {
 	r2->setFont(GLUT_BITMAP_HELVETICA_12);
 
@@ -245,7 +247,7 @@ void normal::drawScore()
 			break;
 	}
 	char modeC[50];
-	sprintf(modeC, "Game Mode: %s", "Normal");
+	sprintf(modeC, "Game Mode: %s", "endless");
 	char bulletsFiredStr[50];	
 	sprintf(bulletsFiredStr, "Bullets Fired: %3d", dynamic_cast<enterprise*>(player)->getBulletsFired());
 	char astsOnScr1[50];
@@ -256,6 +258,8 @@ void normal::drawScore()
 	sprintf(hrStr, "Hit Ratio:  %5.2f %%", hitRatio);
 	char health[50];
 	sprintf(health, "Health: %%%d", dynamic_cast<enterprise*>(player)->getHealth() );
+	char levelC[50];
+	sprintf(levelC, "Level: %d", level);
 
 	glColor3f(0.2, 0.5, 0.0);
 	
@@ -269,26 +273,27 @@ void normal::drawScore()
 	r2->drawString(180, -270, hrStr);
 	
 	r2->drawString(-280, 265, health);
+	r2->drawString(-280, 250, levelC);
 }
 
-void normal::drawAll()
+void endless::drawAll()
 {
 	drawLevel();
 	drawObjects();
 	drawScore();
 }
 
-std::string normal::getName()
+std::string endless::getName()
 {
 	return name;
 }
 
-void normal::keyboardFunc(char key, int x, int y)
+void endless::keyboardFunc(char key, int x, int y)
 {
 
 }
 
-void normal::mouseFunc(int button, int state, int x, int y)
+void endless::mouseFunc(int button, int state, int x, int y)
 {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
@@ -300,7 +305,7 @@ void normal::mouseFunc(int button, int state, int x, int y)
 		}
     }
 }
-void normal::passiveMouseFunc(int x, int y)
+void endless::passiveMouseFunc(int x, int y)
 {
 	point pnt = dynamic_cast<ship *>(player)->getAtkPnts()[0];
 	double bearing =(atan2f(pnt.y-y, pnt.x-x));
@@ -309,7 +314,7 @@ void normal::passiveMouseFunc(int x, int y)
 
 extern "C" mode * create()
 {
-	return new normal();
+	return new endless();
 }
 extern "C" mode * destroy(mode * m)
 {
