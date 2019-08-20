@@ -19,9 +19,9 @@ CFLAGS = -v -std=c++11
 COPTFLAGS = -O3
 LIBFLAGS = -lglut -lGLU -lGL -lm
 HEADERS = src/headers.h src/structs.h src/globals.h src/prototypes.h
-OBJ1 = main.o transformer.o render.o mode.o 
-OBJ2 = mode.o object.o enterprise.o normal.o asteroid.o ship.o bullet.o render.o transformer.o
-OBJ3 = mode.o object.o enterprise.o endless.o asteroid.o ship.o bullet.o render.o transformer.o
+OBJ = transformer.o render.o mode.o object.o bullet.o ship.o
+#OBJ2 =  enterprise.o normal.o asteroid.o   render.o transformer.o
+#OBJ3 = mode.o object.o enterprise.o endless.o asteroid.o ship.o bullet.o render.o transformer.o
 SHARED = -shared -fPIC
 LINKS = -ldl
 
@@ -53,20 +53,10 @@ ifeq ($(windows), y)
 endif
 
 # Independent Targets - first is executable, second is object
-All : Asteroids normal.mode endless.mode
+All : AsteroidsCore.so
 
-Asteroids : $(OBJ1) $(HEADERS)
-	$(CC) -o bin/Asteroids $(OBJ1) $(CFLAGS) $(LIBFLAGS) $(LINKS)
-
-normal.mode : $(OBJ2) $(HEADERS)
-	$(CC) -o bin/normal.mode $(OBJ2) $(CFLAGS) $(LIBFLAGS) $(SHARED)
-
-endless.mode : $(OBJ3) $(HEADERS)
-	$(CC) -o bin/endless.mode $(OBJ3) $(CFLAGS) $(LIBFLAGS) $(SHARED)
-
-#I wish we could have figured out how to make it so that these files went into /bin and not the main folder.
-main.o : src/main.cpp $(HEADERS)
-	$(CC) $(CFLAGS) -fpermissive $(COPTFLAGS) -c src/main.cpp
+AsteroidsCore.so : $(OBJ) $(HEADERS)
+	$(CC) -o bin/AsteroidsCore.so $(OBJ) $(CFLAGS) $(LIBFLAGS) $(SHARED)
 
 asteroid.o: src/asteroid.cpp
 	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/asteroid.cpp $(SHARED)
@@ -91,15 +81,6 @@ render.o : src/render.cpp
 
 object.o : src/object.cpp
 	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/object.cpp $(SHARED)
-
-enterprise.o : src/enterprise.cpp
-	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/enterprise.cpp $(SHARED)
-
-normal.o : src/normal.cpp
-	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/normal.cpp $(SHARED)
-
-endless.o : src/endless.cpp
-	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/endless.cpp $(SHARED)
 
 
 

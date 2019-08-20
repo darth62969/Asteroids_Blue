@@ -3,6 +3,11 @@
 
 #include "ship.h"
 
+/**
+ * DEPRECIATED
+ * REMOVED FROM CORE
+ */
+
 class fighter : public ship
 {
 	public:

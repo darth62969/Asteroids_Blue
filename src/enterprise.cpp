@@ -3,6 +3,11 @@
 #include "enterprise.h"
 #include "globals.h"
 
+/**
+ * DEPRECIATED
+ * REMOVED FROM CORE!!
+ */
+
 enterprise::enterprise()
 {
 	location = {0, 0, 0, 1, 0};

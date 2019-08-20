@@ -11,6 +11,11 @@
 #include "structs.h"
 #include "globals.h"
 
+/**
+ * DEPRECIATED
+ * Orginal intention was to develop a scripting language.
+ * Now Dynamic Libraries are the main.
+ */
 
 class fileHandler
 {

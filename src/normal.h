@@ -4,6 +4,10 @@
 #include "mode.h"
 #include "headers.h"
 
+/**
+ * DEPRECIATED 
+ * REMOVED FROM CORE!!
+ */
 
 typedef class object;
 

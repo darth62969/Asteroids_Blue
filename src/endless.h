@@ -7,6 +7,11 @@
 
 typedef class object;
 
+/**
+ * DEPRECIATED
+ * REMOVED FROM CORE!!
+ */
+
 
 class endless : public mode
 {

@@ -1,6 +1,11 @@
 #include "fighter.h"
 #include "globals.h"
 
+/**
+ * DEPRECIATED
+ * REMOVED FROM CORE!!
+ */
+
 fighter::fighter()
 {
 	layer lyr;

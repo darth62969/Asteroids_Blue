@@ -17,6 +17,10 @@
 
 #define _USE_MATH_DEFINES
 
+/**
+ * DEPRECIATED
+ * REMOVED FROM CORE!!
+ */
 
 #include <fstream>
 #include <dlfcn.h>
