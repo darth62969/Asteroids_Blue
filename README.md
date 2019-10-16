@@ -5,6 +5,11 @@ Project From Computer Graphics (CSC315) @Mercer Univercity
 
 ## About:
  A rebuild of the game Asteroids. Completed in 2016, all current updates are individual "improvements" for the sake of improvements. (also code stuff).
+ 
+## Plans:
+ * Convert from freeglut to Vulkan
+ * drop "games" build engine only
+ * build demos to show cappablities
 
 ### Credits:
  * Jonathan Oakes - Me, I did the asteroid class, odds and ends, and broke it plenty of times.
