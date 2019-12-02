@@ -108,6 +108,10 @@ std::vector<int> selections;
 //void generateShips();
 
 // Function to set up draw strings on screen at a particular x and y. 
+/* This is the Window Resize Handler, it takes a Window resize request and 
+ * resets the view port and scaling.
+ * Big O: O(1)
+ */
 
 void WindowResizeHandler(int windowWidth, int windowHeight)
 {
@@ -140,6 +144,11 @@ void WindowResizeHandler(int windowWidth, int windowHeight)
 
 }
 
+/* Function to set the game mode. This determines what mode to increment
+ * and run.
+ * Big O: O(1)
+ */
+
 void setGameMode(int i)
 {
 
@@ -149,18 +158,26 @@ void setGameMode(int i)
 	}
 }
 
+/**
+ * This is the pause screen. it is everything i need to do to
+ * display and opperate that screen. 
+ */
+
 void DisplayPause()
 {
 	// set up the charstrings.
-	std::string pausedString = "ASTEROIDS: Return of Meteor";
-	std::vector<std::string> items;
-	char ToggleGameMode[50];
+	std::string pausedString = "ASTEROIDS: Return of Meteor"; 	//Title
+	std::vector<std::string> items; 		// this is the list of menu items.
+	char ToggleGameMode[50];				// This isn't used?
 	char menu[50];
-	sprintf(menu, "Menu level = %d and menuSelection = %d",  menuLevel, menuSelection);
+	//sprintf(menu, "Menu level = %d and menuSelection = %d",  menuLevel, menuSelection); // This is debug code.
 
+
+	//this is setting fonts and drawing Paused string
 	r->setFont(GLUT_BITMAP_TIMES_ROMAN_24);
 	r->drawString(-200, 220, pausedString.c_str());
 
+	//This is where we set up and display the Options on screen.
 	if (selections.empty())
 	{
 		
@@ -170,6 +187,8 @@ void DisplayPause()
 		items.push_back("Quit");
 		menuOptions=items.size();
 		r->setFont(GLUT_BITMAP_HELVETICA_18);
+
+		//display menu items. Big O(n)
 		for(int i = 0; i < items.size(); i++)
 		{
 			if(i==menuSelection)
@@ -188,6 +207,7 @@ void DisplayPause()
 	{
 		switch(selections.size())
 		{
+			//safe case
 			case 0:
 				items.push_back("Modes");
 				items.push_back("Options");
@@ -195,6 +215,7 @@ void DisplayPause()
 				items.push_back("Quit");
 
 				r->setFont(GLUT_BITMAP_HELVETICA_18);
+				//display options, big O(n)
 				for(int i = 0; i < items.size(); i++)
 				{
 					if(i==menuSelection)
@@ -209,11 +230,13 @@ void DisplayPause()
 					}
 				}
 				break;
-
+			// if one selection is made
 			case 1:
 				switch(selections[0])
 				{
+					//switch between game modes
 					case 0:
+						//populate game modes, big O (n)
 						for(mode * m : usrModes)
 						{
 							items.push_back(m->getName());
@@ -228,6 +251,7 @@ void DisplayPause()
 
 						r->setFont(GLUT_BITMAP_HELVETICA_18);
 						
+						//display game modes, Big O(n)
 						for(int i = 0; i < items.size(); i++)
 						{
 							if(i==menuSelection)
@@ -242,7 +266,7 @@ void DisplayPause()
 							}
 						}
 						break;	
-
+					//display controls
 					case 2:
 						menuOptions=0;
 						items.push_back("S = Start Game");
@@ -253,6 +277,7 @@ void DisplayPause()
 						items.push_back("F = Filled Asteroids");
 						items.push_back("M = Toggle between endless and normal");
 
+						//big o(n)
 						r->setFont(GLUT_BITMAP_HELVETICA_12);
 						for (int i = 0; i<items.size(); i++)
 						{
@@ -261,12 +286,14 @@ void DisplayPause()
 
 					break;
 					
+					//exit game
 					case 3:
 						exit(0);
 						break;
 
 				}
 				break;
+			//This is where we initiate the game.
 			case 2:
 				switch(selections[0])
 				{
@@ -283,6 +310,9 @@ void DisplayPause()
 // Function to display the score.
 
 // Function to print game over on screen.
+/**
+ * big o(1)
+ * */
 void printGameOver(void)
 {
 	//Set font
@@ -297,6 +327,9 @@ void printGameOver(void)
 }
 
 // Function to print "you win" on screen.
+/**
+ * big o(1)
+ * */
 void printYouWin(void)
 {
 	// Set font
@@ -311,6 +344,9 @@ void printYouWin(void)
 }
 
 // Here we calculate the FPS of the game. (Technically the FrameTime)
+/**
+ * big o(1)
+ * */
 void calculateFPS()
 {
 	// Increment frame count
@@ -336,6 +372,7 @@ void calculateFPS()
 /*
  * Main Display Fucntion
  * Displays everything from the Asteroids to the Bullets to the Scoreboard 
+ * Big O(1)
  */
 void gameView()
 {
@@ -349,7 +386,7 @@ void gameView()
 	switch(gamestate)	
 	{
 
-	
+		//big o(n) technically, depends on what is in the current mode. 
 		case 1:
 			if(curMode)
 			{
@@ -371,7 +408,10 @@ void gameView()
 	
 }
 
-
+/**
+ * This is the main game loop, it increments everything.
+ * big O(1) technically, game mode->step can be anything... more likely then not big O(n^2)
+ */
 void gameLoop()
 {
 	timeC2 = glutGet(GLUT_ELAPSED_TIME);

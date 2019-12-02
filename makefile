@@ -18,7 +18,7 @@ CC = g++
 CFLAGS = -v -std=c++11
 COPTFLAGS = -O3
 LIBFLAGS = -lglut -lGLU -lGL -lm
-HEADERS = src/headers.h src/structs.h src/globals.h src/prototypes.h
+HEADERS = src/headers.h src/structs.h src/globals.h src/prototypes.h src/object.h src/ship.h src/mode.h src/render.h
 OBJ = transformer.o render.o mode.o object.o bullet.o ship.o
 #OBJ2 =  enterprise.o normal.o asteroid.o   render.o transformer.o
 #OBJ3 = mode.o object.o enterprise.o endless.o asteroid.o ship.o bullet.o render.o transformer.o
@@ -56,7 +56,9 @@ endif
 All : AsteroidsCore.so
 
 AsteroidsCore.so : $(OBJ) $(HEADERS)
-	$(CC) -o bin/AsteroidsCore.so $(OBJ) $(CFLAGS) $(LIBFLAGS) $(SHARED)
+#	$(CC) -c -o bin/AsteroidsCore.o $(OBJ) $(CFLAGS) $(LIBFLAGS) $(SHARED)
+	ar rcs bin/AsteroidsCore.a $(OBJ)
+	ar rcs bin/AsteroidsCore_h.a $(HEADERS)
 
 asteroid.o: src/asteroid.cpp
 	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/asteroid.cpp $(SHARED)
