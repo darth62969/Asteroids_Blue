@@ -7,3 +7,6 @@ Asteroids*
 gmon.out
 .vs/*
 lib/*
+*.mode
+*.dll
+*.pdb
