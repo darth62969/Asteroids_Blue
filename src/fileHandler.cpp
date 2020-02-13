@@ -5,6 +5,12 @@
 #include <stdio.h>
 #include <regex>
 
+/**
+ * DEPRECIATED
+ * Was going to set up a scripting language,
+ * Now Dynamic Libraries are the main.
+ */
+
 
 std::regex num ("[0-9]");
 std::regex dot ("[\.]");

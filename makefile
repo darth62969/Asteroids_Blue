@@ -18,9 +18,13 @@ CC = g++
 CFLAGS = -v -std=c++11
 COPTFLAGS = -O3
 LIBFLAGS = -lglut -lGLU -lGL -lm
-HEADERS = src/headers.h src/structs.h src/globals.h src/prototypes.h
-OBJS = main.o asteroid.o ship.o bullet.o transformer.o 
-OBJS += mode.o object.o enterprise.o render.o
+HEADERS = src/headers.h src/structs.h src/globals.h src/prototypes.h src/object.h src/ship.h src/mode.h src/render.h
+OBJ = transformer.o render.o mode.o object.o bullet.o ship.o
+#OBJ2 =  enterprise.o normal.o asteroid.o   render.o transformer.o
+#OBJ3 = mode.o object.o enterprise.o endless.o asteroid.o ship.o bullet.o render.o transformer.o
+SHARED = -shared -fPIC
+LINKS = -ldl
+
 
 debug ?= n
 logging ?= n
@@ -49,40 +53,36 @@ ifeq ($(windows), y)
 endif
 
 # Independent Targets - first is executable, second is object
+All : AsteroidsCore.so
 
-Asteroids : $(OBJS) $(HEADERS)
-	$(CC) -o bin/Asteroids $(OBJS) $(CFLAGS) $(LIBFLAGS)
-
-#I wish we could have figured out how to make it so that these files went into /bin and not the main folder.
-main.o : src/main.cpp $(HEADERS)
-	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/main.cpp
+AsteroidsCore.so : $(OBJ) $(HEADERS)
+#	$(CC) -c -o bin/AsteroidsCore.o $(OBJ) $(CFLAGS) $(LIBFLAGS) $(SHARED)
+	ar rcs bin/AsteroidsCore.a $(OBJ)
+	ar rcs bin/AsteroidsCore_h.a $(HEADERS)
 
 asteroid.o: src/asteroid.cpp
-	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/asteroid.cpp
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/asteroid.cpp $(SHARED)
 
 bullet.o: src/bullet.cpp
-	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/bullet.cpp
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/bullet.cpp $(SHARED)
 
 ship.o: src/ship.cpp
-	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/ship.cpp
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/ship.cpp $(SHARED)
 
-transformer.o: src/transformer.cpp $(HEADERS)
-	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/transformer.cpp
+transformer.o: src/transformer.cpp $(HEADERS) 
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/transformer.cpp $(SHARED)
 
 clipper.o: src/clipper.cpp $(HEADERS)
 	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/clipper.cpp
 
 mode.o : src/mode.cpp
-	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/mode.cpp
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/mode.cpp $(SHARED)
 
 render.o : src/render.cpp
-	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/render.cpp
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/render.cpp $(SHARED)
 
 object.o : src/object.cpp
-	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/object.cpp
-
-enterprise.o : src/enterprise.cpp
-	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/enterprise.cpp
+	$(CC) $(CFLAGS) $(COPTFLAGS) -c src/object.cpp $(SHARED)
 
 
 

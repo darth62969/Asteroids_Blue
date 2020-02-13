@@ -3,6 +3,11 @@
 #include "enterprise.h"
 #include "globals.h"
 
+/**
+ * DEPRECIATED
+ * REMOVED FROM CORE!!
+ */
+
 enterprise::enterprise()
 {
 	location = {0, 0, 0, 1, 0};
@@ -115,7 +120,7 @@ void enterprise::render()
 	glColor3d(lyrs[0].clr.red, lyrs[0].clr.green, lyrs[0].clr.blue);	
 	for(int i = 0; i<temp.size(); i++)
 	{    
-		switch (filled)
+		switch (/*filled*/0)
 		{
 			case 0:
 			case 1:

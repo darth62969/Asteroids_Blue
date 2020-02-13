@@ -17,6 +17,11 @@
 
 #include "headers.h"
 
+/**
+ * DEPRECIATED
+ * REMOVED FROM CORE!!
+ */
+
 //checks proximity of asteroids
 bool asteroidProximity(asteroid ast1, asteroid ast2)
 {

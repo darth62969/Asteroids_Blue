@@ -17,7 +17,7 @@
 
 #include "headers.h"
 #include "structs.h"
-#include "globals.h"
+//#include "globals.h"
 #include <math.h>
 
 double TRANS[4][4];
@@ -92,13 +92,13 @@ void rotatePoint(point& p,double theta)
 	ptom(p, A);
 	//double origin = (WORLD_COORDINATE_MAX_X / 2);
 
-	buildTranslate(TRANS,origin*-1,origin*-1,0);
+	buildTranslate(TRANS,0-1,0*-1,0);
 	mVmult(TRANS,4,4,A,4,1,B,4,1);	
 	
 	buildRotateZ(TRANS,theta);
 	mVmult(TRANS,4,4,B,4,1,A,4,1);	
 
-	buildTranslate(TRANS,origin,origin,0);
+	buildTranslate(TRANS,0,0,0);
 	mVmult(TRANS,4,4,A,4,1,B,4,1);	
 
 	mtop(p,B);

@@ -14,7 +14,7 @@ struct triangle
 struct value
 {
 	int type;
-	char* name;
+	char** name;
 	int _int;
 	double _double;
 	short fail;

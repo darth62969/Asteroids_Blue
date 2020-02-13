@@ -4,6 +4,11 @@
 #include "headers.h"
 #include "ship.h"
 
+/**
+ * DEPRECIATED
+ * REMOVED FROM CORE
+ */
+
 //enterprise player = new enterprise();
 
 class enterprise : public ship

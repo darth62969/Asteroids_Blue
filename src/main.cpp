@@ -17,6 +17,13 @@
 
 #define _USE_MATH_DEFINES
 
+/**
+ * DEPRECIATED
+ * REMOVED FROM CORE!!
+ */
+
+#include <fstream>
+#include <dlfcn.h>
 #include "headers.h"
 #include "mode.h"
 #include "structs.h"
@@ -101,6 +108,10 @@ std::vector<int> selections;
 //void generateShips();
 
 // Function to set up draw strings on screen at a particular x and y. 
+/* This is the Window Resize Handler, it takes a Window resize request and 
+ * resets the view port and scaling.
+ * Big O: O(1)
+ */
 
 void WindowResizeHandler(int windowWidth, int windowHeight)
 {
@@ -133,6 +144,11 @@ void WindowResizeHandler(int windowWidth, int windowHeight)
 
 }
 
+/* Function to set the game mode. This determines what mode to increment
+ * and run.
+ * Big O: O(1)
+ */
+
 void setGameMode(int i)
 {
 
@@ -142,18 +158,26 @@ void setGameMode(int i)
 	}
 }
 
+/**
+ * This is the pause screen. it is everything i need to do to
+ * display and opperate that screen. 
+ */
+
 void DisplayPause()
 {
 	// set up the charstrings.
-	std::string pausedString = "ASTEROIDS: Return of Meteor";
-	std::vector<std::string> items;
-	char ToggleGameMode[50];
+	std::string pausedString = "ASTEROIDS: Return of Meteor"; 	//Title
+	std::vector<std::string> items; 		// this is the list of menu items.
+	char ToggleGameMode[50];				// This isn't used?
 	char menu[50];
-	sprintf(menu, "Menu level = %d and menuSelection = %d",  menuLevel, menuSelection);
+	//sprintf(menu, "Menu level = %d and menuSelection = %d",  menuLevel, menuSelection); // This is debug code.
 
+
+	//this is setting fonts and drawing Paused string
 	r->setFont(GLUT_BITMAP_TIMES_ROMAN_24);
 	r->drawString(-200, 220, pausedString.c_str());
 
+	//This is where we set up and display the Options on screen.
 	if (selections.empty())
 	{
 		
@@ -163,6 +187,8 @@ void DisplayPause()
 		items.push_back("Quit");
 		menuOptions=items.size();
 		r->setFont(GLUT_BITMAP_HELVETICA_18);
+
+		//display menu items. Big O(n)
 		for(int i = 0; i < items.size(); i++)
 		{
 			if(i==menuSelection)
@@ -181,6 +207,7 @@ void DisplayPause()
 	{
 		switch(selections.size())
 		{
+			//safe case
 			case 0:
 				items.push_back("Modes");
 				items.push_back("Options");
@@ -188,6 +215,7 @@ void DisplayPause()
 				items.push_back("Quit");
 
 				r->setFont(GLUT_BITMAP_HELVETICA_18);
+				//display options, big O(n)
 				for(int i = 0; i < items.size(); i++)
 				{
 					if(i==menuSelection)
@@ -202,11 +230,13 @@ void DisplayPause()
 					}
 				}
 				break;
-
+			// if one selection is made
 			case 1:
 				switch(selections[0])
 				{
+					//switch between game modes
 					case 0:
+						//populate game modes, big O (n)
 						for(mode * m : usrModes)
 						{
 							items.push_back(m->getName());
@@ -221,6 +251,7 @@ void DisplayPause()
 
 						r->setFont(GLUT_BITMAP_HELVETICA_18);
 						
+						//display game modes, Big O(n)
 						for(int i = 0; i < items.size(); i++)
 						{
 							if(i==menuSelection)
@@ -235,17 +266,18 @@ void DisplayPause()
 							}
 						}
 						break;	
-
+					//display controls
 					case 2:
 						menuOptions=0;
 						items.push_back("S = Start Game");
 						items.push_back("P = Pause Game");
-						items.push_back("Space = Fire Misiles");
+						items.push_back("Space = Fire Missiles");
 						items.push_back("Arrow Keys = Rotate player");
 						items.push_back("R = Restart Game");
 						items.push_back("F = Filled Asteroids");
 						items.push_back("M = Toggle between endless and normal");
 
+						//big o(n)
 						r->setFont(GLUT_BITMAP_HELVETICA_12);
 						for (int i = 0; i<items.size(); i++)
 						{
@@ -254,12 +286,14 @@ void DisplayPause()
 
 					break;
 					
+					//exit game
 					case 3:
 						exit(0);
 						break;
 
 				}
 				break;
+			//This is where we initiate the game.
 			case 2:
 				switch(selections[0])
 				{
@@ -276,6 +310,9 @@ void DisplayPause()
 // Function to display the score.
 
 // Function to print game over on screen.
+/**
+ * big o(1)
+ * */
 void printGameOver(void)
 {
 	//Set font
@@ -290,6 +327,9 @@ void printGameOver(void)
 }
 
 // Function to print "you win" on screen.
+/**
+ * big o(1)
+ * */
 void printYouWin(void)
 {
 	// Set font
@@ -304,6 +344,9 @@ void printYouWin(void)
 }
 
 // Here we calculate the FPS of the game. (Technically the FrameTime)
+/**
+ * big o(1)
+ * */
 void calculateFPS()
 {
 	// Increment frame count
@@ -329,6 +372,7 @@ void calculateFPS()
 /*
  * Main Display Fucntion
  * Displays everything from the Asteroids to the Bullets to the Scoreboard 
+ * Big O(1)
  */
 void gameView()
 {
@@ -342,9 +386,12 @@ void gameView()
 	switch(gamestate)	
 	{
 
-	
+		//big o(n) technically, depends on what is in the current mode. 
 		case 1:
-			curMode->drawAll();
+			if(curMode)
+			{
+				curMode->drawAll();
+			}
 			break;
 
 		case 0:
@@ -361,7 +408,10 @@ void gameView()
 	
 }
 
-
+/**
+ * This is the main game loop, it increments everything.
+ * big O(1) technically, game mode->step can be anything... more likely then not big O(n^2)
+ */
 void gameLoop()
 {
 	timeC2 = glutGet(GLUT_ELAPSED_TIME);
@@ -369,7 +419,8 @@ void gameLoop()
 	switch (gamestate)
 	{
 		case 1:
-			curMode->step();
+			gamestate = curMode->step();
+			break;
 	
 	}
 	timeP2 = glutGet(GLUT_ELAPSED_TIME);
@@ -469,7 +520,10 @@ void debugMe(int x, int y)
  */
 void keyboard(unsigned char key, int x, int y)
 {	
-	curMode->keyboardFunc(key, x, y);
+	if(curMode)
+	{
+		curMode->keyboardFunc(key, x, y);
+	}
 	// start game
 	switch (key)
 	{
@@ -668,7 +722,10 @@ void specialKeyReleased(int key, int x, int y)
 		
 void mouse(int button, int state, int x, int y)
 {
-	curMode->mouseFunc(button, state, x, y);
+	if(curMode)
+	{
+		curMode->mouseFunc(button, state, x, y);
+	}
 }
 
 /* The Passive Mouse Function finds where in the world 
@@ -682,14 +739,64 @@ void passiveMouse(int x, int y)
 	point temp ={x, y, 0, 1};
 	point pnt;
 	double bearing;
-	curMode -> passiveMouseFunc(x2, y2);
+	if(curMode)
+	{
+		curMode -> passiveMouseFunc(x2, y2);
+	}
 }
 
+typedef mode* create_t();
+
 void initModes()
-{
+{/*
 	mode * temp = new mode();
 	usrModes.push_back(temp);
-	curMode = temp;
+	curMode = temp;*/
+	std::fstream in("libraries.txt", std::fstream::in);
+	while (in)
+	{
+		std::string str;
+		std::getline(in, str);
+		//in >> str;
+		std::cout << str << std::endl;
+		
+
+		//typedef mode * (create_t)();
+		//std::cout << "created function pointer\n";
+		//void *handle = dlopen(str.c_str(), RTLD_NOW);
+		void *handle = dlopen(str.c_str(), RTLD_NOW);
+		if(!handle)
+		{
+			std::cout << "ERROR " << dlerror() <<std::endl;
+		}
+		if (handle)
+		{
+			std::cout << "Found Library\n";
+		}
+
+		create_t* create = dlsym(handle,"create");
+
+		
+//		destroy_t* destroy=(destroy_t*)dlsym(handle,"destroy");
+		if (!create)
+		{
+			std::cout << "Error: " << dlerror() << std::endl;
+			break;
+		}
+
+/*		if (!destroy)
+		{
+			std::cout << "Error: %s" << dlerror();
+		}*/
+
+		mode * temp = create();
+		temp -> init();
+		usrModes.push_back(temp);
+		curMode = temp;
+		//destroy(tst);
+		//return 0;
+
+	}
 }
 
 int main(int argc, char** argv)
@@ -703,9 +810,10 @@ int main(int argc, char** argv)
 	unsigned s2 = d.count();
 	generator.seed(s2);
 	std::cout << "initiating window\n";
-
-
 	initiateWindow(argc, argv); 				/* Set up Window 					*/
+	std::cout << "Initiating Modes\n";
+	initModes();
+
 	initiateGL();								/* Initiate GL   					*/
 	glutReshapeFunc(WindowResizeHandler);		/* Reshapes window					*/
 	glutSetKeyRepeat(GLUT_KEY_REPEAT_ON);		/* Set Key Repeat on 				*/
@@ -719,7 +827,7 @@ int main(int argc, char** argv)
 	glutDisplayFunc(gameView);					/* Set loop for The game rendering	*/
 	glutIdleFunc(gameLoop);						/* Set loop for the game processing	*/
 
-	initModes();
+	
 	
 	glutMainLoop();								/* Start the main loop				*/
 }

@@ -47,6 +47,13 @@ asteroid::asteroid()
  *	Tessellate points and save as triangles
  * 	Return the asteroid
  */
+	std::chrono::high_resolution_clock::time_point s = 
+		std::chrono::high_resolution_clock::now();
+	std::chrono::high_resolution_clock::duration d = 
+		std::chrono::high_resolution_clock::now()-s;
+	unsigned s2 = d.count();
+	std::mt19937_64 generator;
+	generator.seed(s2);
 
 	int avgSize = sizedist(generator);
 
@@ -239,7 +246,7 @@ std::vector<std::shared_ptr<asteroid>> asteroid::getInfluencers2(mode * md)
 
 void asteroid::render() 
 {
-	switch(filled)
+	switch(/*filled*/0)
 	{
 	// If not filled
 		case 0:

@@ -24,6 +24,7 @@ void render::drawString(GLuint x, GLuint y, const char* string)
 
 void render::initOctogon()
 {
+	
 	point p;
 	p.x = WORLD_COORDINATE_MIN_X*cos(M_PI_4/2)-0*sin(M_PI_4/2);
 	p.y = WORLD_COORDINATE_MIN_X*sin(M_PI_4/2)+0*cos(M_PI_4/2);

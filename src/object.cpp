@@ -9,6 +9,24 @@ void object::doAction(mode * md)
 	return;
 }
 
+bool intersect(point v1, point v2, point v3, point v4)
+{
+	float ua_num = ((v3.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v3.y - v1.y));
+	float den = ((v2.x - v1.x) * -(v4.y - v3.y)) - (-(v4.x - v3.x) * (v2.y - v1.y));
+
+	float ub_num = ((v2.x - v1.x) * (v3.y - v1.y)) - ((v3.x - v1.x) * (v2.y - v1.y));
+
+	float ua = ua_num / den;
+	float ub = ub_num / den;
+
+	if((ua > 0.0) && (ua < 1.0) && (ub > 0.0) && (ub < 1.0))
+	{
+		return true;
+	}
+
+	return false;
+}
+
 void object::tessellate(layer* lyr)
 {
 	std::vector<point> temp = lyr->pnts;
